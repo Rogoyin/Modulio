@@ -251,18 +251,58 @@ def Create_Box_Plot(Data, Title = None, X_Label = 'X', Y_Label = 'Y', Grid = Tru
     
     plt.show()
 
-def Create_Scatter_Plot(X, Y, Title = None, X_Label = 'X', Y_Label = 'Y', Colors = None, Grid = True, Figure_Size = (10, 6),
+def Create_Scatter_Plot(X, Y, Title = True, X_Label = 'X', Y_Label = 'Y', Colors = None, Grid = True, Figure_Size = (10, 6),
                          Font_Size = 12, Alpha = 1.0, X_Lim = None, Y_Lim = None,
                          X_Ticks = None, Y_Ticks = None, X_Ticks_Step = None, Y_Ticks_Step = None,
                          Annotations = None, File_Name = None, File_Format = 'png',
                          Legend = True, Legend_Location = 'best', Legend_Font_Size = 12,
                          Cluster_Size = 100, Epsilon = 0.1, Min_Samples = 2, Clustering_Method = None, Jitter = None,
                          Cluster_Color = 'Blues', Perform_Regression = True, Regression_Type = 'linear', 
-                         Polynomial_Degree = 2):
+                         Polynomial_Degree = 2, Group = False, Group_Color = 'blue', Color_Map = None, 
+                         Y_Thresholds = None, Colors_Segments = None): 
 
     plt.figure(figsize = Figure_Size)
 
-    # Group points only if a clustering method is specified.
+    if Group:
+        df = pd.DataFrame({'X': X, 'Y': Y})
+        df_Agrupado = df.groupby(['X', 'Y']).size().reset_index(name = 'Occurrences')
+
+        # Apply segment colors to grouped data.
+        if Y_Thresholds is not None and Colors_Segments is not None:
+            Group_Colors = []
+            for y in df_Agrupado['Y']:
+                Color = 'gray'  # Default color.
+                for Threshold, Seg_Color in zip(Y_Thresholds, Colors_Segments):
+                    if y <= Threshold:
+                        Color = Seg_Color
+                        break
+                Group_Colors.append(Color)
+        else:
+            # Use Color_Map if provided, otherwise apply the Group_Color.
+            if Color_Map is not None:
+                Group_Colors = [Color_Map.get(y, Group_Color) for y in df_Agrupado['Y']]
+            else:
+                Group_Colors = [Group_Color] * len(df_Agrupado)  # All points get the same group color.
+        
+        plt.scatter(df_Agrupado['X'], df_Agrupado['Y'], s = df_Agrupado['Occurrences'] * 30, 
+                    color = Group_Colors, alpha = 0.5)
+    else:
+        if Y_Thresholds is not None and Colors_Segments is not None:
+            Colors = []
+            for val in Y:
+                Color = 'gray'  # Default color.
+                for Threshold, Seg_Color in zip(Y_Thresholds, Colors_Segments):
+                    if val <= Threshold:
+                        Color = Seg_Color
+                        break
+                Colors.append(Color)
+        elif Color_Map is not None:
+            Colors = [Color_Map.get(val, 'gray') for val in Y]  # Default to gray if not found in Color_Map.
+        else:
+            Colors = Colors  # Use provided colors if any.
+
+        plt.scatter(X, Y, color = Colors, alpha = Alpha)
+
     if Clustering_Method is not None:
         Coords = np.column_stack((X, Y))
 
@@ -297,9 +337,6 @@ def Create_Scatter_Plot(X, Y, Title = None, X_Label = 'X', Y_Label = 'Y', Colors
         Points_Not_In_Clusters = Labels == -1
         plt.scatter(X[Points_Not_In_Clusters], Y[Points_Not_In_Clusters], color = 'gray', alpha = Alpha, 
                     label = None)
-    else:
-        # If no clustering method is specified, plot all points individually.
-        plt.scatter(X, Y, color = Colors, alpha = Alpha, label = None)
 
     if Perform_Regression:
         X_Reshaped = np.array(X).reshape(-1, 1)
@@ -312,12 +349,16 @@ def Create_Scatter_Plot(X, Y, Title = None, X_Label = 'X', Y_Label = 'Y', Colors
             plt.plot(X, Y_Pred, color = 'red', label = f'R = {R:.2f}', linewidth = 2)
 
         elif Regression_Type == 'polynomial':
-            P = Polynomial.fit(X, Y, Polynomial_Degree)
-            X_Fit = np.linspace(min(X), max(X), 100)
-            Y_Fit = P(X_Fit)
+            P = PolynomialFeatures(degree = Polynomial_Degree)
+            X_Poly = P.fit_transform(X_Reshaped)
+            Model = LinearRegression().fit(X_Poly, Y_Reshaped)
+            X_Fit = np.linspace(min(X), max(X), 100).reshape(-1, 1)
+            Y_Fit = Model.predict(P.transform(X_Fit))
             plt.plot(X_Fit, Y_Fit, color = 'red', label = f'Polynomial Regression (Degree {Polynomial_Degree})', linewidth = 2)
 
     if Title:
+        if Title == True and X_Label and Y_Label:
+            Title = f'{X_Label} vs. {Y_Label}'
         plt.title(Title, fontsize = Font_Size)
 
     plt.xlabel(X_Label, fontsize = Font_Size)

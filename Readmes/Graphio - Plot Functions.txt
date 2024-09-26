@@ -310,8 +310,8 @@
 - **Y** (array-like):
     The data for the y-axis. Options: list or array.
 
-- **Title** (str, optional, default = None):
-    The title of the scatter plot. Options: any string.
+- **Title** (bool, optional, default = True):
+    Whether to display the title of the scatter plot. Options: `True` or `False`.
 
 - **X_Label** (str, optional, default = 'X'):
     Label for the x-axis. Options: any string.
@@ -320,10 +320,7 @@
     Label for the y-axis. Options: any string.
 
 - **Colors** (list of str, optional): 
-    List of colors for the points. Options: any valid Matplotlib color.
-
-- **Alpha** (float, optional, default = 1.0):
-    Opacity of the points (0 to 1). Options: any float in the range [0, 1].
+    List of colors for individual points. Options: any valid Matplotlib color list or array.
 
 - **Grid** (bool, optional, default = True):
     Whether to display a grid. Options: `True` or `False`.
@@ -332,7 +329,10 @@
     Size of the figure in inches. Options: `(width, height)` as positive numbers.
 
 - **Font_Size** (int, optional, default = 12):
-    Font size for title and labels. Options: any positive integer.
+    Font size for the title and labels. Options: any positive integer.
+
+- **Alpha** (float, optional, default = 1.0):
+    Opacity of the points. Options: any float in the range [0, 1].
 
 - **X_Lim** (tuple, optional, default = None):
     The limits of the x-axis as a tuple `(min, max)`. Options: two numbers indicating limits.
@@ -340,7 +340,28 @@
 - **Y_Lim** (tuple, optional, default = None):
     The limits of the y-axis as a tuple `(min, max)`. Options: two numbers indicating limits.
 
-- **Legend** (bool, optional, default = False):
+- **X_Ticks** (list, optional, default = None):
+    Custom tick marks for the x-axis. Options: list of numbers.
+
+- **Y_Ticks** (list, optional, default = None):
+    Custom tick marks for the y-axis. Options: list of numbers.
+
+- **X_Ticks_Step** (float, optional, default = None):
+    Step size for ticks on the x-axis. Options: any positive float.
+
+- **Y_Ticks_Step** (float, optional, default = None):
+    Step size for ticks on the y-axis. Options: any positive float.
+
+- **Annotations** (list of dict, optional): 
+    List of annotations to be added to the plot. Each dictionary should contain 'text', 'xy', 'xytext', and optional 'arrowprops'. Options: any list of dictionaries.
+
+- **File_Name** (str, optional, default = None):
+    Name for saving the scatter plot file. Options: any string.
+
+- **File_Format** (str, optional, default = 'png'):
+    Format for saving the scatter plot file. Options: 'png', 'jpg', 'pdf', etc.
+
+- **Legend** (bool, optional, default = True):
     Whether to display the legend. Options: `True` or `False`.
 
 - **Legend_Location** (str, optional, default = 'best'):
@@ -361,17 +382,32 @@
 - **Jitter** (float, optional, default = None):
     Standard deviation of the jitter to be added to the coordinates. Options: any positive float.
 
-- **Annotations** (list of dict, optional): 
-    List of annotations to be added to the plot. Each dictionary should contain 'text', 'xy', 'xytext', and optional 'arrowprops'. Options: any list of dictionaries.
-
-- **File_Name** (str, optional, default = None):
-    Name for saving the scatter plot file. Options: any string.
-
-- **File_Format** (str, optional, default = 'png'):
-    Format for saving the scatter plot file. Options: 'png', 'jpg', 'pdf', etc.
-
 - **Clustering_Method** (str, optional, default = None):
     The method for clustering points. Options: 'KMeans', 'DBSCAN', or None (to plot all points individually).
+
+- **Perform_Regression** (bool, optional, default = True):
+    Whether to perform a regression on the data. Options: `True` or `False`.
+
+- **Regression_Type** (str, optional, default = 'linear'):
+    Type of regression to be performed. Options: 'linear', 'polynomial'.
+
+- **Polynomial_Degree** (int, optional, default = 2):
+    Degree of the polynomial if polynomial regression is chosen. Options: any positive integer.
+
+- **Group** (bool, optional, default = False):
+    Whether to group data points by their occurrences. Options: `True` or `False`.
+
+- **Group_Color** (str, optional, default = 'blue'):
+    Color for grouped points if no color map or segmentation is applied. Options: any valid Matplotlib color.
+
+- **Color_Map** (dict, optional, default = None):
+    A dictionary mapping values in `Y` to specific colors. Options: any dictionary where keys are `Y` values and values are colors.
+
+- **Thresholds** (list of float, optional, default = None):
+    List of thresholds to define segments for coloring the data. Options: any list of floats representing thresholds.
+
+- **Colors_Segments** (list of str, optional, default = None):
+    List of colors corresponding to each threshold segment. Options: any list of valid Matplotlib colors, the number of colors must match the number of thresholds.
 
 ########################################################################
 # Create_Violin_Plot

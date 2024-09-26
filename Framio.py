@@ -662,3 +662,23 @@ def Insert_Column_In_Specific_Position(df, Value, Column_Name, Number_Position =
         raise KeyError("You must specify one of the following: Number_Position, Before_To, or After_To.")
     
     return df
+
+def Apply_String_Style_To_All_DataFrame(df, String_Style='Title', Replace_From=None, Replace_To=None):
+    for Column in df.columns:
+        if df[Column].dtype == 'object':
+            if String_Style == 'Title':
+                df[Column] = df[Column].str.title()
+            elif String_Style == 'Capitalize':
+                df[Column] = df[Column].str.capitalize()
+            elif String_Style == 'Lower':
+                df[Column] = df[Column].str.lower()
+            elif String_Style == 'Upper':
+                df[Column] = df[Column].str.upper()
+            elif String_Style == 'Swapcase':
+                df[Column] = df[Column].str.swapcase()
+            elif String_Style == 'Strip':
+                df[Column] = df[Column].str.strip()
+            elif String_Style == 'Replace' and Replace_From is not None and Replace_To is not None:
+                df[Column] = df[Column].str.replace(Replace_From, Replace_To)
+    
+    return df

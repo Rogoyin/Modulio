@@ -425,6 +425,12 @@ def Create_Dummy_Variables_In_All_DataFrame(DataFrame, Drop_First = False, Group
 
 def Replace_Values_In_Name_Columns(df: pd.DataFrame, Old_Values: str, New_Values: str) -> pd.DataFrame:
     
+    if isinstance(Old_Values, str):
+        Old_Values = [Old_Values]
+    
+    if isinstance(New_Values, str):
+        New_Values = [New_Values]
+
     if len(Old_Values) != len(New_Values):
         raise ValueError("Old_Values and New_Values must have the same length.")
     
@@ -680,5 +686,53 @@ def Apply_String_Style_To_All_DataFrame(df, String_Style='Title', Replace_From=N
                 df[Column] = df[Column].str.strip()
             elif String_Style == 'Replace' and Replace_From is not None and Replace_To is not None:
                 df[Column] = df[Column].str.replace(Replace_From, Replace_To)
+    
+    return df
+
+def Process_DataFrame(df: pd.DataFrame, 
+                      Columns: list = None, 
+                      Fill_NaN: int = 0, 
+                      Dummies: bool = False,
+                      String_Style: str = 'Title', 
+                      Replace: list = None,  # Should be list of two lists
+                      Case_Name_Columns: str = 'Pascal Snake Case', 
+                      Separator_In_Name_Columns: str = '_',
+                      Remove_Accents_In_Name_Columns: bool = True, 
+                      Replace_Enie_In_Name_Columns: bool = True,
+                      Replace_In_Name_Columns: list = None):  # Should be list of two lists
+
+    if Columns is not None:
+        df = df[Columns]
+
+    if Fill_NaN is not None:
+        df = df.fillna(Fill_NaN)
+    
+    if Remove_Accents_In_Name_Columns:
+        df = Replace_Values_In_Name_Columns(df, ['á', 'é', 'í', 'ó', 'ú'], ['a', 'e', 'i', 'o', 'u'])
+    
+    if Separator_In_Name_Columns is not None:
+        Separators = ['-', ' ', '_', '|', ':', ',', '.']
+        for Separator in Separators:
+            df.columns = df.columns.str.replace(Separator, Separator_In_Name_Columns, regex=False)
+            
+    if Replace_Enie_In_Name_Columns:
+        df = Replace_Values_In_Name_Columns(df, ['ñ'], ['ni'])
+
+    if Dummies:
+        df = Create_Dummy_Variables_In_All_DataFrame(df)
+    
+    if Case_Name_Columns:
+        df = Casing_Column_Names(df, Style = Case_Name_Columns, Separator = Separator_In_Name_Columns)
+    
+    if String_Style is not None:
+        df = Apply_String_Style_To_All_DataFrame(df, String_Style = String_Style)
+
+    if Replace is not None:
+        for Index, Word in enumerate(Replace):
+            df = Apply_String_Style_To_All_DataFrame(df, String_Style = 'Replace', Replace_From=Replace[0][Index], Replace_To=Replace[1][Index])
+    
+    if Replace_In_Name_Columns is not None:
+        for Index, Word in enumerate(Replace_In_Name_Columns[0]):
+            df = Replace_Values_In_Name_Columns(df, Replace_In_Name_Columns[0][Index], Replace_In_Name_Columns[1][Index])
     
     return df

@@ -6,6 +6,9 @@ import numpy as np
 from sklearn.cluster import KMeans, DBSCAN
 from sklearn.linear_model import LinearRegression
 from numpy.polynomial.polynomial import Polynomial
+from collections import Counter
+import itertools
+import Framio as fr
 
 #######################################################################################################################
 # CREATE #
@@ -173,55 +176,193 @@ def Create_Histogram(Data, Title = None, X_Label = 'X', Y_Label = 'Y', Bins = 10
     
     plt.show()
 
-def Create_Bar_Plot(X, Y, Title = None, X_Label = 'X', Y_Label = 'Y', Colors = None, Grid = True, Figure_Size = (10, 6), 
-                     Font_Size = 12, Alpha = 1.0, X_Lim = None, Y_Lim = None, 
-                     X_Ticks = None, Y_Ticks = None, X_Ticks_Step = None, Y_Ticks_Step = None, 
-                     Horizontal_Lines = None, Vertical_Lines = None, 
-                     Annotations = None, File_Name = None, File_Format = 'png'):
-    
-    plt.figure(figsize = Figure_Size)
-    plt.bar(X, Y, color = Colors, alpha = Alpha)
-    
-    if Title:
-        plt.title(Title, fontsize = Font_Size)
-    plt.xlabel(X_Label, fontsize = Font_Size)
-    plt.ylabel(Y_Label, fontsize = Font_Size)
-    
-    Combined_X_Ticks = set()
-    if X_Ticks is not None:
-        Combined_X_Ticks.update(X_Ticks)
-    if X_Ticks_Step is not None:
-        Combined_X_Ticks.update(np.arange(X_Lim[0], X_Lim[1] + 1, step=X_Ticks_Step))
-    
-    plt.xticks(sorted(Combined_X_Ticks))
-    
-    Combined_Y_Ticks = set()
-    if Y_Ticks is not None:
-        Combined_Y_Ticks.update(Y_Ticks)
-    if Y_Ticks_Step is not None:
-        Combined_Y_Ticks.update(np.arange(Y_Lim[0], Y_Lim[1] + 1, step=Y_Ticks_Step))
-    
-    plt.yticks(sorted(Combined_Y_Ticks))
+def Create_Bar_Plot(X, 
+                    Y = None,  
+                    Z = None, 
+                    X_Segments = None,
+                    X_Ranges = None, 
+                    X_Decimals = 0,          
+                    Z_Segments = None,  
+                    Z_Ranges = None, 
+                    Z_Decimals = 0,
+                    X_As_Base = True, 
+                    X_Group_Small_Categories = False, 
+                    X_Threshold_Percentage = 5, 
+                    X_Threshold_Absolute = None, 
+                    X_Remove_Others = True,
+                    Z_Group_Small_Categories = False,  
+                    Z_Threshold_Percentage = 5, 
+                    Z_Threshold_Absolute = None, 
+                    Z_Remove_Others = False,
+                    Name_Others_Group = 'Others', 
+                    Figure_Size = (10, 6), 
+                    Title = None,
+                    Font_Size = 12, 
+                    X_Label = None, 
+                    Y_Label = None,
+                    Grid = True,  
+                    Horizontal_Lines = None,
+                    Horizontal_Lines_Colours = ['g'],
+                    Horizontal_Lines_Styles = ['--'],  
+                    Vertical_Lines = None,
+                    Vertical_Lines_Colours = ['r'],
+                    Vertical_Lines_Styles = ['--'],  
+                    Annotations = None,
+                    Annotations_Decimals = 2,  
+                    File_Name = None,  
+                    File_Format = 'png',
+                    Legend_Title = None,  
+                    Legend_Colors = None,
+                    Legend_Position = 'upper right',  
+                    X_Ticks_Rotation = 90,  
+                    X_Ticks_Alignment = 'center',
+                    Normalize = False,
+                    Normalize_By_X = False, 
+                    Normalize_By_Z=False,       
+                    Bar_Width = 0.8):         
 
+    # Create DataFrame for X.
+    df = pd.DataFrame({'X': X})
+    if pd.api.types.is_numeric_dtype(df['X']):
+        df['X'] = df['X'].fillna(0)
+    
+    # Add Y if provided.
+    if Y is not None:
+        df['Y'] = Y
+        if isinstance(Y, (list, pd.Series)) and pd.api.types.is_numeric_dtype(pd.Series(Y)):
+            df['Y'] = df['Y'].fillna(0)
+    
+    # Add Z if provided.
+    if Z is not None:
+        df['Z'] = Z
+        if isinstance(Z, (list, pd.Series)) and pd.api.types.is_numeric_dtype(pd.Series(Z)):
+            df['Z'] = df['Z'].fillna(0)
+
+    # Remove small categories in X.
+    if X_Group_Small_Categories:
+        if X_Threshold_Percentage and X_Threshold_Absolute:
+            raise KeyError('Both thresholds are not compatible.')
+        elif X_Threshold_Percentage:
+            Threshold = X_Threshold_Percentage
+            df = fr.Remove_Values_Under_Threshold(df, 'X', Threshold_Percentage = Threshold, Threshold_Numeric = None, 
+                                                  Remove = X_Remove_Others, New_Value = Name_Others_Group)
+        elif X_Threshold_Absolute:
+            Threshold = X_Threshold_Absolute
+            df = fr.Remove_Values_Under_Threshold(df, 'X', Threshold_Percentage = None, Threshold_Numeric = Threshold, 
+                                                  Remove = X_Remove_Others, New_Value = Name_Others_Group)
+
+    # Remove small categories in Z.
+    if Z is not None and Z_Group_Small_Categories:
+        if Z_Threshold_Percentage and Z_Threshold_Absolute:
+            raise KeyError('Both thresholds are not compatible.')
+        elif Z_Threshold_Percentage:
+            Threshold = Z_Threshold_Percentage
+            df = fr.Remove_Values_Under_Threshold(df, 'Z', Threshold_Percentage = Threshold, Threshold_Numeric = None, 
+                                                  Remove = Z_Remove_Others)
+        elif Z_Threshold_Absolute:
+            Threshold = Z_Threshold_Absolute
+            df = fr.Remove_Values_Under_Threshold(df, 'Z', Threshold_Percentage = None, Threshold_Numeric = Threshold, 
+                                                  Remove = Z_Remove_Others)
+
+    # Create segments for X if specified.
+    if df['X'].dtype in ['float64', 'int64']:
+        if X_Segments is not None and X_Ranges is not None:
+            raise KeyError(f"You must choose between X_Segments and X_Ranges, but you don't must have both.")
+        if X_Segments is not None:
+            Min_X, Max_X = df['X'].min(), df['X'].max()
+            Bins = pd.cut(df['X'], bins = np.linspace(Min_X, Max_X, X_Segments + 1), 
+                        right = True, include_lowest = True)
+        if X_Ranges is not None:
+            Bins = pd.cut(df['X'], bins=X_Ranges, right=True, include_lowest=True)
+        if X_Segments is not None and X_Ranges is not None:
+            df['X'] = Bins
+
+    # Create segments for Z if specified.
+    if df['Z'].dtype in ['float64', 'int64']:
+        if Z_Segments is not None and Z_Ranges is not None:
+            raise KeyError(f"You must choose between Z_Segments and Z_Ranges, but you don't must have both.")
+        if Z_Segments is not None:
+            Min_X, MaZ_X = df['Z'].min(), df['Z'].max()
+            Bins = pd.cut(df['Z'], bins = np.linspace(Min_X, MaZ_X, Z_Segments + 1), 
+                        right = True, include_lowest = True)
+        if Z_Ranges is not None:
+            Bins = pd.cut(df['Z'], bins=Z_Ranges, right=True, include_lowest=True)
+        if Z_Segments is not None and Z_Ranges is not None:
+            df['Z'] = Bins
+        
+    # Prepare data for plotting.
+    if X_As_Base:
+        Count = df.groupby(['X', 'Z']).size().unstack(fill_value = 0)
+    else:
+        Count = df.groupby(['Z', 'X']).size().unstack(fill_value = 0)
+    # Normalize.
+    if Normalize:
+        if Normalize_By_Z:  
+            Count = Count.div(Count.sum(axis=0), axis=1)
+        elif Normalize_By_X:  
+            Count = Count.div(Count.sum(axis=1), axis=0)
+        else:
+            raise KeyError('If Normalize = True, Normalize_By_Z or Normalize_By_X must be True.')
+
+
+    # Check if Count is empty.
+    if Count.empty:
+        print("Count is empty, check the applied filters.")
+        return
+
+    # Plotting.
+    if Z is None:
+        if Legend_Colors is None:
+            Legend_Colors = np.random.rand(Count.shape[0], 3)
+        ax = Count.plot(kind='bar', figsize=Figure_Size, color=Legend_Colors if Legend_Colors is not None else None, width=Bar_Width)
+    else:
+        if Legend_Colors is None:
+            Legend_Colors = np.random.rand(Count.shape[1], 3)
+        ax = Count.plot(kind='bar', figsize=Figure_Size, color=Legend_Colors if Legend_Colors is not None else ['blue'], width=Bar_Width)
+
+    # Titles and labels.
+    if Title:
+        plt.title(Title, fontsize=Font_Size)
+    plt.xlabel(X_Label if X_Label else 'X', fontsize=Font_Size)
+    plt.ylabel(Y_Label if Y_Label else ('Percentage' if Normalize else 'Frequency'), fontsize=Font_Size)
+
+    # Show grid if enabled.
     if Grid:
         plt.grid(True)
-    
+
+    # Handle horizontal and vertical lines.
     if Horizontal_Lines:
-        for line in Horizontal_Lines:
-            plt.axhline(y = line, color = 'gray', linestyle = '--')
+        for Line in Horizontal_Lines:
+            for Index, Color in enumerate(Horizontal_Lines_Colours):
+                plt.axhline(y=Line, color=Horizontal_Lines_Colours[Index], linestyle=Horizontal_Lines_Styles[Index])
     if Vertical_Lines:
-        for line in Vertical_Lines:
-            plt.axvline(x = line, color = 'gray', linestyle = '--')
-    
+        for Line in Vertical_Lines:
+            for Index, Color in enumerate(Vertical_Lines_Colours):
+                plt.axhline(y=Line, color=Vertical_Lines_Colours[Index], linestyle=Vertical_Lines_Styles[Index])
+
     if Annotations:
-        for annotation in Annotations:
-            plt.annotate(annotation['text'], xy = annotation['xy'], xytext = annotation['xytext'], 
-                         arrowprops = annotation.get('arrowprops', {}))
-    
-    if File_Name:
-        plt.savefig(f'{File_Name}.{File_Format}', format = File_Format, bbox_inches = 'tight')
-    
+        # Cuando Z no es None, tenemos subgrupos.
+        if Z is not None:
+            Number_Of_Groups = Count.shape[0]  # Number of group of bars.
+            Number_Of_Subgroups = Count.shape[1]  # Number of bars.
+            Bar_Positions = np.arange(Number_Of_Groups)  # Position of bars.
+
+            for i in range(Number_Of_Groups):  
+                for j in range(Number_Of_Subgroups): 
+                    Value = Count.iloc[i, j]
+                    Bar_Position = Bar_Positions[i] + j * (Bar_Width / Number_Of_Subgroups) - (Bar_Width / 2) + (Bar_Width / (2 * Number_Of_Subgroups))
+                    plt.text(Bar_Position, Value, f'{Value:.{Annotations_Decimals}f}', ha='center', va='bottom')
+        else:
+            for Index, Value in enumerate(Count.values.flatten()):
+                plt.text(Index, Value, f'{Value:.{Annotations_Decimals}f}', ha='center', va='bottom')
+
+    plt.xticks(rotation=X_Ticks_Rotation, ha=X_Ticks_Alignment)
+    plt.legend(title=Legend_Title, loc=Legend_Position)
     plt.show()
+
+    # Save figure if a file name is provided.
+    if File_Name:
+        plt.savefig(f"{File_Name}.{File_Format}", format=File_Format)
 
 def Create_Box_Plot(Data, Title = None, X_Label = 'X', Y_Label = 'Y', Grid = True, Figure_Size = (10, 6), 
                     Font_Size = 12, X_Lim = None, Y_Lim = None, Legend = False, Legend_Location = 'best', 

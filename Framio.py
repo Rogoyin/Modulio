@@ -241,7 +241,7 @@ def Update_Column_Selected_Rows(df: pd.DataFrame, Condition_Column: str, Conditi
     df.loc[Filtered_Rows.index, Update_Column] = Update_Value
     return df
 
-def Drop_Selected_Rows(df: pd.DataFrame, Column: str, Value: object, Condition: str) -> pd.DataFrame:
+def Drop_Selected_Rows(df: pd.DataFrame, Column: str, Value: object, Condition: str = 'Match') -> pd.DataFrame:
 
     """
     Drops rows where a specified column meets a certain condition.
@@ -275,7 +275,7 @@ def Apply_Operation_To_Columns(df: pd.DataFrame, Columns: List[str], Operations:
 
     Example:
 
-    df = Columns_Processing(df,
+    df = Apply_Operation_To_Columns(df,
                             Columns=['Name', 'City', 'Country'],
                             Operations=[lambda x: x.upper(),
                                         Remove_Vocals])
@@ -542,3 +542,123 @@ def Values_Of_New_Column_By_Compare_Other_Columns(Row, Column1, Value1, Column2,
             return Value3
     else:
         raise ValueError(f"Operation '{Operation}' is not supported. Use '>', '<', or '=='.")
+    
+def Remove_Values_Under_Threshold(df, Column, Threshold_Percentage = 5, Threshold_Numeric = None, Remove = True, 
+                                  New_Value = 'Others'):
+
+    Uniques = list(df[Column].unique())
+    Length = len(df[Column])
+
+    if Threshold_Percentage:
+        Threshold = (Length / 100) * Threshold_Percentage
+    else:
+        Threshold = Threshold_Numeric
+
+    for Value in Uniques:
+        Count = (df[Column] == Value).sum()
+        if Count < Threshold:
+            if Remove:
+                df = Drop_Selected_Rows(df, Column, Value)
+            else:
+                df[Column] = df[Column].replace(Value, New_Value)
+
+    df.reset_index(drop=True, inplace=True)
+
+    return df
+
+def Combine_Columns(df, Column1, Column2, New_Column_Name = None, Criteria = 'Sum', Remove = False):
+
+    if New_Column_Name is None:
+        New_Column_Name = Criteria
+
+    elif Criteria == 'Sum':
+        if df[Column1].dtype == df[Column2].dtype and df[Column1].dtype in [str, int, float, list, tuple]:
+            df[New_Column_Name] = df[Column1] + df[Column2]
+        else:
+            raise TypeError(f'Column1 and Column2 must have the same type.')
+
+    elif Criteria == 'Difference':
+        if pd.api.types.is_numeric_dtype(df[Column1]) and pd.api.types.is_numeric_dtype(df[Column2]):
+            df[New_Column_Name] = df[Column1] - df[Column2]
+        else:
+            raise KeyError(f'"Difference" criteria needs numbers.')
+
+    elif Criteria == 'Product':
+        if pd.api.types.is_numeric_dtype(df[Column1]) and pd.api.types.is_numeric_dtype(df[Column2]):
+            df[New_Column_Name] = df[Column1] * df[Column2]
+        else:
+            raise KeyError(f'"Product" criteria needs numbers.')
+
+    elif Criteria == 'Division':
+        if pd.api.types.is_numeric_dtype(df[Column1]) and pd.api.types.is_numeric_dtype(df[Column2]):
+            df[New_Column_Name] = df[Column1] / df[Column2].replace(0, float('nan'))
+        else:
+            raise KeyError(f'"Division" criteria needs numbers.')
+    
+    if Criteria == 'Average':
+        if pd.api.types.is_numeric_dtype(df[Column1]) and pd.api.types.is_numeric_dtype(df[Column2]):
+            df[New_Column_Name] = (df[Column1] + df[Column2]) / 2
+        else:
+            raise KeyError(f'"Average" criteria needs numbers, not objects.')
+
+    elif Criteria == 'Concatenate':
+        df[New_Column_Name] = df[Column1].astype(str) + df[Column2].astype(str)
+
+    elif Criteria == 'Logical AND':
+        if pd.api.types.is_bool_dtype(df[Column1]) and pd.api.types.is_bool_dtype(df[Column2]):
+            df[New_Column_Name] = df[Column1] & df[Column2]
+        else:
+            raise KeyError(f'"Logical AND" criteria needs boolean values.')
+
+    elif Criteria == 'Logical OR':
+        if pd.api.types.is_bool_dtype(df[Column1]) and pd.api.types.is_bool_dtype(df[Column2]):
+            df[New_Column_Name] = df[Column1] | df[Column2]
+        else:
+            raise KeyError(f'"Logical OR" criteria needs boolean values.')
+
+    elif Criteria == 'Logical XOR':
+        if pd.api.types.is_bool_dtype(df[Column1]) and pd.api.types.is_bool_dtype(df[Column2]):
+            df[New_Column_Name] = df[Column1] ^ df[Column2]
+        else:
+            raise KeyError(f'"Logical XOR" criteria needs boolean values.')
+
+    elif Criteria == 'Logical NOT':
+        if pd.api.types.is_bool_dtype(df[Column1]):
+            df[New_Column_Name] = ~df[Column1]
+        else:
+            raise KeyError(f'"Logical NOT" criteria needs boolean values for Column1.')
+
+    else:
+        raise ValueError(f"Criteria '{Criteria}' is not supported.")
+
+    if Remove:
+        df = df.drop(columns=[Column1,Column2])
+
+    return df
+
+def Insert_Column_In_Specific_Position(df, Value, Column_Name, Number_Position = None, Before_To = None, After_To = None):
+
+    if (Number_Position and Before_To) or (Number_Position and After_To) or (Before_To and After_To):
+        raise KeyError("Please specify only one of the following: Number_Position, Before_To, or After_To.")
+    
+    if Number_Position is not None:
+        df.insert(Number_Position, Column_Name, value=Value)
+    
+    elif Before_To is not None:
+        try:
+            Number_Position = list(df.columns).index(Before_To)
+            df.insert(Number_Position, Column_Name, value=Value)
+        except ValueError:
+            raise KeyError(f"Column '{Before_To}' not found in DataFrame.")
+    
+    elif After_To is not None:
+        try:
+            Number_Position = list(df.columns).index(After_To) + 1
+            df.insert(Number_Position, Column_Name, value=Value)
+        except ValueError:
+            raise KeyError(f"Column '{After_To}' not found in DataFrame.")
+    
+    else:
+        raise KeyError("You must specify one of the following: Number_Position, Before_To, or After_To.")
+    
+    return df

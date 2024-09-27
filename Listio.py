@@ -1,5 +1,6 @@
 import numpy as np
 import re
+import itertools
 
 def Verify_Iterable_Elements_Of_List(List: list):
     for Element in List:
@@ -292,3 +293,12 @@ def Max_Characters(Iterable):
             Max_Characters = Characters   
 
     return Max_Characters
+
+def Generate_All_Combinations(List: list, Elements: int):
+
+    if Elements > len(List):
+        raise ValueError("El número de elementos no puede ser mayor que la longitud de la lista.")
+
+    List_Of_Combinations = list(itertools.combinations(List, Elements))
+
+    return List_Of_Combinations

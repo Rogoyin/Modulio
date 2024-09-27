@@ -297,6 +297,7 @@ def Create_Bar_Plot(X,
         Count = df.groupby(['X', 'Z']).size().unstack(fill_value = 0)
     else:
         Count = df.groupby(['Z', 'X']).size().unstack(fill_value = 0)
+
     # Normalize.
     if Normalize:
         if Normalize_By_Z:  
@@ -305,7 +306,6 @@ def Create_Bar_Plot(X,
             Count = Count.div(Count.sum(axis=1), axis=0)
         else:
             raise KeyError('If Normalize = True, Normalize_By_Z or Normalize_By_X must be True.')
-
 
     # Check if Count is empty.
     if Count.empty:
@@ -325,8 +325,19 @@ def Create_Bar_Plot(X,
     # Titles and labels.
     if Title:
         plt.title(Title, fontsize=Font_Size)
-    plt.xlabel(X_Label if X_Label else None, fontsize=Font_Size)
-    plt.ylabel(Y_Label if Y_Label else ('Percentage' if Normalize else 'Frequency'), fontsize=Font_Size)
+
+    if X_As_Base:
+        X_Final_Label, Y_Final_Label = X_Label, Y_Label
+    else:
+        X_Final_Label, Y_Final_Label = Y_Label, X_Label
+    
+    if Normalize:
+        Y_Final_Label = Y_Final_Label + ' (Percentage)'
+    else:
+        Y_Final_Label = Y_Final_Label + ' (Frequency)'
+
+    plt.xlabel(X_Final_Label if X_Label else None, fontsize=Font_Size)
+    plt.ylabel(Y_Final_Label if Y_Label else ('Percentage' if Normalize else 'Frequency'), fontsize=Font_Size)
 
     # Show grid if enabled.
     if Grid:
@@ -361,7 +372,7 @@ def Create_Bar_Plot(X,
     plt.xticks(rotation=X_Ticks_Rotation, ha=X_Ticks_Alignment)
     plt.legend(title=Legend_Title, loc=Legend_Position)
     plt.tight_layout()
-    
+
     if File_Name:
         File_Format = File_Format.lower()
         print(f"Guardando gráfico en: {File_Name}.{File_Format}")
@@ -409,7 +420,7 @@ def Create_Scatter_Plot(X, Y, Title = True, X_Label = 'X', Y_Label = 'Y', Colors
                          Cluster_Size = 100, Epsilon = 0.1, Min_Samples = 2, Clustering_Method = None, Jitter = None,
                          Cluster_Color = 'Blues', Perform_Regression = True, Regression_Type = 'linear', 
                          Polynomial_Degree = 2, Group = False, Group_Color = 'blue', Color_Map = None, 
-                         Y_Thresholds = None, Colors_Segments = None): 
+                         Y_Thresholds = None, Colors_Segments = None, Show = True): 
 
     plt.figure(figsize = Figure_Size)
 
@@ -517,11 +528,19 @@ def Create_Scatter_Plot(X, Y, Title = True, X_Label = 'X', Y_Label = 'Y', Colors
     if Legend:
         plt.legend(loc = Legend_Location, fontsize = Legend_Font_Size)
 
+    plt.tight_layout()
+
     if File_Name:
-        plt.savefig(f'{File_Name}.{File_Format}', format = File_Format, bbox_inches = 'tight')
+        File_Format = File_Format.lower()
+        print(f"Guardando gráfico en: {File_Name}.{File_Format}")
+        plt.savefig(File_Name + '.' + File_Format, format=File_Format)
+        print(f"Gráfico guardado correctamente.")
 
-    plt.show()
+    if Show:
+        plt.show()
 
+    plt.close()
+    
 def Create_Violin_Plot(Data, Title = None, X_Label = 'X', Y_Label = 'Y', Colors = None, Grid = True, Figure_Size = (10, 6), 
                         Font_Size = 12, Alpha = 1.0, X_Ticks = None, Y_Ticks = None, 
                         X_Ticks_Step = None, Y_Ticks_Step = None, 
@@ -741,6 +760,8 @@ def Bar_Plot_To_All_DataFrame(df, Limit_Of_Int = 10, Segments = 10, Path = None,
                                         Title=Title,
                                         Grid=False,  
                                         Annotations=True, 
+                                        X_Label = Column1,
+                                        Y_Label = Column2, 
                                         File_Name=File_Name,  
                                         File_Format='png', 
                                         X_Ticks_Rotation=90,
@@ -765,7 +786,9 @@ def Bar_Plot_To_All_DataFrame(df, Limit_Of_Int = 10, Segments = 10, Path = None,
                                 Z_Group_Small_Categories=Z_Group_Small_Categories, 
                                 Title=Title,
                                 Grid=False,  
-                                Annotations=True, 
+                                Annotations=True,
+                                X_Label = Column1,
+                                Y_Label = Column2, 
                                 File_Name=File_Name,  
                                 File_Format='png', 
                                 X_Ticks_Rotation=90,
@@ -775,4 +798,34 @@ def Bar_Plot_To_All_DataFrame(df, Limit_Of_Int = 10, Segments = 10, Path = None,
                                 Bar_Width=0.8,
                                 Show = Show)
 
-   
+def Scatter_Plot_To_All_DataFrame(df, Show = False, Path = None):
+    
+    Columns = list(df.columns)
+
+    Column_Pairs = ls.Generate_All_Combinations(df, 2)
+
+    for Column1, Column2 in Column_Pairs:
+
+        X = df[Column1]
+        Y = df[Column2]
+
+        Title = f'{Column1} vs. {Column2}'
+
+        File_Name = f'Scatter_{Column1}_vs_{Column2}'
+
+        if Path is not None:
+            File_Name = Path + File_Name
+
+        if df[Column1].dtype in ['float64', 'int64'] and df[Column2].dtype in ['float64', 'int64']:
+            Create_Scatter_Plot(X = X,  
+                                Y = Y, 
+                                Title = Title,
+                                Grid = False,   
+                                X_Label = Column1,
+                                Y_Label = Column2, 
+                                File_Name = File_Name,  
+                                File_Format = 'png',
+                                Group = True, 
+                                Group_Color = 'red', 
+                                Show = Show)
+

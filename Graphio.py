@@ -9,6 +9,7 @@ from numpy.polynomial.polynomial import Polynomial
 from collections import Counter
 import itertools
 import Framio as fr
+import Listio as ls
 
 #######################################################################################################################
 # CREATE #
@@ -219,7 +220,8 @@ def Create_Bar_Plot(X,
                     Normalize = False,
                     Normalize_By_X = False, 
                     Normalize_By_Z=False,       
-                    Bar_Width = 0.8):         
+                    Bar_Width = 0.8,
+                    Show = True):         
 
     # Create DataFrame for X.
     df = pd.DataFrame({'X': X})
@@ -274,7 +276,7 @@ def Create_Bar_Plot(X,
                         right = True, include_lowest = True)
         if X_Ranges is not None:
             Bins = pd.cut(df['X'], bins=X_Ranges, right=True, include_lowest=True)
-        if X_Segments is not None and X_Ranges is not None:
+        if X_Segments is not None or X_Ranges is not None:
             df['X'] = Bins
 
     # Create segments for Z if specified.
@@ -287,7 +289,7 @@ def Create_Bar_Plot(X,
                         right = True, include_lowest = True)
         if Z_Ranges is not None:
             Bins = pd.cut(df['Z'], bins=Z_Ranges, right=True, include_lowest=True)
-        if Z_Segments is not None and Z_Ranges is not None:
+        if Z_Segments is not None or Z_Ranges is not None:
             df['Z'] = Bins
         
     # Prepare data for plotting.
@@ -323,7 +325,7 @@ def Create_Bar_Plot(X,
     # Titles and labels.
     if Title:
         plt.title(Title, fontsize=Font_Size)
-    plt.xlabel(X_Label if X_Label else 'X', fontsize=Font_Size)
+    plt.xlabel(X_Label if X_Label else None, fontsize=Font_Size)
     plt.ylabel(Y_Label if Y_Label else ('Percentage' if Normalize else 'Frequency'), fontsize=Font_Size)
 
     # Show grid if enabled.
@@ -358,11 +360,18 @@ def Create_Bar_Plot(X,
 
     plt.xticks(rotation=X_Ticks_Rotation, ha=X_Ticks_Alignment)
     plt.legend(title=Legend_Title, loc=Legend_Position)
-    plt.show()
-
-    # Save figure if a file name is provided.
+    plt.tight_layout()
+    
     if File_Name:
-        plt.savefig(f"{File_Name}.{File_Format}", format=File_Format)
+        File_Format = File_Format.lower()
+        print(f"Guardando gráfico en: {File_Name}.{File_Format}")
+        plt.savefig(File_Name + '.' + File_Format, format=File_Format)
+        print(f"Gráfico guardado correctamente.")
+
+    if Show:
+        plt.show()
+
+    plt.close()
 
 def Create_Box_Plot(Data, Title = None, X_Label = 'X', Y_Label = 'Y', Grid = True, Figure_Size = (10, 6), 
                     Font_Size = 12, X_Lim = None, Y_Lim = None, Legend = False, Legend_Location = 'best', 
@@ -664,3 +673,106 @@ def Correlation_Heatmap(df: pd.DataFrame, Title = None, X_Label = None, Y_Label 
     plt.show()
 
     return
+
+#######################################################################################################################
+# DATAFRAMES #
+#######################################################################################################################
+
+def Bar_Plot_To_All_DataFrame(df, Limit_Of_Int = 10, Segments = 10, Path = None, Show = False):
+
+    Columns = list(df.columns)
+
+    Column_Pairs = ls.Generate_All_Combinations(df, 2)
+
+    for Column1, Column2 in Column_Pairs:
+        
+        X = df[Column1]
+        Z = df[Column2]
+        Title = f'{Column1} vs. {Column2}'
+
+        if (df[Column1].dtype == 'int64' and (max(df[Column1]) - min(df[Column1])) > Limit_Of_Int) or (df[Column1].dtype == 'float64'):
+            X_Segments = Segments
+        else:
+            X_Segments = None
+
+        if (df[Column2].dtype == 'int64' and (max(df[Column2]) - min(df[Column2])) > Limit_Of_Int) or (df[Column2].dtype == 'float64'):
+            Z_Segments = Segments
+        else:
+            Z_Segments = None
+        
+        if df[Column1].dtype == 'object':
+            X_Group_Small_Categories = True
+        else:
+            X_Group_Small_Categories = False
+
+        if df[Column2].dtype == 'object':
+            Z_Group_Small_Categories = True
+        else:
+            Z_Group_Small_Categories = False
+        
+        # Normalize.
+        Normalize_Bools = [True, False]
+        
+        for Normalize in Normalize_Bools:
+            if Normalize:
+                for Normalize_By_X in [True, False]:
+                    for Normalize_By_Z in [True, False]:
+                        # Continuar si ambos son True
+                        if Normalize_By_X and Normalize_By_Z:
+                            continue
+                        
+                        # Aseguramos que al menos uno de Normalize_By_X o Normalize_By_Z es True
+                        if not Normalize_By_X and not Normalize_By_Z:
+                            continue  # Esto evita que se llame a Create_Bar_Plot si ambas son False
+
+                        File_Suffix = f'Normalizado_Por_{Column1}_{Normalize_By_X}_By_{Column2}_{Normalize_By_Z}'
+                        File_Name = f'Barras_{Column1}_vs_{Column2}_{File_Suffix}'
+
+                        if Path is not None:
+                            File_Name = Path + File_Name
+
+                        Create_Bar_Plot(X=X,  
+                                        Z=Z, 
+                                        X_Segments=X_Segments,  
+                                        Z_Segments=Z_Segments,
+                                        X_As_Base=Normalize_By_X, 
+                                        X_Group_Small_Categories=X_Group_Small_Categories,
+                                        Z_Group_Small_Categories=Z_Group_Small_Categories, 
+                                        Title=Title,
+                                        Grid=False,  
+                                        Annotations=True, 
+                                        File_Name=File_Name,  
+                                        File_Format='png', 
+                                        X_Ticks_Rotation=90,
+                                        Normalize=Normalize,
+                                        Normalize_By_X=Normalize_By_X, 
+                                        Normalize_By_Z=Normalize_By_Z,       
+                                        Bar_Width=0.8,
+                                        Show = Show)
+
+            else: 
+                File_Name = f'Barras_{Column1}_vs_{Column2}'
+
+                if Path is not None:
+                    File_Name = Path + File_Name
+
+                Create_Bar_Plot(X=X,  
+                                Z=Z, 
+                                X_Segments=X_Segments,  
+                                Z_Segments=Z_Segments,
+                                X_As_Base=False, 
+                                X_Group_Small_Categories=X_Group_Small_Categories,
+                                Z_Group_Small_Categories=Z_Group_Small_Categories, 
+                                Title=Title,
+                                Grid=False,  
+                                Annotations=True, 
+                                File_Name=File_Name,  
+                                File_Format='png', 
+                                X_Ticks_Rotation=90,
+                                Normalize=Normalize,
+                                Normalize_By_X=False, 
+                                Normalize_By_Z=False,       
+                                Bar_Width=0.8,
+                                Show = Show)
+
+   

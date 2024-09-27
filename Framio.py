@@ -670,6 +670,7 @@ def Insert_Column_In_Specific_Position(df, Value, Column_Name, Number_Position =
     return df
 
 def Apply_String_Style_To_All_DataFrame(df, String_Style='Title', Replace_From=None, Replace_To=None):
+
     for Column in df.columns:
         if df[Column].dtype == 'object':
             if String_Style == 'Title':
@@ -728,8 +729,9 @@ def Process_DataFrame(df: pd.DataFrame,
         df = Apply_String_Style_To_All_DataFrame(df, String_Style = String_Style)
 
     if Replace is not None:
-        for Index, Word in enumerate(Replace):
-            df = Apply_String_Style_To_All_DataFrame(df, String_Style = 'Replace', Replace_From=Replace[0][Index], Replace_To=Replace[1][Index])
+        for Index, Word in enumerate(Replace[0]):
+            df = Apply_String_Style_To_All_DataFrame(df, String_Style = 'Replace', Replace_From=Replace[0][Index], 
+                                                     Replace_To=Replace[1][Index])
     
     if Replace_In_Name_Columns is not None:
         for Index, Word in enumerate(Replace_In_Name_Columns[0]):

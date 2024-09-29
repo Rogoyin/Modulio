@@ -798,7 +798,7 @@ def Bar_Plot_To_All_DataFrame(df, Limit_Of_Int = 10, Segments = 10, Path = None,
                                 Bar_Width=0.8,
                                 Show = Show)
 
-def Scatter_Plot_To_All_DataFrame(df, Show = False, Path = None):
+def Scatter_Plot_To_All_DataFrame(df, Show = False, Path = None, Color = 'blue'):
     
     Columns = list(df.columns)
 
@@ -826,6 +826,6 @@ def Scatter_Plot_To_All_DataFrame(df, Show = False, Path = None):
                                 File_Name = File_Name,  
                                 File_Format = 'png',
                                 Group = True, 
-                                Group_Color = 'red', 
+                                Group_Color = Color, 
                                 Show = Show)
 

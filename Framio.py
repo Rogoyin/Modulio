@@ -7,11 +7,59 @@ def Match_And_Copy_Column_Values(df1: pd.DataFrame, df2: pd.DataFrame,
                                  Column_df1_A: str, Column_df1_B: str, 
                                  Column_df2_A: str, Column_df2_B: str) -> pd.DataFrame:
     
-    '''
-    Compare values from df1 and df2 based on Column_df1_A and Column_df2_A, and copy values from Column_df2_B to 
-    Column_df1_B in df1.
+    """
+    Compare values from two DataFrames and copy values from one column 
+    to another based on matching criteria.
 
-    '''
+    This function compares values in Column_df1_A from df1 with 
+    values in Column_df2_A from df2. If a match is found, the 
+    corresponding value from Column_df2_B in df2 is copied into 
+    Column_df1_B in df1. If the specified columns are identical, 
+    their names are modified to avoid conflicts.
+
+    Parameters
+    ----------
+    df1 : pd.DataFrame
+        The first DataFrame containing the columns for comparison 
+        and value copying.
+    df2 : pd.DataFrame
+        The second DataFrame containing the values to be copied 
+        based on matches found in df1.
+    Column_df1_A : str
+        The name of the column in df1 used for comparison.
+    Column_df1_B : str
+        The name of the column in df1 where values will be copied.
+    Column_df2_A : str
+        The name of the column in df2 used for comparison.
+    Column_df2_B : str
+        The name of the column in df2 from which values will be copied.
+
+    Returns
+    -------
+    pd.DataFrame
+        The modified df1 DataFrame with updated values in 
+        Column_df1_B where matches were found.
+
+    Notes
+    -----
+    - If Column_df1_A matches Column_df2_A, the column in df2 is 
+      renamed with a suffix "_R" to prevent naming conflicts.
+    - Similarly, if Column_df1_B matches Column_df2_B, the column 
+      in df2 is renamed with a suffix "_R".
+    - This function performs a nested loop comparison and may 
+      not be efficient for large DataFrames.
+    
+    Example
+    -------
+    >>> df1 = pd.DataFrame({'A': [1, 2, 3], 'B': [None, None, None]})
+    >>> df2 = pd.DataFrame({'A': [1, 2], 'B': ['X', 'Y']})
+    >>> result = Match_And_Copy_Column_Values(df1, df2, 'A', 'B', 'A', 'B')
+    >>> print(result)
+       A    B
+    0  1    X
+    1  2    Y
+    2  3  None
+    """
 
     if Column_df1_A == Column_df2_A:
         df2 = df2.rename(columns={Column_df2_A: f"{Column_df2_A}_R"})
@@ -34,14 +82,60 @@ def Match_And_Copy_Column_Values(df1: pd.DataFrame, df2: pd.DataFrame,
 def Compare_Columns(df1: pd.DataFrame, Column1: str, 
                     df2: pd.DataFrame, Column2: str, 
                     Label1: str = "df1", Label2: str = "df2") -> pd.DataFrame:
+    """
+    Compare two specified columns from two DataFrames and identify the 
+    unique values present in each column but not in the other. This 
+    function helps analyze differences between two datasets.
 
-    '''
-    This function compares two specified columns from two separate dataframes and identifies the unique values 
-    present in each column but not in the other. It returns a new dataframe with the unique values and the corresponding 
-    source of the values (custom labels provided by Label1 and Label2).
+    Parameters
+    ----------
+    df1 : pd.DataFrame
+        The first DataFrame containing the column to be compared.
+    Column1 : str
+        The name of the column in df1 to compare.
+    df2 : pd.DataFrame
+        The second DataFrame containing the column to be compared.
+    Column2 : str
+        The name of the column in df2 to compare.
+    Label1 : str, optional
+        A label to identify df1 in the result. Default is "df1".
+    Label2 : str, optional
+        A label to identify df2 in the result. Default is "df2".
 
-    '''
+    Returns
+    -------
+    pd.DataFrame
+        A DataFrame containing two columns: 'Valor' and 'DataFrame'.
+        - 'Valor' contains the unique values found in Column1 or 
+          Column2 that are not present in the other column.
+        - 'DataFrame' indicates the source DataFrame of each unique 
+          value, labeled with Label1 or Label2.
 
+    Notes
+    -----
+    - The function converts the specified columns into sets to 
+      efficiently determine unique values.
+    - The resulting DataFrame includes all unique values from both 
+      columns with their corresponding labels.
+    - If either specified column does not exist in the respective 
+      DataFrame, a KeyError will be raised.
+    - The maximum number of rows displayed in the result is set to 
+      None for full visibility.
+
+    Example
+    -------
+    >>> df1 = pd.DataFrame({'A': [1, 2, 3, 4]})
+    >>> df2 = pd.DataFrame({'B': [3, 4, 5, 6]})
+    >>> result = Compare_Columns(df1, 'A', df2, 'B', 
+    ...                          Label1="DataFrame1", 
+    ...                          Label2="DataFrame2")
+    >>> print(result)
+          Valor DataFrame
+    0      1  DataFrame1
+    1      2  DataFrame1
+    2      5  DataFrame2
+    3      6  DataFrame2
+    """
     Column1_Set = set(df1[Column1])
     Column2_Set = set(df2[Column2])
     
@@ -293,8 +387,54 @@ def Apply_Operations_To_Selected_Rows(df: pd.DataFrame, Filtered_Column: str, Fi
                                       Columns_To_Operate: List[str], Operations: List[Callable]) -> pd.DataFrame:
     
     """
-    Applies a given operations to a list of specified columns for rows filtered by a condition.
+    Applies specified operations to selected columns for rows 
+    filtered by a given condition.
 
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        The DataFrame to apply operations on.
+
+    Filtered_Column : str
+        The name of the column used to filter rows.
+
+    Filter_Value : object
+        The value to filter the rows in the specified column.
+
+    Condition : str
+        The condition to be applied for filtering rows (e.g., 
+        '==', '>', '<', etc.).
+
+    Columns_To_Operate : List[str]
+        A list of column names on which to apply the operations.
+
+    Operations : List[Callable]
+        A list of functions to apply to the selected columns.
+
+    Returns:
+    --------
+    pd.DataFrame
+        The DataFrame after applying the specified operations 
+        to the selected rows and columns.
+
+    Notes:
+    ------
+    - The original index of the DataFrame is preserved during 
+      the operation for correct ordering.
+    - The function assumes that the operations provided are 
+      compatible with the data types in the specified columns.
+
+    Example:
+    ---------
+    >>> df = pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6]})
+    >>> operations = [lambda x: x * 2]
+    >>> result = Apply_Operations_To_Selected_Rows(
+    ...     df, 'A', 2, '>', ['B'], operations)
+    >>> print(result)
+       A  B
+    0  1  4
+    1  2  10
+    2  3  12
     """
 
     df['Original_Index'] = df.index
@@ -317,26 +457,46 @@ def Find_Best_Value_Column(
 ) -> pd.DataFrame:
     
     """
-    Identifies the best value from specified columns based on a comparison function.
+    Identifies the best value from specified columns based on a 
+    comparison function.
 
     Parameters:
-    - df: DataFrame containing the data.
-    - Target_Column: The column where the target value is stored.
-    - Columns_To_Compare: List of column names to compare against the target value.
-    - Best_Value_Column: The name of the column where the best value will be stored.
-    - Comparison_Function: Optional function to determine if a value is better. Defaults to equality comparison.
-    The function must accept two arguments (the target value and the comparison column value) and return a boolean.
+    -----------
+    df : pd.DataFrame
+        DataFrame containing the data.
+
+    Target_Column : str
+        The column where the target value is stored.
+
+    Columns_To_Compare : List[str]
+        List of column names to compare against the target value.
+
+    Best_Value_Column : str
+        The name of the column where the best value will be stored.
+
+    Comparison_Function : Optional[Callable]
+        Optional function to determine if a value is better. 
+        Defaults to equality comparison. The function must accept 
+        two arguments (the target value and the comparison column 
+        value) and return a boolean.
 
     Returns:
-    - The modified DataFrame with the Best_Value_Column updated to the best value based on the comparison function.
+    --------
+    pd.DataFrame
+        The modified DataFrame with the Best_Value_Column updated 
+        to the best value based on the comparison function.
 
     Example:
-        df = Find_Best_Value_Column(df,
-                                    Target_Column = 'Precio',
-                                    Columns_To_Compare = ['Proveedor1', 'Proveedor2', 'Proveedor3'],
-                                    Best_Value_Column = 'Mejor_Proveedor',
-                                    Comparison_Function = lambda Target, Value: Target == Value
-                                    )
+    ---------
+    >>> df = Find_Best_Value_Column(df,
+...                        Target_Column='Precio',
+...                        Columns_To_Compare=['Proveedor1', 
+...                                            'Proveedor2', 
+...                                            'Proveedor3'],
+...                        Best_Value_Column='Mejor_Proveedor',
+...                        Comparison_Function=lambda Target, 
+...                        Value: Target == Value
+...                              )
     """
     
     if Comparison_Function is None:
@@ -691,18 +851,58 @@ def Apply_String_Style_To_All_DataFrame(df, String_Style='Title', Replace_From=N
     return df
 
 def Process_DataFrame(df: pd.DataFrame, 
-                      Columns: list = None, 
-                      Fill_NaN: int = 0, 
+                      Columns: list = [], 
+                      Fill_NaN: float = 0, 
                       Dummies: bool = False,
-                      String_Style: str = 'Title', 
-                      Replace: list = None,  # Should be list of two lists
-                      Case_Name_Columns: str = 'Pascal Snake Case', 
-                      Separator_In_Name_Columns: str = '_',
+                      String_Style: str = 'None', 
+                      Replace: list = [],
+                      Case_Name_Columns: str = 'None', 
+                      Separator_In_Name_Columns: str = 'None',
                       Remove_Accents_In_Name_Columns: bool = True, 
                       Replace_Enie_In_Name_Columns: bool = True,
-                      Replace_In_Name_Columns: list = None):  # Should be list of two lists
+                      Replace_In_Name_Columns: list = []):
+    """
+    Processes a DataFrame by applying various transformations to the data and column names.
 
-    if Columns is not None:
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        The input DataFrame to be processed.
+    Columns : list, optional
+        List of specific columns to keep in the DataFrame. Default is None (keeps all columns).
+    Fill_NaN : int or float, optional
+        The value to fill NaN entries in the DataFrame. Default is 0.
+    Dummies : bool, optional
+        Whether to create dummy variables for all categorical columns in the DataFrame. Default is False.
+    String_Style : str, optional
+        Style to apply to string entries in the DataFrame. Options include 'Title', 'Upper', 'Lower', etc. Default is 'Title'.
+    Replace : list of two lists, optional
+        A list containing two lists: one with words to replace and another with their corresponding replacements. Default is None.
+    Case_Name_Columns : str, optional
+        Case style to apply to the column names. Options include 'Pascal Case', 'snake_case', etc. Default is 'Pascal Snake Case'.
+    Separator_In_Name_Columns : str, optional
+        Separator to use between words in the column names. Default is '_'.
+    Remove_Accents_In_Name_Columns : bool, optional
+        Whether to remove accents from the column names (e.g., replace 'á' with 'a'). Default is True.
+    Replace_Enie_In_Name_Columns : bool, optional
+        Whether to replace 'ñ' in column names with 'ni'. Default is True.
+    Replace_In_Name_Columns : list of two lists, optional
+        A list containing two lists: one with substrings to replace in column names and another with their corresponding replacements. Default is None.
+
+    Returns:
+    --------
+    pd.DataFrame
+        The processed DataFrame with the applied transformations.
+
+    Notes:
+    ------
+    - If `Columns` is provided, only those columns will be kept in the DataFrame.
+    - NaN values will be filled according to the `Fill_NaN` parameter.
+    - If `Dummies` is True, dummy variables will be created for categorical columns.
+    - Column names can be transformed to a specific case style and cleaned up by replacing characters such as spaces or special accents.
+    - The function supports replacement of specific words or characters both in the DataFrame's data and in the column names.
+    """
+    if Columns:
         df = df[Columns]
 
     if Fill_NaN is not None:
@@ -711,7 +911,7 @@ def Process_DataFrame(df: pd.DataFrame,
     if Remove_Accents_In_Name_Columns:
         df = Replace_Values_In_Name_Columns(df, ['á', 'é', 'í', 'ó', 'ú'], ['a', 'e', 'i', 'o', 'u'])
     
-    if Separator_In_Name_Columns is not None:
+    if Separator_In_Name_Columns != 'None':
         Separators = ['-', ' ', '_', '|', ':', ',', '.']
         for Separator in Separators:
             df.columns = df.columns.str.replace(Separator, Separator_In_Name_Columns, regex=False)
@@ -722,18 +922,18 @@ def Process_DataFrame(df: pd.DataFrame,
     if Dummies:
         df = Create_Dummy_Variables_In_All_DataFrame(df)
     
-    if Case_Name_Columns:
+    if Case_Name_Columns != 'None':
         df = Casing_Column_Names(df, Style = Case_Name_Columns, Separator = Separator_In_Name_Columns)
     
-    if String_Style is not None:
+    if String_Style != 'None':
         df = Apply_String_Style_To_All_DataFrame(df, String_Style = String_Style)
 
-    if Replace is not None:
+    if Replace:
         for Index, Word in enumerate(Replace[0]):
             df = Apply_String_Style_To_All_DataFrame(df, String_Style = 'Replace', Replace_From=Replace[0][Index], 
                                                      Replace_To=Replace[1][Index])
     
-    if Replace_In_Name_Columns is not None:
+    if Replace_In_Name_Columns:
         for Index, Word in enumerate(Replace_In_Name_Columns[0]):
             df = Replace_Values_In_Name_Columns(df, Replace_In_Name_Columns[0][Index], Replace_In_Name_Columns[1][Index])
     

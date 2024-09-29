@@ -123,9 +123,45 @@ def Get_Longest_Words(Text: str) -> str:
     Max_Len = max(len(Word) for Word in Words)
     return [Word for Word in Words if len(Word) == Max_Len]
 
-# def Get_Email(String: str) -> str:
+def Get_Coincident_Characters(String: str) -> list:
 
-# def Get_URL(String: str) -> str:
+    if String is None:
+        return []
+    
+    Characters = []
+
+    for i in range (0, len(String)):
+        for j in range (0, len(String)):
+            if i != j and String[i] == String[j] and String[i] not in Characters:
+                Characters.append(String[i])
+
+    return Characters
+
+def Get_Mails(String: str) -> list:
+
+    List_Of_Words = String.split()
+    Patron = r'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}(?:\.[A-Za-z]{2,})?'
+    Mails = []
+
+    for Word in List_Of_Words:
+        Mail = re.search(Patron, Word)
+        if Mail is not None:
+            Mails.append(Mail.group())
+
+    return Mails
+
+def Get_URL(String: str) -> list:
+
+    List_Of_Words = String.split()
+    Patron = r'https?://[A-Za-z0-9._%+-]+\.[A-Za-z]{2,}(?:\.[A-Za-z]{2,})?(?:/[A-Za-z0-9._%+-]*)*'
+    URLs = []
+
+    for Word in List_Of_Words:
+        URL = re.search(Patron, Word)
+        if URL is not None:
+            URLs.append(URL.group())
+
+    return URLs
 
 #######################################################################################################################
 # PROCESSING #

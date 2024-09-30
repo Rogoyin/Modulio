@@ -141,7 +141,6 @@ def Get_History(df: pd.DataFrame, Team1: str, Team2: str, Field: Optional[str] =
 
     return Data_History, df_History
 
-
 # def Performance_Team(df, Team, Tournament_Type = None, Tournaments = None, 
 #                      Period = False, Year1 = 1900, Year2 = 2024, PJ = True, 
 #                      Team1_Win = True, Team2_Win = True, Father = True, 

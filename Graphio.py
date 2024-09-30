@@ -29,38 +29,121 @@ def Create_Line_Plot(X, Y, Title = None, X_Label = 'X', Y_Label = 'Y', Colors = 
                      X_Label_Rotation = 0, Title_Pad = 20, X_Label_Pad = 10, Y_Label_Pad = 10, 
                      X_Ticks_Step = None, Y_Ticks_Step = None, X_Ticks = None, Y_Ticks = None):
     
-    '''
-    Example of use:
+    """
+    Creates a line plot with specified parameters and saves it to a 
+    file if needed.
 
-    gr.Create_Line_Plot(
-                        X = X_data,
-                        Y = Y_data,
-                        Title = 'Sine and Cosine Waves',
-                        X_Label = 'X-axis (radians)',
-                        Y_Label = 'Y-axis',
-                        Colors = Colors,
-                        Labels = Labels,
-                        Legend = True,
-                        X_Lim = (0, 10),
-                        Y_Lim = (-1.5, 1.5),
-                        Horizontal_Lines = [0],  # Horizontal lines in y=0
-                        Vertical_Lines = [np.pi/2, np.pi],  # Vertical lines in pi/2 and pi
-                        Annotations = [
-                            {'text': 'Max Sine', 'xy': (np.pi/2, 1), 'xytext': (np.pi/2 + 0.5, 1.2), 
-                            'arrowprops': {'facecolor': 'black', 'arrowstyle': '->'}},
-                            {'text': 'Min Cosine', 'xy': (3*np.pi/2, -1), 'xytext': (3*np.pi/2 + 0.5, -1.2), 
-                            'arrowprops': {'facecolor': 'black', 'arrowstyle': '->'}}
-                        ],
-                        File_Name = 'sine_cosine_plot',  
-                        File_Format = 'png',
-                        X_Label_Rotation = 45,
-                        X_Ticks_Step = 1,  
-                        Y_Ticks_Step = 0.5,  
-                        X_Ticks = [2, 4, 6, 8],  # Personalized X_Ticks
-                        Y_Ticks = [-1, 0, 1]     # Personalized Y_Ticks
-                        )
+    Parameters:
+    -----------
+    X : array-like
+        The x-axis data.
 
-    '''
+    Y : array-like or list of arrays
+        The y-axis data. Can be a list of arrays for multiple lines.
+
+    Title : str, optional
+        Title of the plot. Default is None.
+
+    X_Label : str, optional
+        Label for the x-axis. Default is 'X'.
+
+    Y_Label : str, optional
+        Label for the y-axis. Default is 'Y'.
+
+    Colors : list, optional
+        List of colors for each line. Default is None.
+
+    Grid : bool, optional
+        If True, shows grid lines. Default is True.
+
+    Figure_Size : tuple, optional
+        Size of the figure. Default is (10, 6).
+
+    Font_Size : int, optional
+        Font size for labels and title. Default is 12.
+
+    Alpha : float, optional
+        Transparency level of the lines. Default is 1.0.
+
+    X_Lim : tuple, optional
+        Limits for the x-axis. Default is None.
+
+    Y_Lim : tuple, optional
+        Limits for the y-axis. Default is None.
+
+    X_Scale : str, optional
+        Scale of the x-axis ('linear' or 'log'). Default is 'linear'.
+
+    Y_Scale : str, optional
+        Scale of the y-axis ('linear' or 'log'). Default is 'linear'.
+
+    Labels : list, optional
+        Labels for each line if Legend is True. Default is None.
+
+    Legend : bool, optional
+        If True, shows legend. Default is False.
+
+    Legend_Location : str, optional
+        Location of the legend. Default is 'best'.
+
+    Legend_Font_Size : int, optional
+        Font size for legend. Default is 12.
+
+    Marker_Styles : str or list, optional
+        Marker style for lines. Default is 'o'.
+
+    Line_Styles : str or list, optional
+        Line style for lines. Default is '-'.
+
+    Line_Width : int, optional
+        Width of the lines. Default is 2.
+
+    Horizontal_Lines : list, optional
+        Y-values for horizontal lines. Default is None.
+
+    Vertical_Lines : list, optional
+        X-values for vertical lines. Default is None.
+
+    Annotations : list, optional
+        Annotations to add to the plot. Default is None.
+
+    File_Name : str, optional
+        Name of the file to save the plot. Default is None.
+
+    File_Format : str, optional
+        Format of the saved file. Default is 'png'.
+
+    X_Label_Rotation : int, optional
+        Rotation angle for x-axis labels. Default is 0.
+
+    Title_Pad : int, optional
+        Padding for title. Default is 20.
+
+    X_Label_Pad : int, optional
+        Padding for x-axis label. Default is 10.
+
+    Y_Label_Pad : int, optional
+        Padding for y-axis label. Default is 10.
+
+    X_Ticks_Step : int, optional
+        Step for x-axis ticks. Default is None.
+
+    Y_Ticks_Step : int, optional
+        Step for y-axis ticks. Default is None.
+
+    X_Ticks : list, optional
+        Custom x-axis ticks. Default is None.
+
+    Y_Ticks : list, optional
+        Custom y-axis ticks. Default is None.
+
+    Returns:
+    --------
+    None
+        Displays and saves the line plot based on the provided 
+        parameters.
+
+    """
     
     plt.figure(figsize = Figure_Size)
     
@@ -137,6 +220,80 @@ def Create_Histogram(Data, Title = None, X_Label = 'X', Y_Label = 'Y', Bins = 10
                      Legend = False, Legend_Location = 'best', Legend_Font_Size = 12, 
                      Horizontal_Lines = None, Vertical_Lines = None, Annotations = None, File_Name = None, File_Format = 'png'):
     
+    """
+    Creates a histogram of the provided data and saves it to a file 
+    if specified.
+
+    Parameters:
+    -----------
+    Data : array-like
+        The input data for the histogram.
+
+    Title : str, optional
+        Title of the histogram. Default is None.
+
+    X_Label : str, optional
+        Label for the x-axis. Default is 'X'.
+
+    Y_Label : str, optional
+        Label for the y-axis. Default is 'Y'.
+
+    Bins : int, optional
+        Number of bins for the histogram. Default is 10.
+
+    Colors : list, optional
+        List of colors for the histogram. Default is None.
+
+    Alpha : float, optional
+        Transparency level of the histogram bars. Default is 0.7.
+
+    Grid : bool, optional
+        If True, shows grid lines. Default is True.
+
+    Figure_Size : tuple, optional
+        Size of the figure. Default is (10, 6).
+
+    Font_Size : int, optional
+        Font size for labels and title. Default is 12.
+
+    X_Lim : tuple, optional
+        Limits for the x-axis. Default is None.
+
+    Y_Lim : tuple, optional
+        Limits for the y-axis. Default is None.
+
+    Legend : bool, optional
+        If True, shows legend. Default is False.
+
+    Legend_Location : str, optional
+        Location of the legend. Default is 'best'.
+
+    Legend_Font_Size : int, optional
+        Font size for legend. Default is 12.
+
+    Horizontal_Lines : list, optional
+        Y-values for horizontal lines. Default is None.
+
+    Vertical_Lines : list, optional
+        X-values for vertical lines. Default is None.
+
+    Annotations : list, optional
+        Annotations to add to the histogram. Default is None.
+
+    File_Name : str, optional
+        Name of the file to save the histogram. Default is None.
+
+    File_Format : str, optional
+        Format of the saved file. Default is 'png'.
+
+    Returns:
+    --------
+    None
+        Displays and saves the histogram based on the provided 
+        parameters.
+
+    """
+
     plt.figure(figsize = Figure_Size)
     
     if Colors:
@@ -222,6 +379,166 @@ def Create_Bar_Plot(X,
                     Normalize_By_Z=False,       
                     Bar_Width = 0.8,
                     Show = True):         
+
+    """
+    Creates a bar plot with optional grouping, normalization, and 
+    filtering. The function allows for customizing various aspects 
+    of the plot, such as title, axis labels, and saving options. 
+
+    Parameters:
+    -----------
+    X : array-like
+        The data for the x-axis. This is a required parameter.
+
+    Y : array-like, optional
+        The data for the y-axis. It can be used for additional 
+        grouping. Default is None.
+
+    Z : array-like, optional
+        The grouping variable for stacked bars. Default is None.
+
+    X_Segments : int, optional
+        The number of segments to divide the X data. Default is None.
+
+    X_Ranges : list, optional
+        Specific ranges to categorize the X data. Default is None.
+
+    X_Decimals : int, default 0
+        The number of decimal places to display on the X axis. 
+
+    Z_Segments : int, optional
+        The number of segments to divide the Z data. Default is None.
+
+    Z_Ranges : list, optional
+        Specific ranges to categorize the Z data. Default is None.
+
+    Z_Decimals : int, default 0
+        The number of decimal places to display on the Z axis.
+
+    X_As_Base : bool, default True
+        Indicates whether to use X as the base for grouping 
+        the data. Default is True.
+
+    X_Group_Small_Categories : bool, default False
+        Whether to group small categories in the X data. 
+        Default is False.
+
+    X_Threshold_Percentage : float, optional
+        The minimum percentage threshold for X categories to 
+        be displayed. Default is 5.
+
+    X_Threshold_Absolute : float, optional
+        The minimum absolute threshold for X categories to 
+        be displayed. Default is None.
+
+    X_Remove_Others : bool, default True
+        Indicates whether to remove categories below the 
+        threshold for X. Default is True.
+
+    Z_Group_Small_Categories : bool, default False
+        Whether to group small categories in the Z data. 
+        Default is False.
+
+    Z_Threshold_Percentage : float, optional
+        The minimum percentage threshold for Z categories to 
+        be displayed. Default is 5.
+
+    Z_Threshold_Absolute : float, optional
+        The minimum absolute threshold for Z categories to 
+        be displayed. Default is None.
+
+    Z_Remove_Others : bool, default False
+        Indicates whether to remove categories below the 
+        threshold for Z. Default is False.
+
+    Name_Others_Group : str, default 'Others'
+        The name assigned to grouped small categories.
+
+    Figure_Size : tuple, default (10, 6)
+        The size of the figure in inches.
+
+    Title : str, optional
+        The title of the plot. Default is None.
+
+    Font_Size : int, default 12
+        The font size for labels and title.
+
+    X_Label : str, optional
+        The label for the X axis. Default is None.
+
+    Y_Label : str, optional
+        The label for the Y axis. Default is None.
+
+    Grid : bool, default True
+        Whether to show grid lines on the plot.
+
+    Horizontal_Lines : list, optional
+        Values at which to draw horizontal lines. Default is None.
+
+    Horizontal_Lines_Colours : list, default ['g']
+        Colors for the horizontal lines.
+
+    Horizontal_Lines_Styles : list, default ['--']
+        Styles for the horizontal lines.
+
+    Vertical_Lines : list, optional
+        Values at which to draw vertical lines. Default is None.
+
+    Vertical_Lines_Colours : list, default ['r']
+        Colors for the vertical lines.
+
+    Vertical_Lines_Styles : list, default ['--']
+        Styles for the vertical lines.
+
+    Annotations : bool, optional
+        Whether to display data annotations on the bars. Default is None.
+
+    Annotations_Decimals : int, default 2
+        The number of decimal places for annotations.
+
+    File_Name : str, optional
+        The name of the file to save the plot. Default is None.
+
+    File_Format : str, default 'png'
+        The format to save the plot (e.g., 'png', 'pdf').
+
+    Legend_Title : str, optional
+        The title for the plot legend. Default is None.
+
+    Legend_Colors : list, optional
+        Colors for the legend items. Default is None.
+
+    Legend_Position : str, default 'upper right'
+        The position of the legend on the plot.
+
+    X_Ticks_Rotation : int, default 90
+        The rotation angle for X ticks.
+
+    X_Ticks_Alignment : str, default 'center'
+        The alignment for the X ticks.
+
+    Normalize : bool, default False
+        Indicates whether to normalize the data.
+
+    Normalize_By_X : bool, default False
+        Indicates whether to normalize data by X.
+
+    Normalize_By_Z : bool, default False
+        Indicates whether to normalize data by Z.
+
+    Bar_Width : float, default 0.8
+        The width of the bars in the plot.
+
+    Show : bool, default True
+        Indicates whether to display the plot after creation.
+
+    Returns:
+    --------
+    None
+        The function displays and optionally saves a bar plot.
+
+    """
+
 
     # Create DataFrame for X.
     df = pd.DataFrame({'X': X})
@@ -388,6 +705,63 @@ def Create_Box_Plot(Data, Title = None, X_Label = 'X', Y_Label = 'Y', Grid = Tru
                     Font_Size = 12, X_Lim = None, Y_Lim = None, Legend = False, Legend_Location = 'best', 
                     Legend_Font_Size = 12, File_Name = None, File_Format = 'png'):
     
+    """
+    Creates a box plot to visualize the distribution of data. 
+    This function allows for customization of titles, labels, 
+    grid options, and saving functionality.
+
+    Parameters:
+    -----------
+    Data : DataFrame
+        The data to visualize in the box plot. This is a required 
+        parameter.
+
+    Title : str, optional
+        The title of the box plot. Default is None.
+
+    X_Label : str, default 'X'
+        The label for the x-axis. 
+
+    Y_Label : str, default 'Y'
+        The label for the y-axis. 
+
+    Grid : bool, default True
+        Indicates whether to display grid lines on the plot.
+
+    Figure_Size : tuple, default (10, 6)
+        The size of the figure in inches.
+
+    Font_Size : int, default 12
+        The font size for the x and y labels.
+
+    X_Lim : tuple, optional
+        The limits for the x-axis. Default is None.
+
+    Y_Lim : tuple, optional
+        The limits for the y-axis. Default is None.
+
+    Legend : bool, default False
+        Indicates whether to display a legend.
+
+    Legend_Location : str, default 'best'
+        The location of the legend on the plot.
+
+    Legend_Font_Size : int, default 12
+        The font size for the legend.
+
+    File_Name : str, optional
+        The name of the file to save the plot. Default is None.
+
+    File_Format : str, default 'png'
+        The format to save the plot (e.g., 'png', 'pdf').
+
+    Returns:
+    --------
+    None
+        The function displays and optionally saves a box plot.
+
+    """
+
     plt.figure(figsize = Figure_Size)
     sns.boxplot(data = Data)
     
@@ -421,6 +795,143 @@ def Create_Scatter_Plot(X, Y, Title = True, X_Label = 'X', Y_Label = 'Y', Colors
                          Cluster_Color = 'Blues', Perform_Regression = True, Regression_Type = 'linear', 
                          Polynomial_Degree = 2, Group = False, Group_Color = 'blue', Color_Map = None, 
                          Y_Thresholds = None, Colors_Segments = None, Show = True): 
+
+    """
+    Creates a scatter plot to visualize the relationship between 
+    two variables (X and Y). This function allows for customization 
+    of titles, labels, colors, grid options, and saving functionality. 
+    Additionally, it supports clustering and regression analysis.
+
+    Parameters:
+    -----------
+    X : array-like
+        The data for the x-axis. This is a required parameter.
+
+    Y : array-like
+        The data for the y-axis. This is a required parameter.
+
+    Title : str or bool, default True
+        The title of the scatter plot. If set to True, the title 
+        will be automatically generated as 'X vs. Y'.
+
+    X_Label : str, default 'X'
+        The label for the x-axis.
+
+    Y_Label : str, default 'Y'
+        The label for the y-axis.
+
+    Colors : array-like, optional
+        The colors for the points in the scatter plot. If None, 
+        defaults to 'gray'.
+
+    Grid : bool, default True
+        Indicates whether to display grid lines on the plot.
+
+    Figure_Size : tuple, default (10, 6)
+        The size of the figure in inches.
+
+    Font_Size : int, default 12
+        The font size for the title and axis labels.
+
+    Alpha : float, default 1.0
+        The transparency level of the points in the scatter plot, 
+        ranging from 0 (transparent) to 1 (opaque).
+
+    X_Lim : tuple, optional
+        The limits for the x-axis. Default is None, meaning it 
+        will automatically adjust.
+
+    Y_Lim : tuple, optional
+        The limits for the y-axis. Default is None, meaning it 
+        will automatically adjust.
+
+    X_Ticks : array-like, optional
+        The specific ticks to place on the x-axis. Default is None.
+
+    Y_Ticks : array-like, optional
+        The specific ticks to place on the y-axis. Default is None.
+
+    X_Ticks_Step : int or float, optional
+        The step size for x-axis ticks. Default is None.
+
+    Y_Ticks_Step : int or float, optional
+        The step size for y-axis ticks. Default is None.
+
+    Annotations : array-like, optional
+        The annotations to display for each point. Default is None.
+
+    File_Name : str, optional
+        The name of the file to save the plot. Default is None.
+
+    File_Format : str, default 'png'
+        The format to save the plot (e.g., 'png', 'pdf').
+
+    Legend : bool, default True
+        Indicates whether to display a legend on the plot.
+
+    Legend_Location : str, default 'best'
+        The location of the legend on the plot.
+
+    Legend_Font_Size : int, default 12
+        The font size for the legend.
+
+    Cluster_Size : int, default 100
+        The base size for clusters in the scatter plot.
+
+    Epsilon : float, default 0.1
+        The maximum distance between two samples for them to be 
+        considered as in the same neighborhood (used in DBSCAN).
+
+    Min_Samples : int, default 2
+        The minimum number of samples in a neighborhood for a point 
+        to be considered as a core point (used in DBSCAN).
+
+    Clustering_Method : str, optional
+        The clustering method to use ('KMeans' or 'DBSCAN'). 
+        Default is None, meaning no clustering will be performed.
+
+    Jitter : float, optional
+        The amount of jitter to apply to the points for better 
+        visualization. Default is None.
+
+    Cluster_Color : str, default 'Blues'
+        The color map used for clustering visualization.
+
+    Perform_Regression : bool, default True
+        Indicates whether to perform regression analysis on the data.
+
+    Regression_Type : str, default 'linear'
+        The type of regression to perform ('linear' or 'polynomial').
+
+    Polynomial_Degree : int, default 2
+        The degree of the polynomial for polynomial regression.
+
+    Group : bool, default False
+        Indicates whether to group points based on their X and Y values.
+
+    Group_Color : str, default 'blue'
+        The color used for grouping points.
+
+    Color_Map : dict, optional
+        A dictionary mapping Y values to colors. Default is None.
+
+    Y_Thresholds : list, optional
+        Threshold values for Y to apply different colors to segments. 
+        Default is None.
+
+    Colors_Segments : list, optional
+        Colors corresponding to the thresholds defined in 
+        Y_Thresholds. Default is None.
+
+    Show : bool, default True
+        Indicates whether to display the plot after creation.
+
+    Returns:
+    --------
+    None
+        The function displays and optionally saves a scatter plot. 
+
+    """
 
     plt.figure(figsize = Figure_Size)
 
@@ -547,6 +1058,80 @@ def Create_Violin_Plot(Data, Title = None, X_Label = 'X', Y_Label = 'Y', Colors 
                         Annotations = None, File_Name = None, File_Format = 'png', 
                         Legend = False, Legend_Location = 'best', Legend_Font_Size = 12):
     
+    """
+    Creates a violin plot based on the provided data.
+
+    Parameters:
+    -----------
+    Data : array-like
+        A dataset or list of datasets to be plotted as violin plots.
+
+    Title : str, optional
+        The title of the plot. Default is None.
+
+    X_Label : str, optional
+        The label for the x-axis. Default is 'X'.
+
+    Y_Label : str, optional
+        The label for the y-axis. Default is 'Y'.
+
+    Colors : list, optional
+        A list of colors for the violins. Default is None.
+
+    Grid : bool, optional
+        Whether to display a grid on the plot. Default is True.
+
+    Figure_Size : tuple, optional
+        The size of the figure in inches (width, height). Default is 
+        (10, 6).
+
+    Font_Size : int, optional
+        The font size for the title and labels. Default is 12.
+
+    Alpha : float, optional
+        The transparency level of the violins. Default is 1.0.
+
+    X_Ticks : list, optional
+        Custom tick marks for the x-axis. Default is None.
+
+    Y_Ticks : list, optional
+        Custom tick marks for the y-axis. Default is None.
+
+    X_Ticks_Step : int, optional
+        The step size for generating x-axis tick marks. Default is None.
+
+    Y_Ticks_Step : int, optional
+        The step size for generating y-axis tick marks. Default is None.
+
+    Annotations : list of dicts, optional
+        A list of annotations to be added to the plot, each defined by a
+        dictionary with keys 'text', 'xy', 'xytext', and 'arrowprops'.
+        Default is None.
+
+    File_Name : str, optional
+        The name of the file to save the plot. Default is None.
+
+    File_Format : str, optional
+        The format to save the plot (e.g., 'png', 'pdf'). Default is 
+        'png'.
+
+    Legend : bool, optional
+        Whether to display a legend on the plot. Default is False.
+
+    Legend_Location : str, optional
+        The location of the legend if displayed. Default is 'best'.
+
+    Legend_Font_Size : int, optional
+        The font size for the legend. Default is 12.
+
+    Returns:
+    --------
+    None
+        Displays the violin plot and saves it to a file if a file name 
+        is provided.
+
+    """
+
     plt.figure(figsize = Figure_Size)
     
     plt.violinplot(Data, showmeans=True, showmedians=True)
@@ -646,21 +1231,46 @@ def Correlation_Heatmap(df: pd.DataFrame, Title = None, X_Label = None, Y_Label 
                         Correlation_Method = 'pearson'):
     
     """
-    Creates a half-masked heatmap of the correlation matrix from the input DataFrame.
-    Only the lower triangular part of the heatmap is shown, while the upper part is masked.
+    Creates a half-masked heatmap of the correlation matrix from the 
+    input DataFrame. Only the lower triangular part of the heatmap is 
+    shown, while the upper part is masked.
 
     Example:
-    Half_Masked_Correlation_Heatmap(df, Title="Correlation Heatmap", File="heatmap.png")
+    Half_Masked_Correlation_Heatmap(df, Title="Correlation Heatmap", 
+    File="heatmap.png")
 
     Parameters:
-    df (pd.DataFrame): The input DataFrame.
-    Title (str): Title of the heatmap.
-    X_Label (str): Label for the x-axis.
-    Y_Label (str): Label for the y-axis.
-    File (str): File name to save the heatmap.
-    Figure_Size (tuple): Size of the figure.
-    Decimals (int): Number of decimal places to display in annotations.
-    Correlation_Method (str): Method for calculating correlation ('pearson', 'spearman', or 'kendall').
+    -----------
+    df : pd.DataFrame
+        The input DataFrame.
+
+    Title : str, optional
+        Title of the heatmap. Default is None.
+
+    X_Label : str, optional
+        Label for the x-axis. Default is None.
+
+    Y_Label : str, optional
+        Label for the y-axis. Default is None.
+
+    File : str, optional
+        File name to save the heatmap. Default is None.
+
+    Figure_Size : tuple, optional
+        Size of the figure. Default is (9, 9).
+
+    Decimals : int, optional
+        Number of decimal places to display in annotations. Default is 2.
+
+    Correlation_Method : str, optional
+        Method for calculating correlation ('pearson', 'spearman', 
+        or 'kendall'). Default is 'pearson'.
+
+    Returns:
+    --------
+    None
+        Displays the heatmap and saves it to a file if a file name 
+        is provided.
 
     """
 
@@ -698,6 +1308,36 @@ def Correlation_Heatmap(df: pd.DataFrame, Title = None, X_Label = None, Y_Label 
 #######################################################################################################################
 
 def Bar_Plot_To_All_DataFrame(df, Limit_Of_Int = 10, Segments = 10, Path = None, Show = False):
+
+    """
+    Generates bar plots for all combinations of columns in the 
+    DataFrame and saves them to files. Normalization options 
+    allow visualizing the data in different ways.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        The input DataFrame containing data for plotting.
+
+    Limit_Of_Int : int, optional
+        Threshold to determine when to segment continuous variables. 
+        Default is 10.
+
+    Segments : int, optional
+        Number of segments to create in the bar plots. Default is 10.
+
+    Path : str, optional
+        Path to save the generated plots. Default is None.
+
+    Show : bool, optional
+        If True, displays the plots. Default is False.
+
+    Returns:
+    --------
+    None
+        Generates bar plots and saves them to specified path if given.
+
+    """
 
     Columns = list(df.columns)
 
@@ -800,6 +1440,32 @@ def Bar_Plot_To_All_DataFrame(df, Limit_Of_Int = 10, Segments = 10, Path = None,
 
 def Scatter_Plot_To_All_DataFrame(df, Show = False, Path = None, Color = 'blue'):
     
+    """
+    Generates scatter plots for all combinations of columns in the 
+    DataFrame and saves them to files.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        The input DataFrame containing data for plotting.
+
+    Show : bool, optional
+        If True, displays the plots. Default is False.
+
+    Path : str, optional
+        Path to save the generated plots. Default is None.
+
+    Color : str, optional
+        Color of the points in the scatter plot. Default is 'blue'.
+
+    Returns:
+    --------
+    None
+        Generates scatter plots and saves them to specified path 
+        if given.
+
+    """
+
     Columns = list(df.columns)
 
     Column_Pairs = ls.Generate_All_Combinations(df, 2)

@@ -59,6 +59,7 @@ def Match_And_Copy_Column_Values(df1: pd.DataFrame, df2: pd.DataFrame,
     0  1    X
     1  2    Y
     2  3  None
+
     """
 
     if Column_df1_A == Column_df2_A:
@@ -82,6 +83,7 @@ def Match_And_Copy_Column_Values(df1: pd.DataFrame, df2: pd.DataFrame,
 def Compare_Columns(df1: pd.DataFrame, Column1: str, 
                     df2: pd.DataFrame, Column2: str, 
                     Label1: str = "df1", Label2: str = "df2") -> pd.DataFrame:
+    
     """
     Compare two specified columns from two DataFrames and identify the 
     unique values present in each column but not in the other. This 
@@ -135,7 +137,9 @@ def Compare_Columns(df1: pd.DataFrame, Column1: str,
     1      2  DataFrame1
     2      5  DataFrame2
     3      6  DataFrame2
+
     """
+
     Column1_Set = set(df1[Column1])
     Column2_Set = set(df2[Column2])
     
@@ -153,8 +157,43 @@ def Compare_Columns(df1: pd.DataFrame, Column1: str,
     
     return df_Result
 
-def Get_Last_Number_Of_String_Column(df: pd.DataFrame, Column_With_Strings: str, New_Column_Name: str) -> pd.DataFrame:
+def Get_Last_Number_Of_String_Column(df: pd.DataFrame, Column_With_Strings: str, 
+                                     New_Column_Name: str) -> pd.DataFrame:
     
+    '''
+    Extracts the last number from a specified string column in a DataFrame.
+
+    This function iterates through the specified column, finds all numbers in 
+    each string, and adds the last number to a new column in the DataFrame.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        The DataFrame containing the data.
+
+    Column_With_Strings : str
+        The name of the column containing strings from which to extract numbers.
+
+    New_Column_Name : str
+        The name of the new column where the last numbers will be stored.
+
+    Returns:
+    --------
+    pd.DataFrame
+        The original DataFrame with the new column added.
+
+    Example:
+    ---------
+    >>> df = pd.DataFrame({'Text': ['Item 1: 10', 'Item 2: 20', 'Item 3: 30']})
+    >>> updated_df = Get_Last_Number_Of_String_Column(df, 'Text', 'Last_Number')
+    >>> print(updated_df)
+       Text  Last_Number
+    0  Item 1: 10         10.0
+    1  Item 2: 20         20.0
+    2  Item 3: 30         30.0
+
+    '''
+
     List_Of_Last_Numbers = []
     
     for String in df[Column_With_Strings]:
@@ -167,22 +206,120 @@ def Get_Last_Number_Of_String_Column(df: pd.DataFrame, Column_With_Strings: str,
     return df
 
 def Vertical_Concatenate_For_Multiples_DataFrames(*args) -> pd.DataFrame:
+
+    '''
+    Vertically concatenates multiple DataFrames into one.
+
+    This function takes multiple DataFrames as input and concatenates them 
+    into a single DataFrame.
+
+    Parameters:
+    -----------
+    *args : pd.DataFrame
+        Multiple DataFrames to be concatenated.
+
+    Returns:
+    --------
+    pd.DataFrame
+        A new DataFrame containing all rows from the input DataFrames.
+
+    Example:
+    ---------
+    >>> df1 = pd.DataFrame({'A': [1, 2]})
+    >>> df2 = pd.DataFrame({'A': [3, 4]})
+    >>> combined_df = Vertical_Concatenate_For_Multiples_DataFrames(df1, df2)
+    >>> print(combined_df)
+       A
+    0  1
+    1  2
+    2  3
+    3  4
+
+    '''
+
     Mixed = pd.concat(args, ignore_index=True)
     return Mixed
 
-def Fill_Column(df: pd.DataFrame, Column, Value) -> pd.DataFrame:  
+def Fill_Column(df: pd.DataFrame, Column, Value) -> pd.DataFrame:
+
+    '''
+    Fills a specified column in a DataFrame with a given value.
+
+    This function sets all values in the specified column to the provided value.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        The DataFrame containing the data.
+
+    Column : str
+        The name of the column to be filled.
+
+    Value : object
+        The value to fill in the specified column.
+
+    Returns:
+    --------
+    pd.DataFrame
+        The original DataFrame with the specified column filled.
+
+    Example:
+    ---------
+    >>> df = pd.DataFrame({'A': [1, 2, 3]})
+    >>> updated_df = Fill_Column(df, 'A', 0)
+    >>> print(updated_df)
+       A
+    0  0
+    1  0
+    2  0
+
+    '''
+
     df[Column] = Value
     return df
 
 def Get_Selected_Rows_By_Column(df: pd.DataFrame, Column: str, Value: object, Condition: str = 'Match') -> pd.DataFrame:
 
-    """
+    '''
     Filters rows in the DataFrame based on the specified condition applied to a column.
 
-    Conditions supported: 'Match', 'Contains', '>', '<', '>=', '<=', '!=', 'Is in', 'Not in', 'Starts with', 
-    'Ends with', 'Is null', 'Is not null', 'Between'.
+    Conditions supported: 'Match', 'Contains', '>', '<', '>=', '<=', '!=', 
+    'Is in', 'Not in', 'Starts with', 'Ends with', 'Is null', 
+    'Is not null', 'Between'.
 
-    """
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        The DataFrame containing the data.
+
+    Column : str
+        The name of the column to filter.
+
+    Value : object
+        The value to compare against based on the specified condition.
+
+    Condition : str
+        The condition to apply. Default is 'Match'.
+
+    Returns:
+    --------
+    pd.DataFrame
+        A new DataFrame containing rows that meet the specified condition.
+
+    Raises:
+    -------
+    ValueError
+        If an unsupported condition is specified.
+
+    Example:
+    ---------
+    >>> df = pd.DataFrame({'A': [1, 2, 3]})
+    >>> filtered_df = Get_Selected_Rows_By_Column(df, 'A', 2, Condition='Match')
+    >>> print(filtered_df)
+       A
+    1  2
+
+    '''
 
     if Condition == "Match":
         return df[df[Column] == Value]
@@ -240,13 +377,49 @@ def Get_Selected_Rows_By_Column(df: pd.DataFrame, Column: str, Value: object, Co
 
 def Get_Selected_Rows_By_Two_Columns(df: pd.DataFrame, Column1: str, Column2: str, Values: list, Condition: str = 'Match') -> pd.DataFrame:
     
-    """
+    '''
     Filters rows in the DataFrame based on the specified condition applied to two columns.
 
-    Conditions supported: 'Match', 'Contains', '>', '<', '>=', '<=', '!=', 'Is in', 
-    'Not in', 'Starts with', 'Ends with', 'Is null', 'Is not null', 'Between', 'Match either'.
+    Conditions supported: 'Match', 'Contains', '>', '<', '>=', '<=', '!=', 
+    'Is in', 'Not in', 'Starts with', 'Ends with', 'Is null', 
+    'Is not null', 'Between', 'Match either'.
 
-    """
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        The DataFrame containing the data.
+
+    Column1 : str
+        The name of the first column to filter.
+
+    Column2 : str
+        The name of the second column to filter.
+
+    Values : list
+        The values to compare against based on the specified condition.
+
+    Condition : str
+        The condition to apply. Default is 'Match'.
+
+    Returns:
+    --------
+    pd.DataFrame
+        A new DataFrame containing rows that meet the specified condition.
+
+    Raises:
+    -------
+    ValueError
+        If an unsupported condition is specified.
+
+    Example:
+    ---------
+    >>> df = pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6]})
+    >>> filtered_df = Get_Selected_Rows_By_Two_Columns(df, 'A', 'B', [2], Condition='Match')
+    >>> print(filtered_df)
+       A  B
+    1  2  5
+
+    '''
     
     if Condition == "Match":
         return df[(df[Column1] == Values[0]) | (df[Column2] == Values[0])]
@@ -310,6 +483,38 @@ def Get_Selected_Rows_By_Two_Columns(df: pd.DataFrame, Column1: str, Column2: st
 
 def Add_Word_To_Name_Columns(df, Word = None, Separator = '_'):
 
+    '''
+    Adds a specified word to the names of all columns in a DataFrame.
+
+    This function renames each column by appending the specified word (with a 
+    separator) to the original column name.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        The DataFrame containing the data.
+
+    Word : Optional[str]
+        The word to append to each column name. If None, it defaults to the string 
+        representation of the DataFrame.
+
+    Separator : str
+        The separator to use between the original column name and the appended word.
+
+    Returns:
+    --------
+    pd.DataFrame
+        The original DataFrame with renamed columns.
+
+    Example:
+    ---------
+    >>> df = pd.DataFrame({'A': [1, 2], 'B': [3, 4]})
+    >>> updated_df = Add_Word_To_Name_Columns(df, 'Value')
+    >>> print(updated_df.columns)
+    Index(['A_Value', 'B_Value'], dtype='object')
+
+    '''
+
     if Word == None:
         Word = f'{df}'
 
@@ -323,13 +528,51 @@ def Add_Word_To_Name_Columns(df, Word = None, Separator = '_'):
 
     return df
 
-def Update_Column_Selected_Rows(df: pd.DataFrame, Condition_Column: str, Condition_Value: object, 
+def Update_Column_In_Selected_Rows(df: pd.DataFrame, Condition_Column: str, Condition_Value: object, 
                                       Update_Column: str, Update_Value: object, Condition: str) -> pd.DataFrame:
     
-    """
+    '''
     Updates values in a specified column based on a condition applied to another column.
 
-    """
+    This function filters rows based on a condition in one column and updates 
+    the values in another specified column.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        The DataFrame containing the data.
+
+    Condition_Column : str
+        The name of the column containing the condition.
+
+    Condition_Value : object
+        The value to compare against in the condition column.
+
+    Update_Column : str
+        The name of the column to be updated.
+
+    Update_Value : object
+        The value to set in the update column.
+
+    Condition : str
+        The condition to apply.
+
+    Returns:
+    --------
+    pd.DataFrame
+        The original DataFrame with updated values.
+
+    Example:
+    ---------
+    >>> df = pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6]})
+    >>> updated_df = Update_Column_Selected_Rows(df, 'A', 2, 'B', 10, 'Match')
+    >>> print(updated_df)
+       A   B
+    0  1   4
+    1  2  10
+    2  3   6
+
+    '''
 
     Filtered_Rows = Get_Selected_Rows_By_Column(df, Condition_Column, Condition_Value, Condition=Condition)
     df.loc[Filtered_Rows.index, Update_Column] = Update_Value
@@ -337,10 +580,41 @@ def Update_Column_Selected_Rows(df: pd.DataFrame, Condition_Column: str, Conditi
 
 def Drop_Selected_Rows(df: pd.DataFrame, Column: str, Value: object, Condition: str = 'Match') -> pd.DataFrame:
 
-    """
+    '''
     Drops rows where a specified column meets a certain condition.
 
-    """
+    This function filters the DataFrame based on the specified condition 
+    and removes the corresponding rows.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        The DataFrame containing the data.
+
+    Column : str
+        The name of the column to check for the condition.
+
+    Value : object
+        The value to compare against based on the specified condition.
+
+    Condition : str
+        The condition to apply. Default is 'Match'.
+
+    Returns:
+    --------
+    pd.DataFrame
+        The original DataFrame with specified rows dropped.
+
+    Example:
+    ---------
+    >>> df = pd.DataFrame({'A': [1, 2, 3]})
+    >>> updated_df = Drop_Selected_Rows(df, 'A', 2, Condition='Match')
+    >>> print(updated_df)
+       A
+    0  1
+    2  3
+
+    '''
 
     Filtered_Rows = Get_Selected_Rows_By_Column(df, Column, Value, Condition=Condition)
     df = df.drop(Filtered_Rows.index)
@@ -348,10 +622,47 @@ def Drop_Selected_Rows(df: pd.DataFrame, Column: str, Value: object, Condition: 
 
 def Fill_Missing_Values(df: pd.DataFrame, Column: str, Method: str = None, Fill_Value: object = None) -> pd.DataFrame:
 
-    """
+    '''
     Fills missing values in a specified column using a given method or fill value.
 
-    """
+    This function can either fill missing values using a specified method (e.g., 
+    'ffill', 'bfill') or with a constant value.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        The DataFrame containing the data.
+
+    Column : str
+        The name of the column with missing values.
+
+    Method : Optional[str]
+        The method to use for filling missing values. Default is None.
+
+    Fill_Value : Optional[object]
+        The value to fill missing entries with. Default is None.
+
+    Returns:
+    --------
+    pd.DataFrame
+        The original DataFrame with missing values filled.
+
+    Raises:
+    -------
+    ValueError
+        If neither 'Method' nor 'Fill_Value' is provided.
+
+    Example:
+    ---------
+    >>> df = pd.DataFrame({'A': [1, None, 3]})
+    >>> updated_df = Fill_Missing_Values(df, 'A', Fill_Value=0)
+    >>> print(updated_df)
+       A
+    0  1.0
+    1  0.0
+    2  3.0
+
+    '''
 
     if Method:
         df[Column] = df[Column].fillna(method=Method)
@@ -364,19 +675,38 @@ def Fill_Missing_Values(df: pd.DataFrame, Column: str, Method: str = None, Fill_
 
 def Apply_Operation_To_Columns(df: pd.DataFrame, Columns: List[str], Operations: Optional[List[Callable]] = None) -> pd.DataFrame:
 
-    """
+    '''
     Processes specified columns by applying a series of transformations and conversions.
 
+    This function iterates through the specified columns and applies a list of 
+    operations to each column.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        The DataFrame containing the data.
+
+    Columns : List[str]
+        The names of the columns to be processed.
+
+    Operations : Optional[List[Callable]]
+        A list of functions to apply to each column. Default is None.
+
+    Returns:
+    --------
+    pd.DataFrame
+        The original DataFrame with transformed columns.
+
     Example:
+    ---------
+    >>> df = pd.DataFrame({'Name': ['Alice', 'Bob'], 'City': ['NY', 'LA']})
+    >>> updated_df = Apply_Operation_To_Columns(df, Columns=['Name', 'City'], Operations=[lambda x: x.upper()])
+    >>> print(updated_df)
+        Name City
+    0  ALICE  NY
+    1    BOB  LA
 
-    df = Apply_Operation_To_Columns(df,
-                            Columns=['Name', 'City', 'Country'],
-                            Operations=[lambda x: x.upper(),
-                                        Remove_Vocals])
-
-        Upper the text and remove all vocals of these columns.
-
-    """
+    '''
 
     for Column in Columns:
         for Operation in Operations:
@@ -435,6 +765,7 @@ def Apply_Operations_To_Selected_Rows(df: pd.DataFrame, Filtered_Column: str, Fi
     0  1  4
     1  2  10
     2  3  12
+
     """
 
     df['Original_Index'] = df.index
@@ -489,14 +820,15 @@ def Find_Best_Value_Column(
     Example:
     ---------
     >>> df = Find_Best_Value_Column(df,
-...                        Target_Column='Precio',
-...                        Columns_To_Compare=['Proveedor1', 
-...                                            'Proveedor2', 
-...                                            'Proveedor3'],
-...                        Best_Value_Column='Mejor_Proveedor',
-...                        Comparison_Function=lambda Target, 
-...                        Value: Target == Value
-...                              )
+    ...                        Target_Column='Precio',
+    ...                        Columns_To_Compare=['Proveedor1', 
+    ...                                            'Proveedor2', 
+    ...                                            'Proveedor3'],
+    ...                        Best_Value_Column='Mejor_Proveedor',
+    ...                        Comparison_Function=lambda Target, 
+    ...                        Value: Target == Value
+    ...                              )
+
     """
     
     if Comparison_Function is None:
@@ -513,6 +845,28 @@ def Find_Best_Value_Column(
     return df
 
 def Convert_Type_Of_Columns(df: pd.DataFrame, List_Of_Columns: list, Type = str):
+
+    """
+    Converts the data type of specified columns in a DataFrame.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        The DataFrame containing the data whose column types will be modified.
+
+    List_Of_Columns : list
+        A list of column names in the DataFrame that should have their data type converted.
+
+    Type : type, optional
+        The desired data type to convert the columns to. Default is str.
+
+    Returns:
+    --------
+    pd.DataFrame
+        The DataFrame with specified columns converted to the desired data type.
+        
+    """
+
     for Column in List_Of_Columns:
         if Column in df.columns:
             if df[Column].dtype != Type:
@@ -520,6 +874,29 @@ def Convert_Type_Of_Columns(df: pd.DataFrame, List_Of_Columns: list, Type = str)
     return df
 
 def Casing_Column_Names(df: pd.DataFrame, Style: str = 'Pascal Snake Case', Separator: str = "") -> pd.DataFrame:
+    
+    """
+    Applies a specified casing style to the column names of a DataFrame.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        The DataFrame containing the data whose column names will be modified.
+
+    Style : str, optional
+        The style to apply to the column names. Options include 'Camel Case', 'Snake Case', 'Pascal Snake Case',
+        'Screaming Snake Case', 'Pascal Case', 'Flat Case', and 'Upper Flat Case'. Default is 'Pascal Snake Case'.
+
+    Separator : str, optional
+        The separator to use when applying the casing style. Default is an empty string.
+
+    Returns:
+    --------
+    pd.DataFrame
+        The DataFrame with updated column names.
+
+    """
+
     Columns = list(df.columns)
     if Style == 'Camel Case':
         Columns = [Stringio.Apply_Camel_Case(str(Column), Separator = Separator) for Column in Columns]
@@ -540,6 +917,25 @@ def Casing_Column_Names(df: pd.DataFrame, Style: str = 'Pascal Snake Case', Sepa
     return df
 
 def Change_Column_Names_By_Dictionary(df: pd.DataFrame, Dictionary: dict) -> pd.DataFrame:
+    
+    """
+    Renames the columns of a DataFrame based on a provided dictionary.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        The DataFrame containing the data with columns to be renamed.
+
+    Dictionary : dict
+        A dictionary where keys are the current column names and values are the new column names.
+
+    Returns:
+    --------
+    pd.DataFrame
+        The DataFrame with renamed columns.
+
+    """
+
     return df.rename(columns=Dictionary)
 
 def Create_Dummy_Variables(DataFrame, Column_Name, Drop_First = False, Group_Others = True, Remove_Others = True, 
@@ -547,6 +943,40 @@ def Create_Dummy_Variables(DataFrame, Column_Name, Drop_First = False, Group_Oth
 
     """
     Create dummy variables from a categorical column in a DataFrame.
+
+    Parameters:
+    -----------
+    DataFrame : pd.DataFrame
+        The DataFrame containing the data.
+
+    Column_Name : str
+        The name of the categorical column from which to create dummy variables.
+
+    Drop_First : bool, optional
+        If True, the first level of the categorical variable will be dropped to avoid multicollinearity. Default is False.
+
+    Group_Others : bool, optional
+        If True, infrequent categories will be grouped into an 'Others' column. Default is True.
+
+    Remove_Others : bool, optional
+        If True, the 'Others' column will be removed after grouping. Default is True.
+
+    Threshold : float, optional
+        The frequency threshold for grouping infrequent categories. Default is 0.05.
+
+    Name_Other_Column : str, optional
+        The name of the column to hold grouped infrequent categories. Default is 'Others'.
+
+    Name_Columns_Style : str, optional
+        The style to apply to the names of the new dummy variable columns. Default is 'Pascal_Snake_Case'.
+
+    Separator : str, optional
+        The separator to use in the new column names. Default is an empty string.
+
+    Returns:
+    --------
+    pd.DataFrame
+        The DataFrame with dummy variables added.
 
     """
 
@@ -574,6 +1004,36 @@ def Create_Dummy_Variables(DataFrame, Column_Name, Drop_First = False, Group_Oth
 def Create_Dummy_Variables_In_All_DataFrame(DataFrame, Drop_First = False, Group_Others = True, Remove_Others = True, 
                                             Threshold = 0.05, Name_Other_Column = "Others"):
     
+    """
+    Creates dummy variables for all categorical columns in a DataFrame.
+
+    Parameters:
+    -----------
+    DataFrame : pd.DataFrame
+        The DataFrame containing the data.
+
+    Drop_First : bool, optional
+        If True, the first level of each categorical variable will be dropped. Default is False.
+
+    Group_Others : bool, optional
+        If True, infrequent categories will be grouped into an 'Others' column for each categorical variable. Default is True.
+
+    Remove_Others : bool, optional
+        If True, the 'Others' column will be removed after grouping. Default is True.
+
+    Threshold : float, optional
+        The frequency threshold for grouping infrequent categories. Default is 0.05.
+
+    Name_Other_Column : str, optional
+        The name of the column to hold grouped infrequent categories. Default is 'Others'.
+
+    Returns:
+    --------
+    pd.DataFrame
+        The DataFrame with dummy variables created for all categorical columns.
+
+    """
+
     Column_Types = DataFrame.dtypes
 
     for Index, Value in Column_Types.items():
@@ -583,13 +1043,34 @@ def Create_Dummy_Variables_In_All_DataFrame(DataFrame, Drop_First = False, Group
     
     return DataFrame
 
-def Replace_Values_In_Name_Columns(df: pd.DataFrame, Old_Values: str, New_Values: str) -> pd.DataFrame:
+def Replace_Values_In_Name_Columns(df: pd.DataFrame, Old_Values, New_Values) -> pd.DataFrame:
     
+    """
+    Replaces specified values in the DataFrame's column names.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        The DataFrame whose column names will be modified.
+
+    Old_Values : str or list
+        The value(s) to be replaced in the column names.
+
+    New_Values : str or list
+        The value(s) to replace the old values with. Must match the length of Old_Values if using lists.
+
+    Returns:
+    --------
+    pd.DataFrame
+        The DataFrame with updated column names.
+
+    """
+
     if isinstance(Old_Values, str):
-        Old_Values = [Old_Values]
+        Old_Values = list(Old_Values)
     
     if isinstance(New_Values, str):
-        New_Values = [New_Values]
+        New_Values = list(New_Values)
 
     if len(Old_Values) != len(New_Values):
         raise ValueError("Old_Values and New_Values must have the same length.")
@@ -599,6 +1080,24 @@ def Replace_Values_In_Name_Columns(df: pd.DataFrame, Old_Values: str, New_Values
     return df
 
 def Get_Duplicates_With_Indices_From_DataFrame(df: pd.DataFrame, Column: str) -> list:
+
+    """
+    Retrieves duplicate values from a specified column along with their indices in the DataFrame.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        The DataFrame to search for duplicates.
+
+    Column : str
+        The name of the column in which to find duplicates.
+
+    Returns:
+    --------
+    list
+        A list of dictionaries, each containing a duplicate value and its corresponding indices.
+
+    """
 
     Duplicates = df[Column].duplicated(keep=False)
 
@@ -614,6 +1113,27 @@ def Get_Duplicates_With_Indices_From_DataFrame(df: pd.DataFrame, Column: str) ->
 
 def Divide_DataFrames_By_Column(df: pd.DataFrame, Column: str, Condition: str = 'Match') -> dict:
 
+    """
+    Divides a DataFrame into multiple DataFrames based on unique values in a specified column.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        The DataFrame to divide.
+
+    Column : str
+        The name of the column used to divide the DataFrame.
+
+    Condition : str, optional
+        The condition used to filter the rows. Default is 'Match'.
+
+    Returns:
+    --------
+    dict
+        A dictionary with unique values as keys and corresponding filtered DataFrames as values.
+
+    """
+
     DataFrames = {}
     Unique_Values = list(df[Column].unique())
 
@@ -624,6 +1144,33 @@ def Divide_DataFrames_By_Column(df: pd.DataFrame, Column: str, Condition: str = 
     return DataFrames
 
 def Create_Date_Column(df, Day_Column = 'Day', Month_Column = 'Month', Year_Column = 'Year', Spanish = False):
+
+    """
+    Creates a new date column in the DataFrame using specified day, month, and year columns.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        The DataFrame containing day, month, and year columns.
+
+    Day_Column : str, optional
+        The name of the column containing the day values. Default is 'Day'.
+
+    Month_Column : str, optional
+        The name of the column containing the month values. Default is 'Month'.
+
+    Year_Column : str, optional
+        The name of the column containing the year values. Default is 'Year'.
+
+    Spanish : bool, optional
+        If True, interprets month names in Spanish. Default is False.
+
+    Returns:
+    --------
+    pd.DataFrame
+        The DataFrame with a new 'Date' column added.
+
+    """
 
     if Spanish:
         Months_In_Spanish = {
@@ -649,6 +1196,28 @@ def Create_Date_Column(df, Day_Column = 'Day', Month_Column = 'Month', Year_Colu
     return df
 
 def Sort_Columns(df: pd.DataFrame, Order_By: str, Ascending = False):
+
+    """
+    Sorts the DataFrame columns based on specified criteria.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        The DataFrame containing the data.
+
+    Order_By : str
+        The column name or criteria by which to sort the DataFrame.
+
+    Ascending : bool, optional
+        If True, sorts in ascending order; otherwise, sorts in descending order. Default is False.
+
+    Returns:
+    --------
+    pd.DataFrame
+        The DataFrame sorted by the specified order.
+
+    """
+
     Sort_Columns = [Order_By]
 
     if Order_By == 'Date':
@@ -662,8 +1231,36 @@ def Sort_Columns(df: pd.DataFrame, Order_By: str, Ascending = False):
 
     return df
 
-# Se puede hacer todavía más personalizada ajustando el marcador: número, letra, a partir de cuál, si salta en múltiplos, etc.
+# Se puede hacer todavía más personalizada ajustando el marcador: número, letra, 
+# a partir de cuál, si salta en múltiplos, etc.
 def Divide_Column(df, Column_To_Divide = None, Separator = "_", Column_Names = None, Delete = True):
+
+    """
+    Splits a specified column in the DataFrame into multiple columns based on a separator.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        The DataFrame containing the column to split.
+
+    Column_To_Divide : str
+        The name of the column to split.
+
+    Separator : str, optional
+        The character used to separate the values in the column. Default is an underscore ("_").
+
+    Column_Names : list, optional
+        The names for the new columns created from the split. If None, default names will be generated.
+
+    Delete : bool, optional
+        If True, the original column will be removed after splitting. Default is True.
+
+    Returns:
+    --------
+    pd.DataFrame
+        The DataFrame with the split columns added (and the original column removed if specified).
+    
+    """
 
     Split_Result = df[Column_To_Divide].str.split(Separator, expand = True)
     Number_Of_Columns = Split_Result.shape[1]
@@ -683,8 +1280,36 @@ def Values_Of_New_Column_By_Compare_Other_Columns(Row, Column1, Value1, Column2,
     """
     Returns a value based on comparing two columns in a DataFrame row.
 
+    Parameters:
+    -----------
+    Row : pd.Series
+        A row of the DataFrame containing the values for comparison.
+
+    Column1 : str
+        The name of the first column to compare.
+
+    Value1 : object
+        The value to return if the condition is satisfied.
+
+    Column2 : str
+        The name of the second column to compare.
+
+    Value2 : object
+        The value to return if the condition is not satisfied.
+
+    Value3 : object
+        The value to return if the two columns are equal.
+
+    Operation : str
+        The comparison operation to perform. Can be '>', '<', or '=='.
+
+    Returns:
+    --------
+    object
+        The value based on the comparison of the two columns.
+
     """
-    
+
     if Operation == ">":
         if Row[Column1] > Row[Column2]:
             return Value1
@@ -712,6 +1337,36 @@ def Values_Of_New_Column_By_Compare_Other_Columns(Row, Column1, Value1, Column2,
 def Remove_Values_Under_Threshold(df, Column, Threshold_Percentage = 5, Threshold_Numeric = None, Remove = True, 
                                   New_Value = 'Others'):
 
+    """
+    Removes or replaces values in a specified column of a DataFrame that fall below a defined threshold.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        The DataFrame containing the data.
+
+    Column : str
+        The name of the column to evaluate.
+
+    Threshold_Percentage : float, optional
+        The percentage threshold for filtering values. Default is 5.
+
+    Threshold_Numeric : float, optional
+        The numeric threshold for filtering values. Default is None.
+
+    Remove : bool, optional
+        If True, rows with values under the threshold will be removed; otherwise, values will be replaced. Default is True.
+
+    New_Value : object, optional
+        The value to replace filtered values with when Remove is False. Default is 'Others'.
+
+    Returns:
+    --------
+    pd.DataFrame
+        The modified DataFrame after removing or replacing values.
+
+    """
+
     Uniques = list(df[Column].unique())
     Length = len(df[Column])
 
@@ -733,6 +1388,37 @@ def Remove_Values_Under_Threshold(df, Column, Threshold_Percentage = 5, Threshol
     return df
 
 def Combine_Columns(df, Column1, Column2, New_Column_Name = None, Criteria = 'Sum', Remove = False):
+
+    """
+    Combines two columns in a DataFrame based on specified criteria.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        The DataFrame containing the data.
+
+    Column1 : str
+        The name of the first column to combine.
+
+    Column2 : str
+        The name of the second column to combine.
+
+    New_Column_Name : str, optional
+        The name of the new column that will contain the combined values. Default is the criteria name.
+
+    Criteria : str, optional
+        The operation to perform for combining the columns. Options include 'Sum', 'Difference', 'Product', 'Division', 
+        'Average', 'Concatenate', 'Logical AND', 'Logical OR', 'Logical XOR', and 'Logical NOT'. Default is 'Sum'.
+
+    Remove : bool, optional
+        If True, the original columns will be dropped after combining. Default is False.
+
+    Returns:
+    --------
+    pd.DataFrame
+        The modified DataFrame with the new combined column.
+
+    """
 
     if New_Column_Name is None:
         New_Column_Name = Criteria
@@ -804,6 +1490,36 @@ def Combine_Columns(df, Column1, Column2, New_Column_Name = None, Criteria = 'Su
 
 def Insert_Column_In_Specific_Position(df, Value, Column_Name, Number_Position = None, Before_To = None, After_To = None):
 
+    """
+    Inserts a new column at a specified position in a DataFrame.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        The DataFrame containing the data.
+
+    Value : object
+        The value to fill in the new column.
+
+    Column_Name : str
+        The name of the new column to be added.
+
+    Number_Position : int, optional
+        The index position at which to insert the new column. Default is None.
+
+    Before_To : str, optional
+        The name of the column before which to insert the new column. Default is None.
+
+    After_To : str, optional
+        The name of the column after which to insert the new column. Default is None.
+
+    Returns:
+    --------
+    pd.DataFrame
+        The modified DataFrame with the new column inserted.
+
+    """
+
     if (Number_Position and Before_To) or (Number_Position and After_To) or (Before_To and After_To):
         raise KeyError("Please specify only one of the following: Number_Position, Before_To, or After_To.")
     
@@ -830,6 +1546,31 @@ def Insert_Column_In_Specific_Position(df, Value, Column_Name, Number_Position =
     return df
 
 def Apply_String_Style_To_All_DataFrame(df, String_Style='Title', Replace_From=None, Replace_To=None):
+
+    """
+    Applies a specified string style transformation to all string columns in a DataFrame.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        The DataFrame containing the data.
+
+    String_Style : str, optional
+        The style to apply to string columns. Options include 'Title', 'Capitalize', 'Lower', 'Upper', 'Swapcase', 
+        'Strip', and 'Replace'. Default is 'Title'.
+
+    Replace_From : str, optional
+        The substring to replace if String_Style is 'Replace'. Default is None.
+
+    Replace_To : str, optional
+        The substring to use as a replacement if String_Style is 'Replace'. Default is None.
+
+    Returns:
+    --------
+    pd.DataFrame
+        The modified DataFrame with applied string styles.
+
+    """
 
     for Column in df.columns:
         if df[Column].dtype == 'object':
@@ -861,6 +1602,7 @@ def Process_DataFrame(df: pd.DataFrame,
                       Remove_Accents_In_Name_Columns: bool = True, 
                       Replace_Enie_In_Name_Columns: bool = True,
                       Replace_In_Name_Columns: list = []):
+    
     """
     Processes a DataFrame by applying various transformations to the data and column names.
 
@@ -901,7 +1643,9 @@ def Process_DataFrame(df: pd.DataFrame,
     - If `Dummies` is True, dummy variables will be created for categorical columns.
     - Column names can be transformed to a specific case style and cleaned up by replacing characters such as spaces or special accents.
     - The function supports replacement of specific words or characters both in the DataFrame's data and in the column names.
+    
     """
+
     if Columns:
         df = df[Columns]
 

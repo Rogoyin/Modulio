@@ -67,57 +67,6 @@ def Transpose_List_Of_Lists(List_Of_Lists: list) -> list:
     Transposed_List = list(map(list, zip(*List_Of_Lists)))
     return Transposed_List
 
-# def Sort_List() ->  :  
-# Función para ordenar una lista de elementos en orden ascendente o descendente.
-
-# def Remove_Duplicates() ->  :  
-# Función para eliminar elementos duplicados de una lista, retornando solo valores únicos.
-
-# def Group_Elements() ->  :  
-# Función para agrupar elementos en una lista basándose en un criterio específico.
-
-# def Apply_Operation_To_Elements() ->  :  
-# Función para aplicar una operación a cada elemento de una lista.
-
-# def Divide_List() ->  :  
-# Función para dividir una lista en segmentos de tamaño fijo o basado en un criterio.
-
-# def Concatenate_Lists() ->  :  
-# Función para unir múltiples listas en una sola lista.
-
-# def Find_Element() ->  :  
-# Función para buscar un elemento en una lista y devolver su índice o una indicación de si existe.
-
-# def Combine_List_With_Function() ->  :  
-# Función para combinar elementos de dos listas usando una función específica.
-
-# def Intercalate_List() ->  :  
-# Función para intercalar elementos de listas, combinando dos listas alternadamente.
-
-# def Summarize_List() ->  :  
-# Función para crear un resumen de una lista de datos, como calcular la media, mediana o desviación estándar de valores numéricos.
-
-# def Generate_List_By_Pattern() ->  :  
-# Función para generar una lista siguiendo un patrón específico, como números secuenciales o fechas periódicas.
-
-# def Apply_Function_Iteratively():
-# Aplica una función a cada elemento de una lista de manera iterativa, usando el resultado de la función anterior como entrada para la siguiente.
-
-# def Iterate_With_Index():
-# Itera sobre los elementos de una lista y proporciona tanto el índice como el valor del elemento en cada iteración.
-
-# def Apply_Transformations():
-# Aplica una serie de transformaciones a cada elemento de una lista en un orden específico y devuelve una nueva lista con los resultados.
-
-# def Flatten_Iterables():
-# Aplana una lista de iterables (listas, tuplas, etc.) en una sola lista de elementos, eliminando cualquier estructura anidada.
-
-# def Generate_Permutations():
-# Genera todas las permutaciones posibles de una lista de elementos y devuelve una lista de todas las combinaciones posibles.
-
-# def Create_Cumulative_List():
-# Crea una lista acumulativa donde cada elemento es la suma (o acumulación) de todos los elementos anteriores en la lista original.
-
 def Slice_Iterable_By_Reference(Iterable, Base_Element, Remove = 'Before', Include = True, Appears = 1):
 
     if Base_Element not in Iterable:

@@ -1,9 +1,13 @@
 '''
-                                                --OPERACIONES EXCLUSIVAS DEL PROGRAMA DEL FORRAJE--
+--OPERACIONES EXCLUSIVAS DEL PROGRAMA DEL FORRAJE--
 '''
 
+import Stringio
+from typing import List
+import pandas as pd
+
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------
-# Correspondencias de Markup y Unidad según la categoría del producto.
+# Diccionarios.
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 Markup_And_Unity = {
@@ -25,18 +29,29 @@ Markup_And_Unity = {
     "General": {"Markup %": "50", "Unidad": "UN"},
 }
 
-import Stringio
-from typing import List
-import pandas as pd
-
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 # Funciones.
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def Column_Provider_Processing(df: pd.DataFrame, Columns_Providers: List[str]) -> pd.DataFrame:
-
+    
     """
-    Processes specified columns with prices of providers by applying a series of text transformations and conversions.
+    Processes specified columns containing provider prices by applying 
+    a series of text transformations and conversions.
+
+    Parameters:
+    - df (pd.DataFrame): The DataFrame containing the columns to be 
+      processed.
+    - Columns_Providers (List[str]): A list of column names in the 
+      DataFrame that contain provider prices to process.
+
+    Returns:
+    - pd.DataFrame: The modified DataFrame with processed columns.
+
+    Notes:
+    - The processing includes converting values to strings, removing 
+      unwanted characters, replacing empty strings with '0', and 
+      converting the results to floats.
 
     """
 

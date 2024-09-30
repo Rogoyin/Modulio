@@ -12,6 +12,14 @@ def Extract_Author(Line: str) -> str:
     """
     Extracts the author from a line of text.
 
+    Parameters:
+    - Line (str): A string containing the text from which to extract the 
+      author's name. The author's name is expected to be enclosed in 
+      parentheses following the book title.
+
+    Returns:
+    - str: The extracted author's name.
+
     """
 
     i = 0
@@ -24,6 +32,14 @@ def Extract_Book(Line: str) -> str:
 
     """
     Extracts the book title from a line of text.
+
+    Parameters:
+    - Line (str): A string containing the text from which to extract the 
+      book title. The book title is expected to appear before the author's 
+      name, which is enclosed in parentheses.
+
+    Returns:
+    - str: The extracted book title.
 
     """
 
@@ -39,6 +55,14 @@ def Extract_Page(Line: str) -> str:
     """
     Extracts the page number from a line of text.
 
+    Parameters:
+    - Line (str): A string containing the text from which to extract the 
+      page number. The page number is expected to follow the text 
+      '- Tu subrayado en la página ' and precede ' | posición '.
+
+    Returns:
+    - str: The extracted page number.
+
     """
 
     Text = '- Tu subrayado en la página '
@@ -51,6 +75,14 @@ def Extract_Day_Of_Week(Line: str) -> str:
 
     """
     Extracts the day of the week from a line of text.
+
+    Parameters:
+    - Line (str): A string containing the text from which to extract the 
+      day of the week. The day is indicated by a two-letter abbreviation 
+      following the text ' | Añadido el '.
+
+    Returns:
+    - str: The full name of the day of the week (e.g., 'Lunes').
 
     """
     
@@ -82,6 +114,14 @@ def Extract_Day(Line: str) -> str:
     """
     Extracts the day from a line of text.
 
+    Parameters:
+    - Line (str): A string containing the text from which to extract the 
+      day. The day is located between the extracted day of the week 
+      and the word 'de'.
+
+    Returns:
+    - str: The extracted day as a string.
+
     """
 
     Day = Extract_Day_Of_Week(Line).lower()
@@ -94,6 +134,14 @@ def Extract_Month(Line: str) -> str:
 
     """
     Extracts the month from a line of text.
+
+    Parameters:
+    - Line (str): A string containing the text from which to extract the 
+      month. The month is identified by matching it against a predefined 
+      list of month names.
+
+    Returns:
+    - str: The extracted month, capitalized (e.g., 'Enero').
 
     """
 
@@ -108,6 +156,13 @@ def Extract_Year(Line: str) -> str:
 
     """
     Extracts the year from a line of text.
+
+    Parameters:
+    - Line (str): A string containing the text from which to extract the 
+      year. The year is expected to be in the range of 1900 to 2100.
+
+    Returns:
+    - str: The extracted year as a string.
 
     """
 
@@ -125,6 +180,14 @@ def Extract_Hour(Line: str) -> str:
     """
     Extracts the time (hour) from a line of text.
 
+    Parameters:
+    - Line (str): A string containing the text from which to extract the 
+      hour. The hour is found by identifying a colon (':') and extracting 
+      the characters surrounding it.
+
+    Returns:
+    - str: The extracted hour as a string (e.g., '12:30').
+
     """
 
     Text = ':'
@@ -138,7 +201,17 @@ def Extract_Hour(Line: str) -> str:
 def Build_Note(Lines_List: list) -> list:
 
     """
-    Creates a list of dictionaries with note data from a list of lines.
+    Creates a list of dictionaries containing note data from a list of lines.
+
+    Parameters:
+    - Lines_List (list): A list of strings where each string represents a 
+      line of text containing information about a note, including author, 
+      book, page, date, hour, and highlight.
+
+    Returns:
+    - list: A list of dictionaries where each dictionary contains 
+      information for a note, with keys like 'Author', 'Book', 'Page', 
+      'Day_Of_Week', 'Day', 'Month', 'Year', 'Hour', and 'Highlight'.
 
     """
 
@@ -170,10 +243,25 @@ def Build_Note(Lines_List: list) -> list:
     
     return Notes_List
 
-def Match_Notes_With_Notion_Bases(Token: object, Author_List: list, Page_ID: str, Previous_Match_Base: list) -> list:
+def Match_Notes_With_Notion_Bases(Token: object, Author_List: list, Page_ID: str, 
+                                  Previous_Match_Base: list) -> list:
 
     """
-    Matches author names from Notion with a list of authors and updates the previous match base.
+    Matches author names from Notion with a list of authors and updates the 
+    previous match base.
+
+    Parameters:
+    - Token (object): An authentication token used for accessing Notion 
+      API.
+    - Author_List (list): A list of author names to match with Notion.
+    - Page_ID (str): The unique identifier for the Notion page to be 
+      accessed.
+    - Previous_Match_Base (list): A list of previously matched authors 
+      and their IDs.
+
+    Returns:
+    - list: The updated match base list, including any new matches found 
+      between the Notion titles and the provided author list.
 
     """
 
@@ -220,7 +308,19 @@ def Match_Notes_With_Notion_Bases(Token: object, Author_List: list, Page_ID: str
 def Extract_Note_Data(File_Path: str, Data_To_Extract: str = 'Authors') -> list:
 
     """
-    Extracts authors, books, or both from the note file.
+    Extracts authors, books, or both from the note file specified by the 
+    file path.
+
+    Parameters:
+    - File_Path (str): The file path to the note file from which data is 
+      to be extracted.
+    - Data_To_Extract (str): A string indicating the type of data to 
+      extract; can be 'Authors', 'Books', or 'Both'.
+
+    Returns:
+    - list: Depending on the value of Data_To_Extract, it returns a list 
+      of unique authors, a list of unique books, or a list of dictionaries 
+      containing both authors and their corresponding books.
 
     """
 
@@ -266,6 +366,14 @@ def Build_Df_Of_Highlights(File_Path: str) -> pd.DataFrame:
 
     """
     Converts notes from a file into a pandas DataFrame.
+
+    Parameters:
+    - File_Path (str): The file path to the note file to be processed.
+
+    Returns:
+    - pd.DataFrame: A pandas DataFrame containing the processed notes 
+      with columns for author, book, page, day, month, year, hour, 
+      and highlight text. The DataFrame is sorted by year.
 
     """
 

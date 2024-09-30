@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import filedialog, simpledialog
 import Listio
 
 def Display_Options(Options_List: list = ['Option 1', 'Option 2', 'Option 3'], 
@@ -11,8 +11,58 @@ def Display_Options(Options_List: list = ['Option 1', 'Option 2', 'Option 3'],
                     First_Index: int = 1) -> str:
     
     '''
-    Display a list of options and prompt the user for a choice.
-    Example: Display_Options(['Yes', 'No'], 'Choose:', 'Enter:')
+    Displays a list of options and prompts the user for a choice.
+
+    This function presents a menu of options to the user, allowing them 
+    to select one by entering the corresponding number. The selected 
+    option is then returned. If the input is invalid, the user is 
+    prompted to try again.
+
+    Parameters:
+    -----------
+    Options_List : list
+        A list of strings representing the options to be displayed. 
+        Default is ['Option 1', 'Option 2', 'Option 3'].
+
+    Prompt_Message : str
+        A message displayed to prompt the user before showing the options. 
+        Default is 'Select your preference:'.
+
+    Choice_Message : str
+        A message asking the user to enter the number of their choice. 
+        Default is 'Enter the number of your choice:'.
+
+    Option_Message : str
+        A message displayed after an option is selected. Default is 
+        'Selected option:'.
+
+    Invalid_Option_Message : str
+        A message displayed if the option chosen is invalid. Default 
+        is 'Default', which triggers a generic error message.
+
+    Invalid_Input_Message : str
+        A message displayed for invalid input. Default is 
+        'The selected option is invalid.'.
+
+    First_Index : int
+        The index of the first option displayed to the user. Default is 1.
+
+    Returns:
+    --------
+    str
+        The string of the selected option.
+
+    Notes:
+    ------
+    - If the input is out of range or not a number, the user will be 
+      prompted again.
+    - The function allows for customization of all displayed messages.
+
+    Example:
+    ---------
+    >>> selected_option = Display_Options(['Yes', 'No'], 'Choose:', 'Enter:')
+    >>> print(selected_option)
+    'Yes'  # or 'No' based on user input
 
     '''
 
@@ -44,8 +94,38 @@ def Open_File(Explorer_Title: str = 'Select a file',
               Filetypes_Text: list = [("All files", "*.*")]) -> str:
     
     '''
-    Open a file explorer dialog to select a file.
-    Example: Open_File('Choose a file', [("Text files", "*.txt")])
+    Opens a file explorer dialog to select a file.
+
+    This function launches a file explorer for the user to choose a 
+    file. The selected file path is returned as a string. If no file 
+    is selected, the function will return None.
+
+    Parameters:
+    -----------
+    Explorer_Title : str
+        The title of the file explorer window. Default is 
+        'Select a file'.
+
+    Filetypes_Text : list
+        A list of tuples defining the file types that the user can 
+        select from. Default allows all file types.
+
+    Returns:
+    --------
+    str
+        The path of the selected file or None if no file is selected.
+
+    Notes:
+    ------
+    - The function uses a Tkinter window for file selection.
+    - If a file is successfully selected, its path will be printed 
+      to the console.
+
+    Example:
+    ---------
+    >>> file_path = Open_File('Choose a file', [("Text files", "*.txt")])
+    >>> print(file_path)
+    '/path/to/selected/file.txt'
 
     '''
 
@@ -64,8 +144,42 @@ def Open_Directory(Explorer_Title: str = 'Select a directory',
                    Message_Not_Selected_Directory: str = 'No directory selected') -> str:
     
     '''
-    Open a file explorer dialog to select a directory.
-    Example: Open_Directory('Choose folder')
+    Opens a file explorer dialog to select a directory.
+
+    This function allows the user to choose a directory from their file 
+    system. The path of the selected directory is returned. If no 
+    directory is selected, None is returned.
+
+    Parameters:
+    -----------
+    Explorer_Title : str
+        The title of the directory selection dialog. Default is 
+        'Select a directory'.
+
+    Message_Selected_Directory : str
+        A message displayed when a directory is successfully selected. 
+        Default is 'Selected directory:'.
+
+    Message_Not_Selected_Directory : str
+        A message displayed if no directory is selected. Default is 
+        'No directory selected'.
+
+    Returns:
+    --------
+    str
+        The path of the selected directory or None if no directory 
+        is selected.
+
+    Notes:
+    ------
+    - The function uses a Tkinter window for directory selection.
+    - The selected directory path is printed to the console.
+
+    Example:
+    ---------
+    >>> selected_directory = Open_Directory('Choose folder')
+    >>> print(selected_directory)
+    '/path/to/selected/directory'
 
     '''
     
@@ -89,6 +203,53 @@ def Create_Window(Title = None,
                   Wrap_Lenght = 380, 
                   Pad = 10):
     
+    '''
+    Creates a new Tkinter window with specified parameters.
+
+    This function initializes a Tkinter window, sets its title, 
+    geometry, and position, and displays a label with the provided 
+    text. The window can be customized with various attributes.
+
+    Parameters:
+    -----------
+    Title : str, optional
+        The title of the window. If None, the title will not be set.
+
+    Geometry : str
+        The size and geometry of the window specified as 'widthxheight'. 
+        Default is "400x300".
+
+    Position : str
+        The position of the window on the screen. Default is 'center', 
+        which centers the window on the screen.
+
+    Text : str, optional
+        The text to be displayed in the window. If None, no text 
+        will be shown.
+
+    Wrap_Lenght : int
+        The maximum length of text to wrap in the label. Default is 380.
+
+    Pad : int
+        The padding around the label in pixels. Default is 10.
+
+    Returns:
+    --------
+    tk.Tk
+        The created Tkinter window object.
+
+    Notes:
+    ------
+    - The function can be modified to include more widgets as needed.
+    - The window will remain open until it is closed by the user.
+
+    Example:
+    ---------
+    >>> window = Create_Window('My Window', '400x300', 'center', 'Hello!')
+    >>> window.mainloop()
+
+    '''
+
     Window = tk.Tk()
     Window.title(Title)
     Window.geometry(Geometry)
@@ -98,6 +259,43 @@ def Create_Window(Title = None,
     return Window
 
 def Show_Options_Window(Title, Message, Options, Widht_Padding = 5):
+
+    '''
+    Displays a window with options for the user to select.
+
+    This function creates a new window with a title and a message, 
+    displaying a button for each option provided. The width of each 
+    button is adjusted based on the maximum character length of the 
+    options.
+
+    Parameters:
+    -----------
+    Title : str
+        The title of the options window.
+
+    Message : str
+        The message displayed at the top of the window.
+
+    Options : list
+        A list of strings representing the options available for selection.
+
+    Widht_Padding : int
+        Additional width added to the buttons for padding. Default is 5.
+
+    Returns:
+    --------
+    None
+
+    Notes:
+    ------
+    - The function calls Create_Window to generate the options window.
+    - The buttons do not currently have an action associated with them.
+
+    Example:
+    ---------
+    >>> Show_Options_Window('Select an Option', 'Choose one of the options:', ['Option 1', 'Option 2'])
+    
+    '''
 
     Window = Create_Window(Title = Title, Text = Message)
 
@@ -111,6 +309,40 @@ def Show_Options_Window(Title, Message, Options, Widht_Padding = 5):
     Window.mainloop()
 
 def Show_Message(Title, Message):
+
+    '''
+    Displays a message prompt to the user and returns their input.
+
+    This function creates a simple dialog box that prompts the user 
+    for a string input based on the provided title and message. The 
+    user's input is returned as a string.
+
+    Parameters:
+    -----------
+    Title : str
+        The title of the message dialog that appears at the top.
+
+    Message : str
+        The message displayed in the dialog prompting the user for input.
+
+    Returns:
+    --------
+    str
+        The user's input string from the dialog box.
+
+    Notes:
+    ------
+    - The function uses Tkinter's simpledialog to create the prompt.
+    - If the user cancels the dialog, None is returned.
+
+    Example:
+    ---------
+    >>> user_input = Show_Message('Input Required', 'Please enter your name:')
+    >>> print(user_input)
+    'John Doe'  # or None if cancelled
+
+    '''
+
     Window = tk.Tk()
     Window.withdraw()  # Oculta la ventana principal
     return tk.simpledialog.askstring(Title, Message)  

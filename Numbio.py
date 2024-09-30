@@ -1,14 +1,85 @@
 
 def Check_Pair(Number: int) -> bool:
+
+    """
+    Checks if a given number is an even number.
+
+    The function determines whether the provided number is even by using 
+    the modulus operator. If the number is divisible by 2, it is classified 
+    as even and the function returns True; otherwise, it returns False.
+
+    Parameters:
+    -----------
+    Number : int
+        The number to be checked. This must be an integer value.
+
+    Returns:
+    --------
+    bool
+        Returns True if the number is even; otherwise, it returns False.
+
+    Notes:
+    ------
+    - The function only accepts integers as valid input.
+    - If a non-integer type is passed, a TypeError will be raised.
+
+    Example:
+    ---------
+    >>> result1 = Check_Pair(4)
+    >>> print(result1)
+    True
+
+    >>> result2 = Check_Pair(5)
+    >>> print(result2)
+    False
+    """
+
     return Number % 2 == 0
 
 def Sum_Digits(Number) -> int:
+
+    """
+    Calculates the sum of the digits of a given number.
+
+    The function converts the number into a string to iterate through each 
+    digit. It sums up the integer values of the digits and returns the 
+    total sum. This is useful for scenarios where the digit sum is required 
+    for further calculations or checks.
+
+    Parameters:
+    -----------
+    Number : int
+        The number whose digits will be summed. This must be an integer 
+        value.
+
+    Returns:
+    --------
+    int
+        The total sum of the digits in the provided number.
+
+    Notes:
+    ------
+    - The function works with both positive and negative integers.
+    - If a non-integer type is passed, a TypeError will be raised.
+
+    Example:
+    ---------
+    >>> result1 = Sum_Digits(123)
+    >>> print(result1)
+    6
+
+    >>> result2 = Sum_Digits(-456)
+    >>> print(result2)
+    15
+    """
+    
     Sum = 0
     for Digit in str(Number):
         Sum = Sum + int(Digit)
     return Sum
     
 def Round_By_Multiple(Number, Multiple, Rounding_Direction = None):
+
     '''
     Rounds a given number to the nearest multiple of a specified value.
 
@@ -61,7 +132,9 @@ def Round_By_Multiple(Number, Multiple, Rounding_Direction = None):
     >>> result3 = Round_By_Multiple(27, 5, Rounding_Direction='Under')
     >>> print(result3)
     25.0
+
     '''
+
     Last_Digit = float(str(Number)[-1])
 
     if Last_Digit >= 5:

@@ -199,7 +199,7 @@ def Open_Directory(Explorer_Title: str = 'Select a directory',
 def Create_Window(Title = None, 
                   Geometry = "400x300", 
                   Position = 'center', 
-                  Text = None,
+                  Text = '',
                   Wrap_Lenght = 380, 
                   Pad = 10):
     
@@ -207,7 +207,7 @@ def Create_Window(Title = None,
     Creates a new Tkinter window with specified parameters.
 
     This function initializes a Tkinter window, sets its title, 
-    geometry, and position, and displays a label with the provided 
+    geometry, and position, and displays a Label with the provided 
     text. The window can be customized with various attributes.
 
     Parameters:
@@ -228,10 +228,10 @@ def Create_Window(Title = None,
         will be shown.
 
     Wrap_Lenght : int
-        The maximum length of text to wrap in the label. Default is 380.
+        The maximum length of text to wrap in the Label. Default is 380.
 
     Pad : int
-        The padding around the label in pixels. Default is 10.
+        The padding around the Label in pixels. Default is 10.
 
     Returns:
     --------
@@ -258,7 +258,7 @@ def Create_Window(Title = None,
 
     return Window
 
-def Show_Options_Window(Title, Message, Options, Widht_Padding = 5):
+def Show_Options_Window(Title: str, Message: str, Options, Widht_Padding = 5):
 
     '''
     Displays a window with options for the user to select.
@@ -308,14 +308,20 @@ def Show_Options_Window(Title, Message, Options, Widht_Padding = 5):
 
     Window.mainloop()
 
-def Show_Message(Title, Message):
+def Show_Alert_With_Input_Field(Title: str, 
+                                Message: str, 
+                                Geometry: str = "400x300", 
+                                Position: str = 'center', 
+                                Text: str = '', 
+                                Wrap_Length: int = 380, 
+                                Pad: int = 10) -> str:
+    
+    """
+    Displays a custom message prompt with an input field.
 
-    '''
-    Displays a message prompt to the user and returns their input.
-
-    This function creates a simple dialog box that prompts the user 
-    for a string input based on the provided title and message. The 
-    user's input is returned as a string.
+    This function creates a window that prompts the user for a string 
+    input based on the provided title and message. The user's input 
+    is returned as a string.
 
     Parameters:
     -----------
@@ -323,27 +329,75 @@ def Show_Message(Title, Message):
         The title of the message dialog that appears at the top.
 
     Message : str
-        The message displayed in the dialog prompting the user for input.
+        The message displayed in the dialog prompting the user for 
+        input.
+    
+    Geometry : str, optional
+        The dimensions of the window in the format 'widthxheight'. 
+        Default is '400x300'.
+    
+    Position : str, optional
+        The position of the window on the screen ('center', 
+        'top-left', etc.). Default is 'center'.
+
+    Text : str, optional
+        Default text in the input field. Default is None.
+
+    Wrap_Length : int, optional
+        Wrap length for the message text. Default is 380.
+
+    Pad : int, optional
+        Padding for the window. Default is 10.
 
     Returns:
     --------
     str
-        The user's input string from the dialog box.
+        The user's input string from the dialog box, or None if 
+        cancelled.
 
-    Notes:
-    ------
-    - The function uses Tkinter's simpledialog to create the prompt.
-    - If the user cancels the dialog, None is returned.
+    """
 
-    Example:
-    ---------
-    >>> user_input = Show_Message('Input Required', 'Please enter your name:')
-    >>> print(user_input)
-    'John Doe'  # or None if cancelled
+    Root_Window = tk.Tk()
+    Root_Window.withdraw()  # Hide the root window.
 
-    '''
+    # Create a new top-level window.
+    Window = tk.Toplevel(Root_Window)
+    Window.title(Title)
+    Window.geometry(Geometry)
 
-    Window = tk.Tk()
-    Window.withdraw()  # Oculta la ventana principal
-    return tk.simpledialog.askstring(Title, Message)  
+    # Get screen width and height.
+    Screen_Width = Window.winfo_screenwidth()
+    Screen_Height = Window.winfo_screenheight()
+    
+    # Calculate position for centering.
+    if Position == 'center':
+        Window_Width = int(Geometry.split('x')[0])
+        Window_Height = int(Geometry.split('x')[1])
+        X_Coordinate = (Screen_Width // 2) - (Window_Width // 2)
+        Y_Coordinate = (Screen_Height // 2) - (Window_Height // 2)
+        Window.geometry(f"{Geometry}+{X_Coordinate}+{Y_Coordinate}")
+
+    # Add a label with the message.
+    Label = tk.Label(Window, text = Message, wraplength = Wrap_Length, padx = Pad, pady = Pad)
+    Label.pack()
+
+    # Add an input field.
+    Input_Field = tk.Entry(Window, width = 50)
+    if Text:
+        Input_Field.insert(0, Text)
+    Input_Field.pack(padx = Pad, pady = Pad)
+
+    # Add a submit button.
+    def On_Submit():
+        User_Input = Input_Field.get()
+        Window.destroy()  
+        Root_Window.quit()  
+        return User_Input
+
+    Submit_Button = tk.Button(Window, text = "Submit", command = On_Submit)
+    Submit_Button.pack(pady = Pad)
+
+    Root_Window.mainloop()
+
+    return Input_Field.get()
 

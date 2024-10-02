@@ -1,6 +1,6 @@
 import Framio as fr
 import pandas as pd
-from typing import Optional, Tuple, Dict
+from typing import Optional, Tuple, Dict, List
 
 def Get_History(df: pd.DataFrame, Team1: str, Team2: str, Field: Optional[str] = None, 
                 Tournament_Type: Optional[str] = None, Tournaments: Optional[List[str]] = None, 

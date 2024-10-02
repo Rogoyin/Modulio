@@ -6,6 +6,7 @@ import Listio
 import Notio
 import Framio
 import numpy as np
+import datetime as dt
 
 def Extract_Author(Line: str) -> str:
 
@@ -51,152 +52,56 @@ def Extract_Book(Line: str) -> str:
     return Book
 
 def Extract_Page(Line: str) -> str:
-
-    """
-    Extracts the page number from a line of text.
-
-    Parameters:
-    - Line (str): A string containing the text from which to extract the 
-      page number. The page number is expected to follow the text 
-      '- Tu subrayado en la página ' and precede ' | posición '.
-
-    Returns:
-    - str: The extracted page number.
-
-    """
-
-    Text = '- Tu subrayado en la página '
-    First_Digit = Stringio.Get_Last_Character_Position_Of_Substring(Line, Text)
-    Last_Digit = Line.find(' | posición ') - 1
-    Page = Line[First_Digit:Last_Digit]
+    Page = str(Stringio.Get_Numbers(Line)[0])
     return Page
 
-def Extract_Day_Of_Week(Line: str) -> str:
-
-    """
-    Extracts the day of the week from a line of text.
-
-    Parameters:
-    - Line (str): A string containing the text from which to extract the 
-      day of the week. The day is indicated by a two-letter abbreviation 
-      following the text ' | Añadido el '.
-
-    Returns:
-    - str: The full name of the day of the week (e.g., 'Lunes').
-
-    """
-    
-    Day_Of_Week = ''
-    Text = ' | Añadido el '
-    First_Letter = Stringio.Get_Last_Character_Position_Of_Substring(Line, Text)
-    Second_Letter = First_Letter + 1
-    Two_Letters = Line[First_Letter] + Line[Second_Letter]
-
-    if Two_Letters == 'lu':
-        Day_Of_Week = 'Lunes'
-    elif Two_Letters == 'ma':
-        Day_Of_Week = 'Martes'
-    elif Two_Letters == 'mi':
-        Day_Of_Week = 'Miércoles'
-    elif Two_Letters == 'ju':
-        Day_Of_Week = 'Jueves'
-    elif Two_Letters == 'vi':
-        Day_Of_Week = 'Viernes'
-    elif Two_Letters == 'sa':
-        Day_Of_Week = 'Sábado'
-    elif Two_Letters == 'do':
-        Day_Of_Week = 'Domingo'
-
-    return Day_Of_Week
-
 def Extract_Day(Line: str) -> str:
-
-    """
-    Extracts the day from a line of text.
-
-    Parameters:
-    - Line (str): A string containing the text from which to extract the 
-      day. The day is located between the extracted day of the week 
-      and the word 'de'.
-
-    Returns:
-    - str: The extracted day as a string.
-
-    """
-
-    Day = Extract_Day_Of_Week(Line).lower()
-    First_Digit = Stringio.Get_Last_Character_Position_Of_Substring(Line, Day) + 2
-    Last_Digit = Line.find(' de ')
-    Day = Line[First_Digit:Last_Digit]
+    Day = str(Stringio.Get_Numbers(Line)[3])
     return Day
 
-def Extract_Month(Line: str) -> str:
+def Extract_Month(Line: str) -> int:
 
-    """
-    Extracts the month from a line of text.
+    Line = Line.lower()
 
-    Parameters:
-    - Line (str): A string containing the text from which to extract the 
-      month. The month is identified by matching it against a predefined 
-      list of month names.
-
-    Returns:
-    - str: The extracted month, capitalized (e.g., 'Enero').
-
-    """
-
-    Months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
-    for Month in Months:
+    Months = {1: 'enero', 
+              2: 'febrero', 
+              3: 'marzo', 
+              4: 'abril', 
+              5: 'mayo', 
+              6: 'junio', 
+              7: 'julio', 
+              8: 'agosto', 
+              9: 'septiembre', 
+              10: 'octubre', 
+              11: 'noviembre', 
+              12: 'diciembre'}
+    
+    for Index, Month in Months.items():
         if Month in Line:
-            Final_Month = Month
-    Final_Month = Final_Month.capitalize()
+            Final_Month = Index
+
     return Final_Month
 
 def Extract_Year(Line: str) -> str:
-
-    """
-    Extracts the year from a line of text.
-
-    Parameters:
-    - Line (str): A string containing the text from which to extract the 
-      year. The year is expected to be in the range of 1900 to 2100.
-
-    Returns:
-    - str: The extracted year as a string.
-
-    """
-
-    Years = np.arange(1900, 2100).tolist()
-    for Year in Years:
-        if str(Year) in Line:
-            Index_Last_Year = Line.rfind(str(Year))
-            Final_Year = Line[Index_Last_Year:Index_Last_Year + 4]
-            break 
-
-    return Final_Year
+    Year = str(Stringio.Get_Numbers(Line)[4])
+    return Year
 
 def Extract_Hour(Line: str) -> str:
-
-    """
-    Extracts the time (hour) from a line of text.
-
-    Parameters:
-    - Line (str): A string containing the text from which to extract the 
-      hour. The hour is found by identifying a colon (':') and extracting 
-      the characters surrounding it.
-
-    Returns:
-    - str: The extracted hour as a string (e.g., '12:30').
-
-    """
-
-    Text = ':'
-    First_Digit = Stringio.Get_Last_Character_Position_Of_Substring(Line, Text) - 3
-    if Line[First_Digit] == ' ':
-        First_Digit = Stringio.Get_Last_Character_Position_Of_Substring(Line, Text) - 2
-    Last_Digit = Stringio.Get_Last_Character_Position_Of_Substring(Line, Text) + 2
-    Hour = Line[First_Digit:Last_Digit]
+    Hour = str(Stringio.Get_Numbers(Line)[5]) + str(Stringio.Get_Numbers(Line)[6])
     return Hour
+
+def Calculate_Day_Of_Week(Day, Month, Year, Hour = '00:00') -> int:
+
+    if len(Month) == 1:
+        Month = '0' + Month
+    
+    if isinstance(Day, (int, float)):
+        Day = str(Day)
+        
+    Fecha = dt.datetime.strptime(f'{str(Year)}-{str(Month)}-{str(Day)}, {Hour}:00', '%Y-%m-%d %H:%M:%S')
+    Day_Of_Week = Fecha.weekday()
+
+    return Day_Of_Week
 
 def Build_Note(Lines_List: list) -> list:
 
@@ -224,11 +129,13 @@ def Build_Note(Lines_List: list) -> list:
         Note_Dict['Author'] = Extract_Author(Lines_List[i])
         Note_Dict['Book'] = Extract_Book(Lines_List[i])
         Note_Dict['Page'] = Extract_Page(Lines_List[i + 1])
-        Note_Dict['Day_Of_Week'] = Extract_Day_Of_Week(Lines_List[i + 1])
         Note_Dict['Day'] = Extract_Day(Lines_List[i + 1])
         Note_Dict['Month'] = Extract_Month(Lines_List[i + 1])
         Note_Dict['Year'] = Extract_Year(Lines_List[i + 1])
         Note_Dict['Hour'] = Extract_Hour(Lines_List[i + 1])
+        Note_Dict['Day_Of_Week'] = Calculate_Day_Of_Week(str(Note_Dict['Day']), 
+                                                         str(Note_Dict['Month']),
+                                                         str(Note_Dict['Year']))
         i += 3
 
         Highlight_Lines_List = []
@@ -383,7 +290,7 @@ def Build_Df_Of_Highlights(File_Path: str) -> pd.DataFrame:
     Lines_List = Content.splitlines()
     Notes = Build_Note(Lines_List)
     df = pd.DataFrame(Notes)
-
+    
     # Hour Format.
     df['Hour'] = pd.to_datetime(df['Hour'], format='%H:%M').dt.time
 

@@ -334,6 +334,12 @@ def Get_URL(String: str) -> list:
 
     return URLs
 
+def Get_Numbers(String):
+    Resultado = re.findall(r"\d+", String)
+    Resultado = [float(Element) for Element in Resultado]
+
+    return Resultado
+
 #######################################################################################################################
 # PROCESSING #
 #######################################################################################################################

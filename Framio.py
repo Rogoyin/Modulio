@@ -1682,3 +1682,68 @@ def Process_DataFrame(df: pd.DataFrame,
             df = Replace_Values_In_Name_Columns(df, Replace_In_Name_Columns[0][Index], Replace_In_Name_Columns[1][Index])
     
     return df
+
+def Add_Row_To_DataFrame(Row: dict, df: pd.DataFrame, Fill: str | int | bool | float = np.nan, Last = True) -> pd.DataFrame:
+
+    """
+    Adds a new row to a specified DataFrame based on a dictionary.
+
+    This function creates a new row in a DataFrame using the values 
+    provided in a dictionary. If a key in the dictionary does not 
+    match a column in the DataFrame, that column will be filled 
+    with the specified value. The new row can be added at the end 
+    or the beginning of the DataFrame.
+
+    Parameters:
+    -----------
+    Row : dict
+        A dictionary containing the data for the new row. The keys 
+        should match the column names in the DataFrame.
+
+    df : pd.DataFrame
+        The DataFrame to which the new row will be added.
+
+    Last : bool, optional
+        If True (default), the new row is added to the end of the 
+        DataFrame. If False, it is added to the beginning.
+
+    Fill : str, int, bool or float, optional
+        The value used to fill in any missing columns in the new 
+        row if the corresponding keys are not found in the dictionary. 
+        The default is np.nan. This can be any valid data type.
+
+    Returns:
+    --------
+    pd.DataFrame
+        The updated DataFrame with the new row added.
+    
+    Notes:
+    ------
+    - The function checks if each key in the dictionary matches a 
+      column in the DataFrame. If not, the Fill value is assigned 
+      to that column for the new row.
+    - The DataFrame index is reset after adding the new row.
+
+    Example:
+    ---------
+    >>> data = {'Name': 'David'}
+    >>> updated_df = Add_Row_To_DataFrame(data, df, Fill='Unknown')
+
+    """
+    
+    New_Row = pd.DataFrame()
+
+    for Column in df.columns:
+        if Column in list(Row.keys()):
+            New_Row.loc[0, Column] = Row[Column]
+        else:
+            New_Row.loc[0, Column] = Fill
+
+    if Last:
+        df = pd.concat([df, New_Row], ignore_index=True)
+    else:
+        df = pd.concat([New_Row, df], ignore_index=True)
+
+    df = df.reset_index(drop=True)
+
+    return df

@@ -2,6 +2,7 @@ import pandas as pd
 import re
 import Stringio
 from typing import List, Callable, Optional
+import numpy as np
 
 def Match_And_Copy_Column_Values(df1: pd.DataFrame, df2: pd.DataFrame, 
                                  Column_df1_A: str, Column_df1_B: str, 
@@ -1233,7 +1234,8 @@ def Sort_Columns(df: pd.DataFrame, Order_By: str, Ascending = False):
 
 # Se puede hacer todavía más personalizada ajustando el marcador: número, letra, 
 # a partir de cuál, si salta en múltiplos, etc.
-def Divide_Column(df, Column_To_Divide = None, Separator = "_", Column_Names = None, Delete = True):
+def Divide_Column(df, Column_To_Divide = None, Separator = "_", Column_Names = None, 
+                  Delete = True):
 
     """
     Splits a specified column in the DataFrame into multiple columns based on a separator.

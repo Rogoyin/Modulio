@@ -874,7 +874,7 @@ def Convert_Type_Of_Columns(df: pd.DataFrame, List_Of_Columns: list, Type = str)
                 df[Column] = df[Column].astype(Type)
     return df
 
-def Casing_Column_Names(df: pd.DataFrame, Style: str = 'Pascal Snake Case', Separator: str = "") -> pd.DataFrame:
+def Casing_Column_Names(df: pd.DataFrame, Style: str = 'Pascal Snake Case', Separator: str = " ") -> pd.DataFrame:
     
     """
     Applies a specified casing style to the column names of a DataFrame.

@@ -1,4 +1,4 @@
-import Framio as fr
+import Frampy as fr
 import pandas as pd
 from typing import Optional, Tuple, Dict, List
 

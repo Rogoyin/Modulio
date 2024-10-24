@@ -2,7 +2,7 @@ from notion_client import Client
 from datetime import datetime
 import pandas as pd
 from typing import List, Dict, Optional
-from Stringio import Clean_String_With_Emojis
+from Stringpy import Clean_String_With_Emojis
 
 #######################################################################################################################
 # ADD OR CREATE #

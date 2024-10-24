@@ -8,8 +8,8 @@ from sklearn.linear_model import LinearRegression
 from numpy.polynomial.polynomial import Polynomial
 from collections import Counter
 import itertools
-import Framio as fr
-import Listio as ls
+import Frampy as fr
+import Listpy as ls
 
 #######################################################################################################################
 # CREATE #

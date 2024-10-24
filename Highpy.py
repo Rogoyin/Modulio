@@ -1,10 +1,10 @@
 import re
 import pandas as pd
 import numpy as np
-import Stringio
-import Listio
-import Notio
-import Framio
+import Stringpy
+import Listpy
+import Notpy
+import Frampy
 import numpy as np
 import datetime as dt
 
@@ -44,7 +44,7 @@ def Extract_Book(Line: str) -> str:
 
     """
 
-    Line = Stringio.Remove_Substring_From_String(Line, '\ufeff')
+    Line = Stringpy.Remove_Substring_From_String(Line, '\ufeff')
     i = 0
     while Line[i] != "(":
         i += 1
@@ -52,11 +52,11 @@ def Extract_Book(Line: str) -> str:
     return Book
 
 def Extract_Page(Line: str) -> str:
-    Page = str(Stringio.Get_Numbers(Line)[0])
+    Page = str(Stringpy.Get_Numbers(Line)[0])
     return Page
 
 def Extract_Day(Line: str) -> str:
-    Day = str(Stringio.Get_Numbers(Line)[3])
+    Day = str(Stringpy.Get_Numbers(Line)[3])
     return Day
 
 def Extract_Month(Line: str) -> int:
@@ -83,11 +83,11 @@ def Extract_Month(Line: str) -> int:
     return Final_Month
 
 def Extract_Year(Line: str) -> str:
-    Year = str(Stringio.Get_Numbers(Line)[4])
+    Year = str(Stringpy.Get_Numbers(Line)[4])
     return Year
 
 def Extract_Hour(Line: str) -> str:
-    Hour = str(Stringio.Get_Numbers(Line)[5]) + str(Stringio.Get_Numbers(Line)[6])
+    Hour = str(Stringpy.Get_Numbers(Line)[5]) + str(Stringpy.Get_Numbers(Line)[6])
     return Hour
 
 def Calculate_Day_Of_Week(Day, Month, Year, Hour = '00:00') -> int:
@@ -172,7 +172,7 @@ def Match_Notes_With_Notion_Bases(Token: object, Author_List: list, Page_ID: str
 
     """
 
-    Titles = Notio.Get_Database_Properties(Token, Page_ID, Data=['Title', 'ID'])
+    Titles = Notpy.Get_Database_Properties(Token, Page_ID, Data=['Title', 'ID'])
 
     if Previous_Match_Base != []:
         Listed_Authors = [author['Author'] for author in Previous_Match_Base]
@@ -182,15 +182,15 @@ def Match_Notes_With_Notion_Bases(Token: object, Author_List: list, Page_ID: str
     Notion_Last_Names = []
     for i in range(len(Titles)):
         Name = Titles[i]['Title']
-        Name = Stringio.Remove_Acents(Name)
-        Name = Stringio.Get_Words_From_Text(Name, -1).strip()
+        Name = Stringpy.Remove_Acents(Name)
+        Name = Stringpy.Get_Words_From_Text(Name, -1).strip()
         Notion_Last_Names.append(Name)
 
     List_Last_Names = []
     for i in range(len(Author_List)):
         Name = Author_List[i]
-        Name = Stringio.Remove_Acents(Name)
-        Name = Stringio.Get_Words_From_Text(Name, -1).strip()
+        Name = Stringpy.Remove_Acents(Name)
+        Name = Stringpy.Get_Words_From_Text(Name, -1).strip()
         List_Last_Names.append(Name)
 
     for i in range(len(Notion_Last_Names)):
@@ -295,9 +295,9 @@ def Build_Df_Of_Highlights(File_Path: str) -> pd.DataFrame:
     df['Hour'] = pd.to_datetime(df['Hour'], format='%H:%M').dt.time
 
     # 'Date' column.
-    df = Framio.Create_Date_Column(df, Spanish = True)
+    df = Frampy.Create_Date_Column(df, Spanish = True)
 
     # Sort.
-    df = Framio.Sort_Columns(df, Order_By='Year')
+    df = Frampy.Sort_Columns(df, Order_By='Year')
 
     return df

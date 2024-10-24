@@ -2,7 +2,7 @@
 --OPERACIONES EXCLUSIVAS DEL PROGRAMA DEL FORRAJE--
 '''
 
-import Stringio
+import Stringpy
 from typing import List
 import pandas as pd
 
@@ -56,8 +56,8 @@ def Column_Provider_Processing(df: pd.DataFrame, Columns_Providers: List[str]) -
     """
 
     for Provider in Columns_Providers:
-        df[Provider] = df[Provider].astype(str).apply(Stringio.Remove_Everything_Least_Numbers)
-        df[Provider] = df[Provider].apply(Stringio.Remove_Last_Character)
+        df[Provider] = df[Provider].astype(str).apply(Stringpy.Remove_Everything_Least_Numbers)
+        df[Provider] = df[Provider].apply(Stringpy.Remove_Last_Character)
         df[Provider] = df[Provider].replace("", "0")
         df[Provider] = df[Provider].astype(float)
     return df

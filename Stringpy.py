@@ -164,6 +164,22 @@ def Remove_Special_Characters(String: str) -> str:
 
     return String
 
+def Remove_Stopwords(Text: str, Stopwords: list) -> str:
+
+    """
+    Removes common words (stopwords) from a given text.
+    
+    :param Text: The input string from which stopwords will be removed.
+    :param Stopwords: A list of stopwords to remove.
+    :return: A string with stopwords removed.
+
+    """
+    
+    Words = Text.split()  # Split text into individual words.
+    Filtered_Text = [Word for Word in Words if Word.lower() not in Stopwords]  # Remove stopwords.
+    
+    return ' '.join(Filtered_Text)  # Join the filtered words back into a string.
+
 
 #######################################################################################################################
 # GET #

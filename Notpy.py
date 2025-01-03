@@ -67,7 +67,7 @@ def Create_Text_Block(Text: str, Color: str):
 
     return Block
 
-def Create_Page(Token: Client, Parent_ID: str, Title: str, Properties: dict = None) -> dict:
+def Create_Page(Token: Client, Parent_ID: str, Title: str, Properties: dict = {}) -> dict:
 
     """
     Creates a new page in a Notion database or workspace. Has a additional properties to set for the new page. 

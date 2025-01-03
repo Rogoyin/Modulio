@@ -91,14 +91,32 @@ def Extract_Hour(Line: str) -> str:
     return Hour
 
 def Calculate_Day_Of_Week(Day, Month, Year, Hour = '00:00') -> int:
-
-    if len(Month) == 1:
-        Month = '0' + Month
     
-    if isinstance(Day, (int, float)):
-        Day = str(Day)
-        
-    Fecha = dt.datetime.strptime(f'{str(Year)}-{str(Month)}-{str(Day)}, {Hour}:00', '%Y-%m-%d %H:%M:%S')
+    """
+    Calculate the day of the week for a given date.
+
+    Parameters:
+    - Day: Day of the month (can be int, float, or str).
+    - Month: Month of the year (can be int, float, or str).
+    - Year: Year of the date (can be int, float, or str).
+    - Hour: Hour in HH:MM format (default is '00:00').
+
+    Returns:
+    - int: Day of the week (0 = Monday, 6 = Sunday).
+    """
+    # Convert Day, Month, and Year to integers to handle cases like 6.0 or 2024.0.
+    Day = int(float(Day))
+    Month = int(float(Month))
+    Year = int(float(Year))
+    
+    # Format Month and Day to always have two digits.
+    Month = f'{Month:02d}'
+    Day = f'{Day:02d}'
+    
+    # Create the datetime object with the correct format.
+    Fecha = dt.datetime.strptime(f'{Year}-{Month}-{Day} {Hour}:00', '%Y-%m-%d %H:%M:%S')
+    
+    # Get the day of the week (0 = Monday, 6 = Sunday).
     Day_Of_Week = Fecha.weekday()
 
     return Day_Of_Week

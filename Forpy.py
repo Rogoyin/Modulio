@@ -34,7 +34,6 @@ Markup_And_Unity = {
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 def Column_Provider_Processing(df: pd.DataFrame, Columns_Providers: List[str]) -> pd.DataFrame:
-    
     """
     Processes specified columns containing provider prices by applying 
     a series of text transformations and conversions.
@@ -49,17 +48,35 @@ def Column_Provider_Processing(df: pd.DataFrame, Columns_Providers: List[str]) -
     - pd.DataFrame: The modified DataFrame with processed columns.
 
     Notes:
-    - The processing includes converting values to strings, removing 
-      unwanted characters, replacing empty strings with '0', and 
-      converting the results to floats.
+    - The processing includes converting float values to integers,
+      applying string transformations, removing unwanted characters,
+      replacing empty strings with '0', and converting the results 
+      to floats.
 
     """
 
     for Provider in Columns_Providers:
-        df[Provider] = df[Provider].astype(str).apply(Stringpy.Remove_Everything_Least_Numbers)
-        df[Provider] = df[Provider].apply(Stringpy.Remove_Last_Character)
+        
+        # Step 1: Fill NaN values to avoid conversion issues.
+        df[Provider] = df[Provider].fillna(0)
+        
+        # Step 2: Convert floats to integers (remove decimals).
+        df[Provider] = df[Provider].apply(lambda x: int(x) if isinstance(x, float) else x)
+        
+        # Step 3: Apply transformations only to string values.
+        df[Provider] = df[Provider].apply(
+            lambda x: Stringpy.Remove_Everything_Least_Numbers(x) 
+            if isinstance(x, str) else x
+        )
+        df[Provider] = df[Provider].apply(
+            lambda x: Stringpy.Remove_Last_Character(x) 
+            if isinstance(x, str) else x
+        )
+        
+        # Step 4: Replace empty strings with "0" and convert to float.
         df[Provider] = df[Provider].replace("", "0")
         df[Provider] = df[Provider].astype(float)
+        
     return df
 
 def Find_Best_Provider(df: pd.DataFrame, Columns_Providers: List[str]) -> pd.DataFrame:

@@ -326,7 +326,7 @@ def Get_Selected_Rows_By_Column(df: pd.DataFrame, Column: str, Value: object, Co
         return df[df[Column] == Value]
     
     elif Condition == "Contains":
-        return df[df[Column].str.contains(Value, na=False)]
+        return df[df[Column].str.contains(str(Value), na=False)]
 
     elif Condition == ">":
         return df[df[Column] > Value]
@@ -356,10 +356,10 @@ def Get_Selected_Rows_By_Column(df: pd.DataFrame, Column: str, Value: object, Co
             raise ValueError(f"Value for 'Not in' condition must be a list, set, or tuple.")
     
     elif Condition == "Starts with":
-        return df[df[Column].str.startswith(Value, na=False)]
+        return df[df[Column].str.startswith(str(Value), na=False)]
 
     elif Condition == "Ends with":
-        return df[df[Column].str.endswith(Value, na=False)]
+        return df[df[Column].str.endswith(str(Value), na=False)]
 
     elif Condition == "Is null":
         return df[df[Column].isnull()]
@@ -487,7 +487,7 @@ def Add_Word_To_Name_Columns(df, Word = None, Separator = '_'):
     '''
     Adds a specified word to the names of all columns in a DataFrame.
 
-    This function renames each column by appending the specified word (with a 
+    This function renames each column by appending the specified word (with a
     separator) to the original column name.
 
     Parameters:
@@ -495,9 +495,8 @@ def Add_Word_To_Name_Columns(df, Word = None, Separator = '_'):
     df : pd.DataFrame
         The DataFrame containing the data.
 
-    Word : Optional[str]
-        The word to append to each column name. If None, it defaults to the string 
-        representation of the DataFrame.
+    Word : str
+        The word to append to each column name. This must be provided.
 
     Separator : str
         The separator to use between the original column name and the appended word.
@@ -505,10 +504,15 @@ def Add_Word_To_Name_Columns(df, Word = None, Separator = '_'):
     Returns:
     --------
     pd.DataFrame
-        The original DataFrame with renamed columns.
+        A new DataFrame with renamed columns.
+
+    Raises:
+    -------
+    ValueError
+        If 'Word' is not provided or is an empty string.
 
     Example:
-    ---------
+    --------
     >>> df = pd.DataFrame({'A': [1, 2], 'B': [3, 4]})
     >>> updated_df = Add_Word_To_Name_Columns(df, 'Value')
     >>> print(updated_df.columns)
@@ -521,7 +525,7 @@ def Add_Word_To_Name_Columns(df, Word = None, Separator = '_'):
 
     Columns = df.columns.to_list()
     Renaming = {}
-
+        
     for Column in Columns:
         Renaming[Column] = Stringpy.Remove_Acents(Column) + Separator + Word
     
@@ -576,7 +580,7 @@ def Update_Column_In_Selected_Rows(df: pd.DataFrame, Condition_Column: str, Cond
     '''
 
     Filtered_Rows = Get_Selected_Rows_By_Column(df, Condition_Column, Condition_Value, Condition=Condition)
-    df.loc[Filtered_Rows.index, Update_Column] = Update_Value
+    df.loc[Filtered_Rows.index, Update_Column] = pd.Series([Update_Value] * len(Filtered_Rows), index=Filtered_Rows.index)
     return df
 
 def Drop_Selected_Rows(df: pd.DataFrame, Column: str, Value: object, Condition: str = 'Match') -> pd.DataFrame:
@@ -621,12 +625,12 @@ def Drop_Selected_Rows(df: pd.DataFrame, Column: str, Value: object, Condition: 
     df = df.drop(Filtered_Rows.index)
     return df
 
-def Fill_Missing_Values(df: pd.DataFrame, Column: str, Method: str = None, Fill_Value: object = None) -> pd.DataFrame:
+def Fill_Missing_Values(df: pd.DataFrame, Column: str, Method: str = '', Fill_Value: object = None) -> pd.DataFrame:
 
     '''
     Fills missing values in a specified column using a given method or fill value.
 
-    This function can either fill missing values using a specified method (e.g., 
+    This function can either fill missing values using a specified method (e.g.,
     'ffill', 'bfill') or with a constant value.
 
     Parameters:
@@ -638,7 +642,7 @@ def Fill_Missing_Values(df: pd.DataFrame, Column: str, Method: str = None, Fill_
         The name of the column with missing values.
 
     Method : Optional[str]
-        The method to use for filling missing values. Default is None.
+        The method to use for filling missing values. Default is an empty string.
 
     Fill_Value : Optional[object]
         The value to fill missing entries with. Default is None.
@@ -651,10 +655,10 @@ def Fill_Missing_Values(df: pd.DataFrame, Column: str, Method: str = None, Fill_
     Raises:
     -------
     ValueError
-        If neither 'Method' nor 'Fill_Value' is provided.
+        If neither 'Method' nor 'Fill_Value' is provided, or if an invalid method is given.
 
     Example:
-    ---------
+    --------
     >>> df = pd.DataFrame({'A': [1, None, 3]})
     >>> updated_df = Fill_Missing_Values(df, 'A', Fill_Value=0)
     >>> print(updated_df)
@@ -662,16 +666,24 @@ def Fill_Missing_Values(df: pd.DataFrame, Column: str, Method: str = None, Fill_
     0  1.0
     1  0.0
     2  3.0
-
+    
     '''
 
-    if Method:
-        df[Column] = df[Column].fillna(method=Method)
-
-    elif Fill_Value:
-        df[Column] = df[Column].fillna(value=Fill_Value)
-    else:
+    # Validate parameters.
+    if not Method and Fill_Value is None:
         raise ValueError("Either 'Method' or 'Fill_Value' must be provided.")
+
+    if Method and Method not in ['backfill', 'bfill', 'pad', 'ffill']:
+        raise ValueError(f"Invalid method: {Method}. Use one of ['backfill', 'bfill', 'pad', 'ffill'].")
+
+    # Apply the specified method or fill value.
+    if Method:
+        # Correct use of `method`.
+        df[Column] = df[Column].fillna(method=Method)  # type: ignore 
+    elif Fill_Value is not None:
+        # Correct use of `value`.
+        df[Column] = df[Column].fillna(value=Fill_Value)  # type: ignore 
+
     return df
 
 def Apply_Operation_To_Columns(df: pd.DataFrame, Columns: List[str], Operations: Optional[List[Callable]] = None) -> pd.DataFrame:
@@ -710,6 +722,8 @@ def Apply_Operation_To_Columns(df: pd.DataFrame, Columns: List[str], Operations:
     '''
 
     for Column in Columns:
+        if Operations is None:
+            Operations = []
         for Operation in Operations:
             df[Column] = df[Column].apply(Operation)
     return df
@@ -833,7 +847,7 @@ def Find_Best_Value_Column(
     """
     
     if Comparison_Function is None:
-        Comparison_Function = lambda Target, Value: Target == Value
+        Comparison_Function = lambda Target, Value: (Target == Value).all()
 
     for Index, Row in df.iterrows():
         Best_Value = None
@@ -845,7 +859,7 @@ def Find_Best_Value_Column(
 
     return df
 
-def Convert_Type_Of_Columns(df: pd.DataFrame, List_Of_Columns: list, Type = str):
+def Convert_Type_Of_Columns(df: pd.DataFrame, List_Of_Columns: list, Type: str):
 
     """
     Converts the data type of specified columns in a DataFrame.

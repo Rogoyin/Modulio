@@ -471,16 +471,16 @@ def Filter_List_By_Criteria(List: list, Criteria: str = "=", Value = None, Value
             if Element <= Value:
                 Final_List.append(Element)
         elif Criteria == "Contains":
-            if isinstance(Element, str) and Value in Element:
+            if isinstance(Element, str) and isinstance(Value, str) and Value in Element:
                 Final_List.append(Element)
         elif Criteria == "Not Contains":
-            if isinstance(Element, str) and Value not in Element:
+            if isinstance(Element, str) and isinstance(Value, str) and Value not in Element:
                 Final_List.append(Element)
         elif Criteria == "Starts With":
-            if isinstance(Element, str) and Element.startswith(Value):
+            if isinstance(Element, str) and isinstance(Value, str) and Element.startswith(Value):
                 Final_List.append(Element)
         elif Criteria == "Ends With":
-            if isinstance(Element, str) and Element.endswith(Value):
+            if isinstance(Element, str) and isinstance(Value, (str, tuple)) and Element.endswith(Value):
                 Final_List.append(Element)
         elif Criteria == "In":
             if Element in Value:
@@ -489,7 +489,7 @@ def Filter_List_By_Criteria(List: list, Criteria: str = "=", Value = None, Value
             if Element not in Value:
                 Final_List.append(Element)
         elif Criteria == "Is Instance":
-            if isinstance(Element, Value):
+            if Value is not None and isinstance(Value, type) and isinstance(Element, Value):
                 Final_List.append(Element)
         elif Criteria == "Between":
             if Value <= Element <= Value2:
@@ -507,16 +507,16 @@ def Filter_List_By_Criteria(List: list, Criteria: str = "=", Value = None, Value
             if Element % Value == Value2:
                 Final_List.append(Element)
         elif Criteria == "Regex":
-            if isinstance(Element, str) and re.search(Value, Element):
+            if isinstance(Element, str) and isinstance(Value, (str, re.Pattern)) and re.search(Value, Element):
                 Final_List.append(Element)
         elif Criteria == "All True":
-            if all(Value(E) for E in Element):
+            if Value is not None and callable(Value) and all(Value(E) for E in Element):
                 Final_List.append(Element)
         elif Criteria == "Any True":
-            if any(Value(E) for E in Element):
+            if Value is not None and callable(Value) and any(Value(E) for E in Element):
                 Final_List.append(Element)
         elif Criteria == "Custom Function":
-            if Value(Element):
+            if Value is not None and callable(Value) and Value(Element):
                 Final_List.append(Element)
         elif Criteria == "Type Equals":
             if type(Element) == Value:

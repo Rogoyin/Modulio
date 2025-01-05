@@ -4,11 +4,12 @@
 
 import Stringpy
 from typing import List
-import pandas as pd
+import pandas as pd # type: ignore
 import time
-import pyautogui
-import pygetwindow as gw
+import pyautogui # type: ignore
+import pygetwindow as gw # type: ignore
 import subprocess
+import pyperclip
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 # Diccionarios.
@@ -123,13 +124,15 @@ def Aumentar_Nex(df: pd.DataFrame, Cantidad_Productos_A_Aumentar: int):
     time.sleep(15)
 
     # Pestaña de productos.
-    pyautogui.click(80, 221)
+    pyautogui.click(80, 230)
     time.sleep(15)
     
+    Productos = list(df['Descripcion'])
+
     try:
         for i in range(Cantidad_Productos_A_Aumentar):
             # Obtener datos del DataFrame.
-            Producto = df['Descripcion'][i]
+            Producto = Productos[i]
             Precio = df['Precio_Fin'][i]
             Costo = df['Costo_Fin'][i]
 
@@ -141,7 +144,15 @@ def Aumentar_Nex(df: pd.DataFrame, Cantidad_Productos_A_Aumentar: int):
             time.sleep(1)
 
             # Pegar el nombre del producto.
-            pyautogui.typewrite(str(Producto))  # Escribir el nombre del producto.
+            # Copiar el producto al portapapeles.
+            pyperclip.copy(Producto)
+    
+            # Esperar un poco antes de pegar.
+            time.sleep(1)
+            
+            # Pegar el texto del portapapeles.
+            pyautogui.hotkey('ctrl', 'v')  
+            pyautogui.press('enter')  
             time.sleep(1.5)
             pyautogui.click(486, 314)
             time.sleep(0.2)

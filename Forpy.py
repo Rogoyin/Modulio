@@ -9,7 +9,7 @@ import time
 import pyautogui # type: ignore
 import pygetwindow as gw # type: ignore
 import subprocess
-import pyperclip
+import pyperclip # type: ignore
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 # Diccionarios.
@@ -140,7 +140,7 @@ def Aumentar_Nex(df: pd.DataFrame, Cantidad_Productos_A_Aumentar: int):
             time.sleep(1)
             pyautogui.click(577, 371)
             time.sleep(1)
-            pyautogui.press('tab', presses=4, interval=0.2)
+            pyautogui.press('tab', presses=4, interval=0.5)
             time.sleep(1)
 
             # Pegar el nombre del producto.
@@ -160,7 +160,7 @@ def Aumentar_Nex(df: pd.DataFrame, Cantidad_Productos_A_Aumentar: int):
             time.sleep(0.2)
 
             # Navegar a la sección del precio.
-            pyautogui.press('tab', presses=8, interval=0.2)
+            pyautogui.press('tab', presses=9, interval=0.5)
             time.sleep(0.5)
             pyautogui.press('space')
             time.sleep(0.5)
@@ -172,7 +172,7 @@ def Aumentar_Nex(df: pd.DataFrame, Cantidad_Productos_A_Aumentar: int):
             time.sleep(0.5)
 
             # Navegar a la sección del costo.
-            pyautogui.press('tab', presses=3, interval=0.2)
+            pyautogui.press('tab', presses=3, interval=0.5)
             time.sleep(0.5)
 
             # Borrar contenido anterior y pegar el costo.

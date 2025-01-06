@@ -1770,11 +1770,12 @@ def Show_Dataframe_Editor(Dataframe, Columns_To_Display):
 
     """
     Displays a Tkinter window to edit a DataFrame filtered by specific columns.
-
+    Also allows rows to be deleted with an "X" button next to each row.
+    
     Args:
         Dataframe: The original DataFrame to display and edit.
         Columns_To_Display: List of column names to include in the table.
-
+    
     Returns:
         The updated DataFrame after editing.
 
@@ -1795,9 +1796,64 @@ def Show_Dataframe_Editor(Dataframe, Columns_To_Display):
                 Filtered_Dataframe.at[Row_Index, Column_Name] = Row[Column_Index].get()
         Root.destroy()  # Close the window.
 
+    def Delete_Row(Row_Index):
+
+        """
+        Deletes a row from the DataFrame when the "X" button is clicked.
+
+        """
+
+        # Drop the row by index.
+        Filtered_Dataframe.drop(Filtered_Dataframe.index[Row_Index], inplace=True)
+        
+        # Reset index to avoid NaN or misalignment of rows.
+        Filtered_Dataframe.reset_index(drop=True, inplace=True)
+        
+        # Update the table view.
+        Update_Table()
+
+    def Update_Table():
+
+        """
+        Updates the table to reflect changes made to the DataFrame.
+
+        """
+
+        # Clear the existing widgets in the table frame.
+        for Widget in Table_Frame.winfo_children():
+            Widget.destroy()
+
+        # Clear the existing Table_Data.
+        Table_Data.clear()
+
+        # Create column headers.
+        for Column_Index, Column_Name in enumerate(Columns_To_Display):
+            Header = ttk.Label(Table_Frame, text=Column_Name, borderwidth=1, relief="solid", anchor="center")
+            Header.grid(row=0, column=Column_Index, sticky="nsew", padx=1, pady=1)
+
+        # Recreate the table cells and delete buttons.
+        for Row_Index, Row in Filtered_Dataframe.iterrows():
+            Row_Data = []
+            for Column_Index, Column_Name in enumerate(Columns_To_Display):
+                Cell_Value = tk.StringVar(value=Row[Column_Name])
+                Entry = ttk.Entry(Table_Frame, textvariable=Cell_Value, width=15)
+                Entry.grid(row=Row_Index + 1, column=Column_Index, sticky="nsew", padx=1, pady=1)
+                Row_Data.append(Cell_Value)
+
+            # Create an "X" button for deleting the row.
+            Delete_Button = ttk.Button(Table_Frame, text="X", command=lambda row_index=Row_Index: Delete_Row(row_index))
+            Delete_Button.grid(row=Row_Index + 1, column=len(Columns_To_Display), sticky="nsew", padx=1, pady=1)
+
+            # Store the row data in Table_Data.
+            Table_Data.append(Row_Data)
+
+        # Update the scroll region.
+        Table_Frame.update_idletasks()
+        Canvas.config(scrollregion=Canvas.bbox("all"))
+
     # Create the main Tkinter window.
     Root = tk.Tk()
-    Root.title("DataFrame Editor")  # Set the window title.
+    Root.title("DataFrame Editor")
 
     # Create a frame for the table and a canvas for scrolling.
     Canvas_Frame = ttk.Frame(Root)
@@ -1807,7 +1863,7 @@ def Show_Dataframe_Editor(Dataframe, Columns_To_Display):
     Canvas = tk.Canvas(Canvas_Frame)
     Vertical_Scrollbar = ttk.Scrollbar(Canvas_Frame, orient="vertical", command=Canvas.yview)
     Horizontal_Scrollbar = ttk.Scrollbar(Canvas_Frame, orient="horizontal", command=Canvas.xview)
-    
+
     Canvas.configure(yscrollcommand=Vertical_Scrollbar.set, xscrollcommand=Horizontal_Scrollbar.set)
 
     Vertical_Scrollbar.pack(side="right", fill="y")
@@ -1818,23 +1874,11 @@ def Show_Dataframe_Editor(Dataframe, Columns_To_Display):
     Table_Frame = ttk.Frame(Canvas)
     Canvas.create_window((0, 0), window=Table_Frame, anchor="nw")
 
-    # Create column headers.
-    for Column_Index, Column_Name in enumerate(Columns_To_Display):
-        Header = ttk.Label(
-            Table_Frame, text=Column_Name, borderwidth=1, relief="solid", anchor="center"
-        )
-        Header.grid(row=0, column=Column_Index, sticky="nsew", padx=1, pady=1)
-
-    # Create table cells.
+    # Initialize Table_Data as a list to hold the row data.
     Table_Data = []
-    for Row_Index, Row in Filtered_Dataframe.iterrows():
-        Row_Data = []
-        for Column_Index, Column_Name in enumerate(Columns_To_Display):
-            Cell_Value = tk.StringVar(value=Row[Column_Name])
-            Entry = ttk.Entry(Table_Frame, textvariable=Cell_Value, width=15)
-            Entry.grid(row=Row_Index + 1, column=Column_Index, sticky="nsew", padx=1, pady=1)
-            Row_Data.append(Cell_Value)  # Store the cell variable.
-        Table_Data.append(Row_Data)  # Store the row data.
+
+    # Create the initial table.
+    Update_Table()
 
     # Create a button to save changes.
     Save_Button = ttk.Button(Root, text="Save Changes", command=Save_Changes)
@@ -1844,12 +1888,8 @@ def Show_Dataframe_Editor(Dataframe, Columns_To_Display):
     for Column_Index in range(len(Columns_To_Display)):
         Table_Frame.grid_columnconfigure(Column_Index, weight=1)
 
-    # Update the scroll region of the canvas.
-    Table_Frame.update_idletasks()
-    Canvas.config(scrollregion=Canvas.bbox("all"))
-
     # Run the Tkinter main loop.
     Root.mainloop()
 
-    return Filtered_Dataframe  # Return the updated DataFrame.
+    return Filtered_Dataframe
 

@@ -1767,7 +1767,7 @@ def Add_Row_To_DataFrame(Row: dict, df: pd.DataFrame, Fill: str | int | bool | f
     return df
 
 def Show_Dataframe_Editor(Dataframe, Columns_To_Display):
-    
+
     """
     Displays a Tkinter window to edit a DataFrame filtered by specific columns.
 
@@ -1778,20 +1778,18 @@ def Show_Dataframe_Editor(Dataframe, Columns_To_Display):
     Returns:
         The updated DataFrame after editing.
 
-    Example:
-        >>> Data = {"ID": [1, 2], "Name": ["Alice", "Bob"], "Age": [30, 25]}
-        >>> DF = pd.DataFrame(Data)
-        >>> Updated_DF = Show_Dataframe_Editor(DF, ["Name", "Age"])
-        >>> print(Updated_DF)
-               Name  Age
-        0     Alice   31
-        1       Bob   26
     """
+
     # Create a copy of the DataFrame with only the specified columns.
     Filtered_Dataframe = Dataframe[Columns_To_Display].copy()
 
     def Save_Changes():
-        """Saves changes to the filtered DataFrame and closes the Tkinter window."""
+
+        """
+        Saves changes to the filtered DataFrame and closes the Tkinter window.
+
+        """
+
         for Row_Index, Row in enumerate(Table_Data):
             for Column_Index, Column_Name in enumerate(Columns_To_Display):
                 Filtered_Dataframe.at[Row_Index, Column_Name] = Row[Column_Index].get()
@@ -1801,14 +1799,29 @@ def Show_Dataframe_Editor(Dataframe, Columns_To_Display):
     Root = tk.Tk()
     Root.title("DataFrame Editor")  # Set the window title.
 
-    # Create a frame for the table.
-    Frame = ttk.Frame(Root)
-    Frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+    # Create a frame for the table and a canvas for scrolling.
+    Canvas_Frame = ttk.Frame(Root)
+    Canvas_Frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+
+    # Create vertical and horizontal scrollbars.
+    Canvas = tk.Canvas(Canvas_Frame)
+    Vertical_Scrollbar = ttk.Scrollbar(Canvas_Frame, orient="vertical", command=Canvas.yview)
+    Horizontal_Scrollbar = ttk.Scrollbar(Canvas_Frame, orient="horizontal", command=Canvas.xview)
+    
+    Canvas.configure(yscrollcommand=Vertical_Scrollbar.set, xscrollcommand=Horizontal_Scrollbar.set)
+
+    Vertical_Scrollbar.pack(side="right", fill="y")
+    Horizontal_Scrollbar.pack(side="bottom", fill="x")
+    Canvas.pack(side="left", fill="both", expand=True)
+
+    # Create a frame to hold the table inside the canvas.
+    Table_Frame = ttk.Frame(Canvas)
+    Canvas.create_window((0, 0), window=Table_Frame, anchor="nw")
 
     # Create column headers.
     for Column_Index, Column_Name in enumerate(Columns_To_Display):
         Header = ttk.Label(
-            Frame, text=Column_Name, borderwidth=1, relief="solid", anchor="center"
+            Table_Frame, text=Column_Name, borderwidth=1, relief="solid", anchor="center"
         )
         Header.grid(row=0, column=Column_Index, sticky="nsew", padx=1, pady=1)
 
@@ -1818,7 +1831,7 @@ def Show_Dataframe_Editor(Dataframe, Columns_To_Display):
         Row_Data = []
         for Column_Index, Column_Name in enumerate(Columns_To_Display):
             Cell_Value = tk.StringVar(value=Row[Column_Name])
-            Entry = ttk.Entry(Frame, textvariable=Cell_Value, width=15)
+            Entry = ttk.Entry(Table_Frame, textvariable=Cell_Value, width=15)
             Entry.grid(row=Row_Index + 1, column=Column_Index, sticky="nsew", padx=1, pady=1)
             Row_Data.append(Cell_Value)  # Store the cell variable.
         Table_Data.append(Row_Data)  # Store the row data.
@@ -1829,7 +1842,11 @@ def Show_Dataframe_Editor(Dataframe, Columns_To_Display):
 
     # Adjust column proportions for resizing.
     for Column_Index in range(len(Columns_To_Display)):
-        Frame.grid_columnconfigure(Column_Index, weight=1)
+        Table_Frame.grid_columnconfigure(Column_Index, weight=1)
+
+    # Update the scroll region of the canvas.
+    Table_Frame.update_idletasks()
+    Canvas.config(scrollregion=Canvas.bbox("all"))
 
     # Run the Tkinter main loop.
     Root.mainloop()

@@ -191,3 +191,119 @@ def Aumentar_Nex(df: pd.DataFrame, Cantidad_Productos_A_Aumentar: int):
 
     except KeyboardInterrupt:
         print("El script fue interrumpido manualmente.")
+
+def Cambiar_Descripcion_Nex(df: pd.DataFrame, Cantidad_Productos_A_Cambiar: int):
+
+    """
+    This function automates the process of changing the description of products 
+    in the NexAdmin software. It opens NexAdmin, navigates through its interface, 
+    and modifies product descriptions based on a given DataFrame containing the 
+    old and new descriptions.
+
+    Args:
+        df (pd.DataFrame): A DataFrame with two columns: 'Descripcion' (old 
+                            product descriptions) and 'Editado' (new product 
+                            descriptions). The function will loop through the rows 
+                            and update the descriptions of the products in NexAdmin.
+        Cantidad_Productos_A_Cambiar (int): The number of products to change. 
+                                            This controls how many rows in the 
+                                            DataFrame are processed.
+
+    Returns:
+        None: The function does not return any value. It modifies the product 
+            descriptions directly in the NexAdmin software.
+
+    Example:
+        # Sample DataFrame containing old and new product descriptions
+        data = {
+            'Descripcion': ['Old Description 1', 'Old Description 2'],
+            'Editado': ['New Description 1', 'New Description 2']
+        }
+        df = pd.DataFrame(data)
+
+        # Call the function to change descriptions for 2 products
+        Cambiar_Descripcion_Nex(df, 2)
+
+    Notes:
+        - Ensure that NexAdmin is installed at the specified path 
+        ('C:/Nex/NexAdmin.exe').
+        - The function uses `pyautogui` and `pyperclip` for automating GUI 
+        interactions and copying text.
+        - The script pauses for specific time intervals (`time.sleep`) to allow 
+        for transitions between steps.
+        - The function assumes that the layout and screen coordinates of NexAdmin 
+        are fixed.
+        - Keyboard shortcuts and mouse clicks are automated to simulate human-like 
+        interactions with the software.
+        - The function will be interrupted if the user presses Ctrl+C during 
+        execution.
+
+    """
+
+    # Ejecutar NexAdmin.
+    subprocess.Popen(['C:/Nex/NexAdmin.exe'])  # Ajusta el camino al archivo ejecutable
+
+    # Esperar un momento para asegurarse de que el programa se abre
+    time.sleep(15)
+
+    # Pestaña de productos.
+    pyautogui.click(80, 230)
+    time.sleep(15)
+    
+    Nombres_Viejos = list(df['Descripcion'])
+    Nombres_Nuevos = list(df['Editada'])
+
+    try:
+        for i in range(Cantidad_Productos_A_Cambiar):
+
+            # Obtener datos del DataFrame.
+            Nombre_Viejo = Nombres_Viejos[i]
+            Nombre_Nuevo = Nombres_Nuevos[i]
+
+            # Navegar a la sección de búsqueda.
+            time.sleep(1)
+            pyautogui.click(577, 371)
+            time.sleep(1)
+            pyautogui.press('tab', presses=4, interval=0.5)
+            time.sleep(1)
+
+            # Pegar el nombre del producto.
+            # Copiar el producto al portapapeles.
+            pyperclip.copy(Nombre_Viejo)
+    
+            # Esperar un poco antes de pegar.
+            time.sleep(1)
+            
+            # Pegar el texto del portapapeles.
+            pyautogui.hotkey('ctrl', 'v')  
+            pyautogui.press('enter')  
+            time.sleep(1.5)
+            pyautogui.click(486, 314)
+            time.sleep(0.2)
+            pyautogui.press('enter')
+            time.sleep(0.2)
+
+            # Navegar a la sección del nombre.
+            pyautogui.press('tab', presses=4, interval=0.5)
+            time.sleep(0.5)
+
+            # Borrar contenido anterior y pegar el nombre nuevo.
+            pyautogui.press('delete')
+            time.sleep(0.5)
+            pyautogui.typewrite(str(Nombre_Nuevo))  # Escribir la descripción nueva del producto.
+            time.sleep(0.5)
+
+            # Navegar a la sección del costo.
+            pyautogui.press('tab', presses=3, interval=0.5)
+            time.sleep(0.5)
+
+            # Confirmar cambios.
+            pyautogui.press('f2')
+            time.sleep(0.5)
+            pyautogui.press('space')
+            time.sleep(0.5)
+            pyautogui.click(486, 314)
+            time.sleep(0.5)
+
+    except KeyboardInterrupt:
+        print("El script fue interrumpido manualmente.")

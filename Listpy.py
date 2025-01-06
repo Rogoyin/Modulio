@@ -694,3 +694,26 @@ def Generate_All_Combinations(List: list, Elements: int):
     List_Of_Combinations = list(itertools.combinations(List, Elements))
 
     return List_Of_Combinations
+
+def Find_Different_Elements(First_List: list, Second_List: list) -> list:
+
+    """
+    Finds elements that are present in the first list but not in the second.
+
+    Parameters:
+        First_List: The list to search for unique elements.
+        Second_List: The list to compare against.
+
+    Returns:
+        A list containing elements that are in the first list but 
+        not in the second list.
+
+    Example:
+        >>> Get_Elements_([1, 2, 3], [2, 4])
+        [1, 3]
+
+    """
+
+    Unique_Elements = [Element for Element in First_List if Element not in Second_List]
+
+    return Unique_Elements

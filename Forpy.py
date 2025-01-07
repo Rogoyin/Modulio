@@ -24,7 +24,7 @@ Markup_And_Unity = {
     "Perro Cachorro": {"Markup %": "32", "Unidad": "UN"},
     "Ropa": {"Markup %": "70", "Unidad": "UN"},
     "Mascotas": {"Markup %": "50", "Unidad": "UN"},
-    "Limpieza": {"Markup %": "50", "Unidad": "UN"},
+    "Limpieza": {"Markup %": "45", "Unidad": "UN"},
     "Veterinaria": {"Markup %": "60", "Unidad": "UN"},
     "Balanceados Granel": {"Markup %": "45", "Unidad": "KG"},
     "Balanceados": {"Markup %": "32", "Unidad": "UN"},
@@ -250,7 +250,9 @@ def Cambiar_Descripcion_Nex(df: pd.DataFrame, Cantidad_Productos_A_Cambiar: int)
             # Borrar contenido anterior y pegar el nombre nuevo.
             pyautogui.press('delete')
             time.sleep(0.5)
-            pyautogui.typewrite(str(Nombre_Nuevo))  # Escribir la descripción nueva del producto.
+            pyperclip.copy(Nombre_Nuevo)  # Copiar el producto al portapapeles.
+            time.sleep(1)
+            pyautogui.hotkey('ctrl', 'v')  # Pegar el texto del portapapeles.
             time.sleep(0.5)
 
             # Confirmar cambios.

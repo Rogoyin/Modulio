@@ -1,320 +1,385 @@
 import pandas as pd
 from typing import Any, Dict, List, Set
 
-def Group_Dictionaries_By_Parent_Element(Data_Frame: pd.DataFrame, Element_List: List[str], Parent_Element: str, Child_List: List[str]) -> List[List[Dict[str, str]]]:
+def Agrupar_Diccionarios_Por_Elemento_Padre(
+    Marco_De_Datos: pd.DataFrame, 
+    Lista_De_Elementos: List[str], 
+    Elemento_Padre: str, 
+    Lista_De_Hijos: List[str]
+) -> List[List[Dict[str, str]]]:
 
     """
-    Groups dictionaries containing child elements for each parent element.
+    Agrupa diccionarios que contienen elementos hijos para cada elemento 
+    padre.
 
-    Parameters:
-        Data_Frame: The DataFrame containing the data.
-        Element_List: A list of parent element values to group by.
-        Parent_Element: The column name to use as the parent element.
-        Child_List: A list of child element names to extract.
+    Parámetros:
+        Marco_De_Datos: El DataFrame que contiene los datos.
+        Lista_De_Elementos: Lista de valores de elementos padre para 
+        agrupar.
+        Elemento_Padre: El nombre de la columna a usar como elemento 
+        padre.
+        Lista_De_Hijos: Lista de nombres de elementos hijos a extraer.
 
-    Returns:
-        A list of grouped dictionaries for each parent element.
+    Retorna:
+        Una lista de diccionarios agrupados para cada elemento padre.
 
-    Example:
-        >>> Parent_Element = 'Name'
-        >>> Element_List = ['Jorge', 'Ramón']
-        >>> Child_List = ['Age', 'City']
-        >>> Group_Dictionaries_By_Parent_Element(
-        ...     Data_Frame, Element_List, Parent_Element, Child_List
+    Ejemplo:
+        >>> Elemento_Padre = 'Nombre'
+        >>> Lista_De_Elementos = ['Jorge', 'Ramón']
+        >>> Lista_De_Hijos = ['Edad', 'Ciudad']
+        >>> Agrupar_Diccionarios_Por_Elemento_Padre(
+        ...     Marco_De_Datos, Lista_De_Elementos, 
+        ...     Elemento_Padre, Lista_De_Hijos
         ... )
-        [['Jorge', {'Age': 26}, {'City': 'Buenos Aires'}], 
-         ['Ramón', {'Age': 28}, {'City': 'Rio de Janeiro'}]]
+        [['Jorge', {'Edad': 26}, {'Ciudad': 'Buenos Aires'}], 
+         ['Ramón', {'Edad': 28}, {'Ciudad': 'Rio de Janeiro'}]]
 
     """
 
-    Result = []
+    Resultado = []
 
-    for Parent in Element_List:
-        Data_By_Element = [{Parent_Element: Parent}]
+    for Padre in Lista_De_Elementos:
+        Datos_Por_Elemento = [{Elemento_Padre: Padre}]
 
-        for Index, Row in Data_Frame.iterrows():
-            if Parent == Row[Parent_Element]:
-                Dictionary = {Child: Row[Child] for Child in Child_List}
-                Data_By_Element.append(Dictionary)
+        for Indice, Fila in Marco_De_Datos.iterrows():
+            if Padre == Fila[Elemento_Padre]:
+                Diccionario = {
+                    Hijo: Fila[Hijo] for Hijo in Lista_De_Hijos
+                }
+                Datos_Por_Elemento.append(Diccionario)
         
-        Result.append(Data_By_Element)
+        Resultado.append(Datos_Por_Elemento)
 
-    return Result
+    return Resultado
 
-def Get_Keys_By_Value(Dictionary_List: List[Dict[str, Any]], Value: Any) -> List[str]:
+def Obtener_Claves_Por_Valor(
+    Lista_De_Diccionarios: List[Dict[str, Any]], 
+    Valor: Any
+) -> List[str]:
 
     """
-    Extract keys corresponding to a specific value from a list of 
-    dictionaries.
+    Extrae las claves correspondientes a un valor específico de una 
+    lista de diccionarios.
 
-    Parameters:
-        Dictionary_List (List[Dict[str, Any]]): A list of dictionaries 
-        to extract keys from.
-        Value (Any): The value for which keys should be extracted.
+    Parámetros:
+        Lista_De_Diccionarios (List[Dict[str, Any]]): Una lista de 
+        diccionarios de donde extraer las claves.
+        Valor (Any): El valor para el cual se deben extraer las claves.
 
-    Returns:
-        List[str]: A list of keys corresponding to the specified value.
+    Retorna:
+        List[str]: Una lista de claves correspondientes al valor 
+        especificado.
 
-    Example:
-        >>> Get_Keys_By_Value([{'a': 1, 'b': 2}, {'c': 1}], 1)
+    Ejemplo:
+        >>> Obtener_Claves_Por_Valor([{'a': 1, 'b': 2}, {'c': 1}], 1)
         ['a', 'c']
 
     """
 
-    Keys_List = []
+    Lista_De_Claves = []
 
-    for Dictionary in Dictionary_List:
-        for Key, Dict_Value in Dictionary.items():
-            # Append the key if its value matches the specified value.
-            if Dict_Value == Value:
-                Keys_List.append(Key)
+    for Diccionario in Lista_De_Diccionarios:
+        for Clave, Valor_Dict in Diccionario.items():
+            # Agregar la clave si su valor coincide con el valor 
+            # especificado.
+            if Valor_Dict == Valor:
+                Lista_De_Claves.append(Clave)
 
-    return Keys_List
+    return Lista_De_Claves
 
-def Get_Values_By_Key(Dictionary_List: List[Dict[str, Any]], Key: str) -> List[Any]:
+def Obtener_Valores_Por_Clave(
+    Lista_De_Diccionarios: List[Dict[str, Any]], 
+    Clave: str
+) -> List[Any]:
 
     """
-    Extract values corresponding to a specific key from a list of 
-    dictionaries.
+    Extrae los valores correspondientes a una clave específica de una 
+    lista de diccionarios.
 
-    Parameters:
-        Dictionary_List (List[Dict[str, Any]]): A list of dictionaries 
-        to extract values from.
-        Key (str): The key for which values should be extracted.
+    Parámetros:
+        Lista_De_Diccionarios (List[Dict[str, Any]]): Una lista de 
+        diccionarios de donde extraer los valores.
+        Clave (str): La clave para la cual se deben extraer los valores.
 
-    Returns:
-        List[Any]: A list of values corresponding to the specified key.
+    Retorna:
+        List[Any]: Una lista de valores correspondientes a la clave 
+        especificada.
 
-    Example:
-        >>> Get_Values_By_Key([{'a': 1, 'b': 2}, {'a': 3}], 'a')
+    Ejemplo:
+        >>> Obtener_Valores_Por_Clave([{'a': 1, 'b': 2}, {'a': 3}], 'a')
         [1, 3]
 
     """
 
-    Values_List = []
+    Lista_De_Valores = []
 
-    for Dictionary in Dictionary_List:
-        # Append the value corresponding to the key to the values list.
-        Values_List.append(Dictionary.get(Key))
+    for Diccionario in Lista_De_Diccionarios:
+        # Agregar el valor correspondiente a la clave a la lista de 
+        # valores.
+        Lista_De_Valores.append(Diccionario.get(Clave))
 
-    return Values_List
+    return Lista_De_Valores
 
-def Get_Key_By_Index(Dictionary: Dict[str, Any], Index: int) -> str:
+def Obtener_Clave_Por_Indice(
+    Diccionario: Dict[str, Any], 
+    Indice: int
+) -> str:
 
     """
-    Retrieve a key from a dictionary by its index.
+    Recupera una clave de un diccionario por su índice.
 
-    Parameters:
-        Dictionary (Dict[str, Any]): The dictionary to retrieve the 
-        key from.
-        Index (int): The index of the key to retrieve.
+    Parámetros:
+        Diccionario (Dict[str, Any]): El diccionario del cual recuperar 
+        la clave.
+        Indice (int): El índice de la clave a recuperar.
 
-    Returns:
-        str: The key at the specified index.
+    Retorna:
+        str: La clave en el índice especificado.
 
-    Raises:
-        KeyError: If the index is out of range.
+    Lanza:
+        KeyError: Si el índice está fuera de rango.
 
-    Example:
-        >>> Get_Key_By_Index({'a': 1, 'b': 2, 'c': 3}, 1)
+    Ejemplo:
+        >>> Obtener_Clave_Por_Indice({'a': 1, 'b': 2, 'c': 3}, 1)
         'b'
 
     """
 
-    Count = 0
+    Contador = 0
 
-    if Index >= len(Dictionary):
-        # Raise KeyError if index exceeds dictionary length.
-        raise KeyError("The dictionary does not have that many indices.")
+    if Indice >= len(Diccionario):
+        # Lanzar KeyError si el índice excede la longitud del 
+        # diccionario.
+        raise KeyError("El diccionario no tiene tantos índices.")
     
-    for Key in Dictionary.keys():
-        if Count == Index:
-            return str(Key)
-        Count += 1
+    for Clave in Diccionario.keys():
+        if Contador == Indice:
+            return str(Clave)
+        Contador += 1
 
-    # This line ensures a string return in case of unexpected issues.
-    raise KeyError("Index not found in the dictionary.")
+    # Esta línea asegura un retorno de string en caso de problemas 
+    # inesperados.
+    raise KeyError("Índice no encontrado en el diccionario.")
 
-def Get_Value_By_Index(Dictionary: Dict[str, Any], Index: int) -> Any:
+def Obtener_Valor_Por_Indice(
+    Diccionario: Dict[str, Any], 
+    Indice: int
+) -> Any:
 
     """
-    Retrieve a value from a dictionary by its index.
+    Recupera un valor de un diccionario por su índice.
 
-    Parameters:
-        Dictionary (Dict[str, Any]): The dictionary to retrieve the 
-        value from.
-        Index (int): The index of the value to retrieve.
+    Parámetros:
+        Diccionario (Dict[str, Any]): El diccionario del cual recuperar 
+        el valor.
+        Indice (int): El índice del valor a recuperar.
 
-    Returns:
-        Any: The value at the specified index.
+    Retorna:
+        Any: El valor en el índice especificado.
 
-    Raises:
-        IndexError: If the index is out of range.
+    Lanza:
+        IndexError: Si el índice está fuera de rango.
 
-    Example:
-        >>> Get_Value_By_Index({'a': 1, 'b': 2, 'c': 3}, 1)
+    Ejemplo:
+        >>> Obtener_Valor_Por_Indice({'a': 1, 'b': 2, 'c': 3}, 1)
         2
 
     """
 
-    Count = 0
+    Contador = 0
 
-    if Index >= len(Dictionary):
-        # Raise IndexError if index exceeds dictionary length.
-        raise IndexError("The dictionary does not have that many indices.")
+    if Indice >= len(Diccionario):
+        # Lanzar IndexError si el índice excede la longitud del 
+        # diccionario.
+        raise IndexError("El diccionario no tiene tantos índices.")
 
-    for Value in Dictionary.values():
-        if Count == Index:
-            return Value
-        Count += 1
+    for Valor in Diccionario.values():
+        if Contador == Indice:
+            return Valor
+        Contador += 1
 
-    # This line ensures a return value in case of unexpected issues.
-    raise IndexError("Index not found in the dictionary.")
+    # Esta línea asegura un valor de retorno en caso de problemas 
+    # inesperados.
+    raise IndexError("Índice no encontrado en el diccionario.")
 
-def Get_Nested_Unique_Keys(Dictionary: Dict[str, Any]) -> Set[str]:
+def Obtener_Claves_Unicas_Anidadas(Diccionario: Dict[str, Any]) -> Set[str]:
 
     """
-    Collect all unique keys from a nested dictionary recursively.
+    Recopila todas las claves únicas de un diccionario anidado de 
+    forma recursiva.
 
-    Parameters:
-        Dictionary (Dict[str, Any]): Input dictionary, potentially 
-        nested.
+    Parámetros:
+        Diccionario (Dict[str, Any]): Diccionario de entrada, 
+        potencialmente anidado.
 
-    Returns:
-        Set[str]: Set of all unique keys found in the dictionary.
+    Retorna:
+        Set[str]: Conjunto de todas las claves únicas encontradas en el 
+        diccionario.
 
-    Example:
-        >>> Get_Nested_Unique_Keys({'a': 1, 'b': {'c': 2, 'd': {'e': 3}}})
+    Ejemplo:
+        >>> Obtener_Claves_Unicas_Anidadas(
+        ...     {'a': 1, 'b': {'c': 2, 'd': {'e': 3}}}
+        ... )
         {'a', 'b', 'c', 'd', 'e'}
 
     """
 
-    Keys = set(Dictionary.keys())
+    Claves = set(Diccionario.keys())
 
-    for Value in Dictionary.values():
-        if isinstance(Value, dict):
-            Keys.update(Get_Nested_Unique_Keys(Value))
+    for Valor in Diccionario.values():
+        if isinstance(Valor, dict):
+            Claves.update(Obtener_Claves_Unicas_Anidadas(Valor))
 
-    return Keys
+    return Claves
 
-def Get_Nested_Unique_Values(Dictionary: Dict[str, Any]) -> Set[Any]:
+def Obtener_Valores_Unicos_Anidados(Diccionario: Dict[str, Any]) -> Set[Any]:
 
     """
-    Collect all unique values from a nested dictionary recursively.
+    Recopila todos los valores únicos de un diccionario anidado de 
+    forma recursiva.
 
-    Parameters:
-        Dictionary (Dict[str, Any]): Input dictionary, potentially 
-        nested.
+    Parámetros:
+        Diccionario (Dict[str, Any]): Diccionario de entrada, 
+        potencialmente anidado.
 
-    Returns:
-        Set[Any]: Set of all unique values found in the dictionary.
+    Retorna:
+        Set[Any]: Conjunto de todos los valores únicos encontrados en el 
+        diccionario.
 
-    Example:
-        >>> Get_Nested_Unique_Values({'a': 1, 'b': {'c': 2, 'd': {'e': 3}}})
+    Ejemplo:
+        >>> Obtener_Valores_Unicos_Anidados(
+        ...     {'a': 1, 'b': {'c': 2, 'd': {'e': 3}}}
+        ... )
         {1, 2, 3}
 
     """
 
-    Values = set()
+    Valores = set()
 
-    for Value in Dictionary.values():
-        if isinstance(Value, dict):
-            # Recursively collect values from nested dictionaries.
-            Values.update(Get_Nested_Unique_Values(Value))
+    for Valor in Diccionario.values():
+        if isinstance(Valor, dict):
+            # Recopilar recursivamente valores de diccionarios anidados.
+            Valores.update(Obtener_Valores_Unicos_Anidados(Valor))
         else:
-            Values.add(Value)
+            Valores.add(Valor)
 
-    return Values
+    return Valores
 
-def Get_Unique_Keys_From_Dictionaries(Dictionary_List: List[Dict[str, Any]]) -> List[str]:
+def Obtener_Claves_Unicas_De_Diccionarios(
+    Lista_De_Diccionarios: List[Dict[str, Any]]
+) -> List[str]:
 
     """
-    Extract all unique keys from a list of dictionaries.
+    Extrae todas las claves únicas de una lista de diccionarios.
 
-    Parameters:
-        Dictionary_List (List[Dict[str, Any]]): A list of dictionaries 
-        to extract keys from.
+    Parámetros:
+        Lista_De_Diccionarios (List[Dict[str, Any]]): Una lista de 
+        diccionarios de donde extraer las claves.
 
-    Returns:
-        List[str]: A list of unique keys found across all dictionaries.
+    Retorna:
+        List[str]: Una lista de claves únicas encontradas en todos los 
+        diccionarios.
 
-    Example:
-        >>> Get_Keys_From_Dictionaries([{'a': 1, 'b': 2}, {'c': 3}])
+    Ejemplo:
+        >>> Obtener_Claves_De_Diccionarios(
+        ...     [{'a': 1, 'b': 2}, {'c': 3}]
+        ... )
         ['a', 'b', 'c']
 
     """
 
-    Keys_Set: Set[str] = set()
+    Conjunto_De_Claves: Set[str] = set()
 
-    for Dictionary in Dictionary_List:
-        # Add all keys from the dictionary to the set.
-        Keys_Set.update(Dictionary.keys())
+    for Diccionario in Lista_De_Diccionarios:
+        # Agregar todas las claves del diccionario al conjunto.
+        Conjunto_De_Claves.update(Diccionario.keys())
 
-    return list(Keys_Set)
+    return list(Conjunto_De_Claves)
 
-def Rename_Repeated_Keys(Nested_Dict: Dict[str, Any]) -> Dict[str, Any]:
+def Renombrar_Claves_Repetidas(
+    Diccionario_Anidado: Dict[str, Any]
+) -> Dict[str, Any]:
 
     """
-    Recursively renames keys in a nested dictionary if they are repeated 
-    across levels. Repeated keys are renamed in the format 
-    "Parent_Key_Child_Key".
+    Renombra recursivamente las claves en un diccionario anidado si 
+    están repetidas a través de los niveles. Las claves repetidas se 
+    renombran en el formato "Clave_Padre_Clave_Hijo".
 
-    Parameters:
-        Nested_Dict (Dict[str, Any]): A dictionary that may contain 
-        nested dictionaries.
+    Parámetros:
+        Diccionario_Anidado (Dict[str, Any]): Un diccionario que puede 
+        contener diccionarios anidados.
 
-    Returns:
-        Dict[str, Any]: A new dictionary with renamed keys as needed.
+    Retorna:
+        Dict[str, Any]: Un nuevo diccionario con las claves renombradas 
+        según sea necesario.
 
-    Example:
-        >>> Rename_Repeated_Keys({"a": 1, "b": {"a": 2}})
+    Ejemplo:
+        >>> Renombrar_Claves_Repetidas({"a": 1, "b": {"a": 2}})
         {'a': 1, 'b': {'b_a': 2}}
 
     """
 
-    Seen_Keys: Set[str] = set()
+    Claves_Vistas: Set[str] = set()
 
-    def Rename_Keys(Dictionary: Dict[str, Any], Parent_Key: str) -> Dict[str, Any]:
-        Updated_Dict = {}
+    def Renombrar_Claves(
+        Diccionario: Dict[str, Any], 
+        Clave_Padre: str
+    ) -> Dict[str, Any]:
+        Diccionario_Actualizado = {}
 
-        for Key, Value in Dictionary.items():
-            New_Key = Key if Key not in Seen_Keys else f"{Parent_Key}_{Key}"
-            Seen_Keys.add(New_Key)
+        for Clave, Valor in Diccionario.items():
+            Nueva_Clave = (
+                Clave if Clave not in Claves_Vistas 
+                else f"{Clave_Padre}_{Clave}"
+            )
+            Claves_Vistas.add(Nueva_Clave)
 
-            if isinstance(Value, dict):
-                # Recursively rename keys in nested dictionaries.
-                Updated_Dict[New_Key] = Rename_Keys(Value, New_Key)
+            if isinstance(Valor, dict):
+                # Renombrar recursivamente las claves en diccionarios 
+                # anidados.
+                Diccionario_Actualizado[Nueva_Clave] = Renombrar_Claves(
+                    Valor, 
+                    Nueva_Clave
+                )
             else:
-                Updated_Dict[New_Key] = Value
+                Diccionario_Actualizado[Nueva_Clave] = Valor
 
-        return Updated_Dict
+        return Diccionario_Actualizado
 
-    return Rename_Keys(Nested_Dict, Parent_Key="Root")
+    return Renombrar_Claves(Diccionario_Anidado, Clave_Padre = "Raiz")
 
-def Count_Dictionaries_With_Key(List_Of_Dictionaries: List[Dict[str, Any]], Key: str) -> int:
+def Contar_Diccionarios_Con_Clave(
+    Lista_De_Diccionarios: List[Dict[str, Any]], 
+    Clave: str
+) -> int:
 
     """
-    Count how many dictionaries contain a specific key.
+    Cuenta cuántos diccionarios contienen una clave específica.
 
-    Parameters:
-        List_Of_Dictionaries (List[Dict[str, Any]]): The list of 
-        dictionaries to search.
-        Key (str): The key to count occurrences of.
+    Parámetros:
+        Lista_De_Diccionarios (List[Dict[str, Any]]): La lista de 
+        diccionarios a buscar.
+        Clave (str): La clave cuyas ocurrencias se deben contar.
 
-    Returns:
-        int: The count of dictionaries containing the specified key.
+    Retorna:
+        int: La cantidad de diccionarios que contienen la clave 
+        especificada.
 
-    Example:
-        >>> Count_Dictionaries_With_Key([{'a': 1, 'b': 2}, {'b': 3}, {'c': 4}], 'b')
+    Ejemplo:
+        >>> Contar_Diccionarios_Con_Clave(
+        ...     [{'a': 1, 'b': 2}, {'b': 3}, {'c': 4}], 
+        ...     'b'
+        ... )
         2
 
     """
 
-    Count = 0
+    Contador = 0
 
-    for Dictionary in List_Of_Dictionaries:
-        if Key in Dictionary:
-            # Increment count if the key exists in the dictionary.
-            Count += 1
+    for Diccionario in Lista_De_Diccionarios:
+        if Clave in Diccionario:
+            # Incrementar el contador si la clave existe en el 
+            # diccionario.
+            Contador += 1
 
-    return Count
+    return Contador

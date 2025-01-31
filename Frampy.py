@@ -956,7 +956,8 @@ def Change_Column_Names_By_Dictionary(df: pd.DataFrame, Dictionary: dict) -> pd.
     return df.rename(columns=Dictionary)
 
 def Create_Dummy_Variables(DataFrame, Column_Name, Drop_First = False, Group_Others = True, Remove_Others = True, 
-                           Threshold = 0.05, Name_Other_Column = "Others", Name_Columns_Style = 'Pascal_Snake_Case', Separator=""):
+                           Threshold = 0.05, Name_Other_Column = "Otros", Name_Columns_Style = 'Pascal_Snake_Case', Separator="_",
+                           Drop_Original_Columns = True):
 
     """
     Create dummy variables from a categorical column in a DataFrame.
@@ -1004,7 +1005,7 @@ def Create_Dummy_Variables(DataFrame, Column_Name, Drop_First = False, Group_Oth
         Frequency = Dummies.sum() / len(DataFrame)
         Rare_Columns = Frequency[Frequency < Threshold].index
         if len(Rare_Columns) > 0:
-            Dummies[Name_Other_Column] = Dummies[Rare_Columns].sum(axis = 1)
+            Dummies[Column_Name + '_' + Name_Other_Column] = Dummies[Rare_Columns].sum(axis = 1)
             Dummies = Dummies.drop(Rare_Columns, axis = 1)
 
             if Name_Columns_Style:
@@ -1014,7 +1015,9 @@ def Create_Dummy_Variables(DataFrame, Column_Name, Drop_First = False, Group_Oth
         Dummies = Dummies.drop(Name_Other_Column, axis = 1)
 
     DataFrame_With_Dummies = pd.concat([DataFrame, Dummies], axis = 1)
-    DataFrame_With_Dummies = DataFrame_With_Dummies.drop(Column_Name, axis = 1)
+
+    if Drop_Original_Columns:
+        DataFrame_With_Dummies = DataFrame_With_Dummies.drop(Column_Name, axis = 1)
 
     return DataFrame_With_Dummies
 

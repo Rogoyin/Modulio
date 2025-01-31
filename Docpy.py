@@ -6,110 +6,134 @@ from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.enum.table import WD_ALIGN_VERTICAL
 
-def Create_Expanded_Grid_Word_Document(
-    Dataframe: pd.DataFrame, 
-    Bold_Column: str, 
-    Currency_Column: str, 
-    Output_File: str, 
-    Rows_Per_Page: int, 
-    Columns_Per_Page: int,
-    Length_Page: int = 22
+def Crear_Documento_Word_Cuadricula_Expandida(
+    DataFrame: pd.DataFrame, 
+    Columna_Normal: str, 
+    Columna_Moneda: str, 
+    Archivo_Salida: str, 
+    Filas_Por_Pagina: int, 
+    Columnas_Por_Pagina: int,
+    Longitud_Pagina: int = 22
 ) -> None:
 
     """
-    Creates a Word document with a grid layout, where rows and columns
-    expand to cover the full page. The number column is bold and occupies
-    the majority of the cell, while the text column is smaller.
+    Crea un documento Word con un diseño de cuadrícula, donde las filas 
+    y columnas se expanden para cubrir toda la página. La columna 
+    numérica es negrita y ocupa la mayoría de la celda, mientras que la 
+    columna de texto es más pequeña.
 
-    Parameters:
-        Dataframe (pd.DataFrame): The source dataframe containing the data.
-        Bold_Column (str): The name of the column whose values will appear
-        smaller and unbolded.
-        Currency_Column (str): The name of the column whose values will 
-        appear bolded and larger.
-        Output_File (str): The name of the output Word file.
-        Rows_Per_Page (int): Number of rows to display per page.
-        Columns_Per_Page (int): Number of columns to display per row.
-        Length_Page (int): Centimeters of the page.
+    Parámetros:
+        DataFrame (pd.DataFrame): El dataframe fuente que contiene 
+        los datos.
+        Columna_Normal (str): El nombre de la columna cuyos valores 
+        aparecerán más pequeños y sin negrita.
+        Columna_Moneda (str): El nombre de la columna cuyos valores 
+        aparecerán en negrita y más grandes.
+        Archivo_Salida (str): El nombre del archivo Word de salida.
+        Filas_Por_Pagina (int): Número de filas a mostrar por página.
+        Columnas_Por_Pagina (int): Número de columnas a mostrar por fila.
+        Longitud_Pagina (int): Centímetros de la página.
 
-    Returns:
+    Retorna:
         None
 
-    Example:
-        >>> df = pd.DataFrame({'Name': ['Alice', 'Bob', 'Charlie'], 
-        ...                    'Amount': [1234.56, 789.01, 456.78]})
-        >>> Create_Expanded_Grid_Word_Document(
-        ...     df, 'Name', 'Amount', 'output.docx', 5, 2, 22
+    Ejemplo:
+        >>> df = pd.DataFrame({'Nombre': ['Alicia', 'Bob', 'Carlos'], 
+        ...                    'Monto': [1234.56, 789.01, 456.78]})
+        >>> Crear_Documento_Word_Cuadricula_Expandida(
+        ...     df, 'Nombre', 'Monto', 'salida.docx', 5, 2, 22
         ... )
 
     """
 
-    Document_File = Document()
-    Total_Entries = len(Dataframe)
-    Entries_Per_Page = Rows_Per_Page * Columns_Per_Page
+    Archivo_Documento = Document()
+    Total_Entradas = len(DataFrame)
+    Entradas_Por_Pagina = Filas_Por_Pagina * Columnas_Por_Pagina
 
-    Entry_Index = 0
+    Indice_Entrada = 0
 
-    while Entry_Index < Total_Entries:
-        # Add a new section (page).
-        if Entry_Index > 0:
-            Document_File.add_page_break()
+    while Indice_Entrada < Total_Entradas:
+        # Agregar una nueva sección (página).
+        if Indice_Entrada > 0:
+            Archivo_Documento.add_page_break()
 
-        # Create a table for the page.
-        Table = Document_File.add_table(rows=Rows_Per_Page, cols=Columns_Per_Page)
+        # Crear una tabla para la página.
+        Tabla = Archivo_Documento.add_table(
+            rows=Filas_Por_Pagina, 
+            cols=Columnas_Por_Pagina
+        )
 
-        # Adjust the table to expand across the full page.
-        Table_Width = 16.5  # Width in cm (adjust based on page size and margins).
-        Column_Width = Table_Width / Columns_Per_Page
+        # Ajustar la tabla para expandirse a través de toda la página.
+        Ancho_Tabla = 16.5  # Ancho en cm (ajustar según tamaño y 
+                           # márgenes).
+        Ancho_Columna = Ancho_Tabla / Columnas_Por_Pagina
 
-        for Row_Index in range(Rows_Per_Page):
-            for Col_Index in range(Columns_Per_Page):
-                Cell = Table.cell(Row_Index, Col_Index)
+        for Indice_Fila in range(Filas_Por_Pagina):
+            for Indice_Col in range(Columnas_Por_Pagina):
+                Celda = Tabla.cell(Indice_Fila, Indice_Col)
 
-                # Set cell width.
-                Cell_Width_Element = Cell._element
-                Table_Properties = Cell_Width_Element.xpath('.//w:tcPr')[0]
-                Width_Element = OxmlElement('w:tcW')
-                Width_Element.set(qn('w:w'), str(int(Column_Width * 567)))  # Convert cm to twips.
-                Width_Element.set(qn('w:type'), 'dxa')
-                Table_Properties.append(Width_Element)
+                # Establecer ancho de celda.
+                Elemento_Ancho_Celda = Celda._element
+                Propiedades_Tabla = (
+                    Elemento_Ancho_Celda.xpath('.//w:tcPr')[0]
+                )
+                Elemento_Ancho = OxmlElement('w:tcW')
+                Elemento_Ancho.set(
+                    qn('w:w'), 
+                    str(int(Ancho_Columna * 567))
+                )  # Convertir cm a twips.
+                Elemento_Ancho.set(qn('w:type'), 'dxa')
+                Propiedades_Tabla.append(Elemento_Ancho)
 
-                if Entry_Index < Total_Entries:
-                    # Get the current row from the DataFrame.
-                    Row = Dataframe.iloc[Entry_Index]
-                    Small_Text = Row[Bold_Column]
-                    Large_Bold_Value = f"${int(Row[Currency_Column]):,}"
+                if Indice_Entrada < Total_Entradas:
+                    # Obtener la fila actual del DataFrame.
+                    Fila = DataFrame.iloc[Indice_Entrada]
+                    Texto_Pequeño = Fila[Columna_Normal]
+                    Valor_Grande_Negrita = (
+                        f"${int(Fila[Columna_Moneda]):,}"
+                    )
 
-                    # Add content to the cell.
-                    Paragraph = Cell.paragraphs[0]
+                    # Agregar contenido a la celda.
+                    Parrafo = Celda.paragraphs[0]
 
-                    Run_Bold = Paragraph.add_run(Large_Bold_Value)
-                    Run_Bold.bold = True
+                    Ejecucion_Negrita = Parrafo.add_run(
+                        Valor_Grande_Negrita
+                    )
+                    Ejecucion_Negrita.bold = True
                     
-                    Run_Normal = Paragraph.add_run(f"\n{Small_Text}")
+                    Ejecucion_Normal = Parrafo.add_run(
+                        f"\n{Texto_Pequeño}"
+                    )
 
-                    # Adjust font size to fit the new layout.
-                    Large_Font_Size = 48  # Larger font size for bold numbers.
-                    Small_Font_Size = 12  # Smaller font size for regular text.
-                    Run_Bold.font.size = Pt(Large_Font_Size)
-                    Run_Normal.font.size = Pt(Small_Font_Size)
+                    # Ajustar tamaño de fuente para el nuevo diseño.
+                    Tamaño_Fuente_Grande = 48  # Tamaño grande para 
+                                              # números en negrita.
+                    Tamaño_Fuente_Pequeña = 12  # Tamaño pequeño para 
+                                               # texto normal.
+                    Ejecucion_Negrita.font.size = Pt(
+                        Tamaño_Fuente_Grande
+                    )
+                    Ejecucion_Normal.font.size = Pt(
+                        Tamaño_Fuente_Pequeña
+                    )
 
-                    # Align the content in the center of the cell.
-                    Paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
-                    Cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+                    # Alinear el contenido en el centro de la celda.
+                    Parrafo.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+                    Celda.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
 
-                    Entry_Index += 1
+                    Indice_Entrada += 1
                 else:
-                    # Leave empty cells if there are no more entries.
-                    Cell.text = ""
+                    # Dejar celdas vacías si no hay más entradas.
+                    Celda.text = ""
 
-        # Adjust row height to expand rows across the page.
-        for Row in Table.rows:
-            Row_Height = Length_Page / Rows_Per_Page
-            Row.height = Cm(Row_Height)
+        # Ajustar altura de fila para expandir filas a través de la 
+        # página.
+        for Fila in Tabla.rows:
+            Altura_Fila = Longitud_Pagina / Filas_Por_Pagina
+            Fila.height = Cm(Altura_Fila)
 
-        # Apply a grid style for visibility.
-        Table.style = "Table Grid"
+        # Aplicar un estilo de cuadrícula para visibilidad.
+        Tabla.style = "Table Grid"
 
-    # Save the document to the specified file.
-    Document_File.save(Output_File)
+    # Guardar el documento en el archivo especificado.
+    Archivo_Documento.save(Archivo_Salida)

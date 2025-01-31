@@ -2,718 +2,781 @@ import numpy as np
 import re
 import itertools
 
-def Verify_Iterable_Elements_Of_List(List: list):
+def Verificar_Elementos_Iterables_De_Lista(Lista: list):
 
-    '''
-    Verifies if all elements in a list are iterable types (list, tuple, dict).
+    """
+    Verifica si todos los elementos en una lista son tipos iterables 
+    (lista, tupla, diccionario).
 
-    This function checks each element in the provided list to ensure 
-    that it is an instance of an iterable type. If all elements are 
-    iterable, the function returns True; otherwise, it returns False.
+    Esta función revisa cada elemento en la lista proporcionada para asegurar 
+    que sea una instancia de un tipo iterable. Si todos los elementos son 
+    iterables, la función devuelve True; en caso contrario, devuelve False.
 
-    Parameters:
+    Parámetros:
     -----------
-    List : list
-        A list of elements to verify.
+    Lista : list
+        Una lista de elementos para verificar.
 
-    Returns:
+    Retorna:
     --------
     bool
-        True if all elements are iterable, False otherwise.
+        True si todos los elementos son iterables, False en caso contrario.
 
-    Example:
+    Ejemplo:
     ---------
-    >>> result = Verify_Iterable_Elements_Of_List([[1, 2], (3, 4), {}])
-    >>> print(result)
+    >>> Resultado = Verificar_Elementos_Iterables_De_Lista([[1, 2], (3, 4), {}])
+    >>> print(Resultado)
     True
 
-    '''
+    """
 
-    for Element in List:
-        if not isinstance(Element, (list, tuple, dict)):
+    for Elemento in Lista:
+        if not isinstance(Elemento, (list, tuple, dict)):
             return False
     return True
 
-def Convert_List_Of_Tuples_To_List_Of_List(Tuples_List: list):
+def Convertir_Lista_De_Tuplas_A_Lista_De_Listas(Lista_De_Tuplas: list):
 
-    '''
-    Converts a list of tuples to a list of lists.
+    """
+    Convierte una lista de tuplas a una lista de listas.
 
-    This function takes a list of tuples as input and converts each 
-    tuple into a list. If the input contains non-iterable elements, 
-    it returns the original list as a list.
+    Esta función toma una lista de tuplas como entrada y convierte cada 
+    tupla en una lista. Si la entrada contiene elementos no iterables, 
+    devuelve la lista original como una lista.
 
-    Parameters:
+    Parámetros:
     -----------
-    Tuples_List : list
-        A list of tuples to convert.
+    Lista_De_Tuplas : list
+        Una lista de tuplas para convertir.
 
-    Returns:
+    Retorna:
     --------
     list
-        A list of lists if all elements are tuples; otherwise, 
-        returns the original list.
+        Una lista de listas si todos los elementos son tuplas; en caso 
+        contrario, devuelve la lista original.
 
-    Example:
+    Ejemplo:
     ---------
-    >>> result = Convert_List_Of_Tuples_To_List_Of_List([(1, 2), (3, 4)])
-    >>> print(result)
+    >>> Resultado = Convertir_Lista_De_Tuplas_A_Lista_De_Listas([(1, 2), (3, 4)])
+    >>> print(Resultado)
     [[1, 2], [3, 4]]
-    '''
 
-    if Verify_Iterable_Elements_Of_List(Tuples_List):
-        Lists_List = []
-        for Tuple in Tuples_List:
-            Lists_List.append(list(Tuple))
-        return Lists_List
+    """
+
+    if Verificar_Elementos_Iterables_De_Lista(Lista_De_Tuplas):
+        Lista_De_Listas = []
+        for Tupla in Lista_De_Tuplas:
+            Lista_De_Listas.append(list(Tupla))
+        return Lista_De_Listas
     else:
-        return list(Tuples_List)
+        return list(Lista_De_Tuplas)
 
-def Find_Max_Position_In_Segment(List: list, Start_Index: int, End_Index: int) -> int:
+def Encontrar_Posicion_Maxima_En_Segmento(Lista: list, Indice_Inicio: int, 
+    Indice_Fin: int) -> int:
 
-    '''
-    Finds the position of the maximum value within a specified segment of a list.
+    """
+    Encuentra la posición del valor máximo dentro de un segmento 
+    específico de una lista.
 
-    This function determines the index of the maximum value in a 
-    segment of the provided list, defined by the start and end 
-    indices.
+    Esta función determina el índice del valor máximo en un segmento 
+    de la lista proporcionada, definido por los índices de inicio y fin.
 
-    Parameters:
+    Parámetros:
     -----------
-    List : list
-        The list from which the maximum value's position will be found.
+    Lista : list
+        La lista donde se buscará la posición del valor máximo.
 
-    Start_Index : int
-        The starting index of the segment.
+    Indice_Inicio : int
+        El índice de inicio del segmento.
 
-    End_Index : int
-        The ending index of the segment.
+    Indice_Fin : int
+        El índice final del segmento.
 
-    Returns:
+    Retorna:
     --------
     int
-        The index of the maximum value within the specified segment.
+        El índice del valor máximo dentro del segmento especificado.
 
-    Example:
+    Ejemplo:
     ---------
-    >>> result = Find_Max_Position_In_Segment([1, 3, 2, 5, 4], 1, 3)
-    >>> print(result)
+    >>> Resultado = Encontrar_Posicion_Maxima_En_Segmento([1, 3, 2, 5, 4], 1, 3)
+    >>> print(Resultado)
     3
 
-    '''
+    """
 
-    Segment = List[Start_Index:End_Index + 1]
-    return Segment.index(max(Segment))
+    Segmento = Lista[Indice_Inicio:Indice_Fin + 1]
+    return Segmento.index(max(Segmento))
 
-def Sort_Lists_By_Reference(Reference_List: list, *Lists_To_Sort: list) -> tuple:
+def Ordenar_Listas_Por_Referencia(Lista_Referencia: list, 
+    *Listas_A_Ordenar: list) -> tuple:
 
-    '''
-    Sorts a reference list and other associated lists based on the order of the reference list.
+    """
+    Ordena una lista de referencia y otras listas asociadas basándose 
+    en el orden de la lista de referencia.
 
-    This function sorts the provided reference list in ascending 
-    order and rearranges the other lists according to the new order 
-    of the reference list.
+    Esta función ordena la lista de referencia proporcionada en orden 
+    ascendente y reorganiza las otras listas de acuerdo con el nuevo 
+    orden de la lista de referencia.
 
-    Parameters:
+    Parámetros:
     -----------
-    Reference_List : list
-        The list to be sorted, which dictates the order of sorting 
-        for the other lists.
+    Lista_Referencia : list
+        La lista a ordenar, que dicta el orden de ordenamiento para 
+        las otras listas.
 
-    *Lists_To_Sort : list
-        Additional lists that will be sorted in the same order as 
-        the reference list.
+    *Listas_A_Ordenar : list
+        Listas adicionales que serán ordenadas en el mismo orden que 
+        la lista de referencia.
 
-    Returns:
+    Retorna:
     --------
     tuple
-        A tuple containing the sorted reference list and the 
-        associated sorted lists.
+        Una tupla que contiene la lista de referencia ordenada y las 
+        listas asociadas ordenadas.
 
-    Example:
+    Ejemplo:
     ---------
-    >>> ref_list, sorted_lists = Sort_Lists_By_Reference([3, 1, 2], [30, 10, 20])
-    >>> print(ref_list, sorted_lists)
+    >>> lista_ref, listas_ordenadas = Ordenar_Listas_Por_Referencia(
+            [3, 1, 2], [30, 10, 20])
+    >>> print(lista_ref, listas_ordenadas)
     [1, 2, 3], ([10, 20, 30],)
 
-    '''
+    """
 
-    Current_Index = len(Reference_List) - 1
+    Indice_Actual = len(Lista_Referencia) - 1
 
-    while Current_Index > 0:
-        Max_Position = Find_Max_Position_In_Segment(Reference_List, 0, Current_Index)
-        Reference_List[Max_Position], Reference_List[Current_Index] = Reference_List[Current_Index], Reference_List[Max_Position]
+    while Indice_Actual > 0:
+        Posicion_Maxima = Encontrar_Posicion_Maxima_En_Segmento(
+            Lista_Referencia, 0, Indice_Actual)
+            
+        Lista_Referencia[Posicion_Maxima], Lista_Referencia[Indice_Actual] = \
+            Lista_Referencia[Indice_Actual], Lista_Referencia[Posicion_Maxima]
         
-        for List in Lists_To_Sort:
-            List[Max_Position], List[Current_Index] = List[Current_Index], List[Max_Position]
+        for Lista in Listas_A_Ordenar:
+            Lista[Posicion_Maxima], Lista[Indice_Actual] = \
+                Lista[Indice_Actual], Lista[Posicion_Maxima]
         
-        Current_Index -= 1
+        Indice_Actual -= 1
         
-    return Reference_List, tuple(Lists_To_Sort)
+    return Lista_Referencia, tuple(Listas_A_Ordenar)
 
-def Calculate_Average_Of_Lists(List_Of_Lists: list) -> list:
+def Calcular_Promedio_De_Listas(Lista_De_Listas: list) -> list:
 
-    '''
-    Calculates the average of each list within a list of lists.
+    """
+    Calcula el promedio de cada lista dentro de una lista de listas.
 
-    This function computes the average value of each sublist in the 
-    provided list of lists.
+    Esta función computa el valor promedio de cada sublista en la lista 
+    de listas proporcionada.
 
-    Parameters:
+    Parámetros:
     -----------
-    List_Of_Lists : list
-        A list containing multiple lists for which averages will be 
-        calculated.
+    Lista_De_Listas : list
+        Una lista que contiene múltiples listas para las cuales se 
+        calcularán los promedios.
 
-    Returns:
+    Retorna:
     --------
     list
-        A list of average values corresponding to each sublist.
+        Una lista de valores promedio correspondientes a cada sublista.
 
-    Example:
+    Ejemplo:
     ---------
-    >>> averages = Calculate_Average_Of_Lists([[1, 2, 3], [4, 5, 6]])
-    >>> print(averages)
+    >>> Promedios = Calcular_Promedio_De_Listas([[1, 2, 3], [4, 5, 6]])
+    >>> print(Promedios)
     [2.0, 5.0]
 
-    '''
+    """
 
-    Averages = [np.mean(List) for List in List_Of_Lists]
-    return Averages
+    Promedios = [np.mean(Lista) for Lista in Lista_De_Listas]
+    return Promedios
 
-def Transpose_List_Of_Lists(List_Of_Lists: list) -> list:
+def Transponer_Lista_De_Listas(Lista_De_Listas: list) -> list:
 
-    '''
-    Transposes a list of lists, converting rows to columns and vice versa.
+    """
+    Transpone una lista de listas, convirtiendo filas en columnas y 
+    viceversa.
 
-    This function rearranges the provided list of lists so that the 
-    first sublist becomes the first column, the second sublist becomes 
-    the second column, and so on.
+    Esta función reorganiza la lista de listas proporcionada de manera 
+    que la primera sublista se convierte en la primera columna, la 
+    segunda sublista en la segunda columna, y así sucesivamente.
 
-    Parameters:
+    Parámetros:
     -----------
-    List_Of_Lists : list
-        A list of lists to be transposed.
+    Lista_De_Listas : list
+        Una lista de listas para ser transpuesta.
 
-    Returns:
+    Retorna:
     --------
     list
-        A new list of lists that represents the transposed version of 
-        the input list.
+        Una nueva lista de listas que representa la versión transpuesta 
+        de la lista de entrada.
 
-    Example:
+    Ejemplo:
     ---------
-    >>> transposed = Transpose_List_Of_Lists([[1, 2, 3], [4, 5, 6]])
-    >>> print(transposed)
+    >>> Transpuesta = Transponer_Lista_De_Listas([[1, 2, 3], [4, 5, 6]])
+    >>> print(Transpuesta)
     [[1, 4], [2, 5], [3, 6]]
 
-    '''
+    """
 
-    Transposed_List = list(map(list, zip(*List_Of_Lists)))
-    return Transposed_List
+    Lista_Transpuesta = list(map(list, zip(*Lista_De_Listas)))
+    return Lista_Transpuesta
 
-def Slice_Iterable_By_Reference(Iterable, Base_Element, Remove = 'Before', 
-                                Include = True, Appears = 1):
+def Cortar_Iterable_Por_Referencia(Iterable, Elemento_Base, Remover = 'Antes', 
+    Incluir = True, Apariciones = 1):
 
-    '''
-    Slices an iterable based on the position of a specified base element.
+    """
+    Corta un iterable basado en la posición de un elemento base 
+    especificado.
 
-    This function modifies the provided iterable by slicing it 
-    according to the first occurrence of a specified element. The 
-    slicing can either remove elements before or after the base 
-    element.
+    Esta función modifica el iterable proporcionado cortándolo según 
+    la primera ocurrencia de un elemento especificado. El corte puede 
+    eliminar elementos antes o después del elemento base.
 
-    Parameters:
+    Parámetros:
     -----------
     Iterable : iterable
-        The iterable to be sliced.
+        El iterable a ser cortado.
 
-    Base_Element : object
-        The element that serves as the reference point for slicing.
+    Elemento_Base : object
+        El elemento que sirve como punto de referencia para el corte.
 
-    Remove : str
-        Indicates whether to remove elements 'Before' or 'After' the 
-        base element. Default is 'Before'.
+    Remover : str
+        Indica si se deben remover elementos 'Antes' o 'Despues' del 
+        elemento base. Por defecto es 'Antes'.
 
-    Include : bool
-        Indicates whether to include the base element in the result. 
-        Default is True.
+    Incluir : bool
+        Indica si se debe incluir el elemento base en el resultado. 
+        Por defecto es True.
 
-    Appears : int
-        The occurrence of the base element to be used for slicing. 
-        Default is 1.
+    Apariciones : int
+        La ocurrencia del elemento base a usar para el corte. 
+        Por defecto es 1.
 
-    Returns:
+    Retorna:
     --------
     iterable
-        The sliced iterable.
+        El iterable cortado.
 
-    Raises:
+    Lanza:
     -------
     KeyError
-        If the base element is not found in the iterable.
+        Si el elemento base no se encuentra en el iterable.
 
-    Example:
+    Ejemplo:
     ---------
-    >>> result = Slice_Iterable_By_Reference([1, 2, 3, 4], 3)
-    >>> print(result)
+    >>> Resultado = Cortar_Iterable_Por_Referencia([1, 2, 3, 4], 3)
+    >>> print(Resultado)
     [4]
 
-    '''
+    """
 
-    if Base_Element not in Iterable:
-        raise KeyError('The element must be in the iterable.')
+    if Elemento_Base not in Iterable:
+        raise KeyError('El elemento debe estar en el iterable.')
     
-    Count = 0
-    for Index, Element in enumerate(Iterable):
-        if Element == Base_Element:
-            Count += 1
-            if Count == Appears:
-                if Remove == 'Before':
-                    if Include == False:
-                        Index += 1
-                    Iterable = Iterable[Index:]
+    Contador = 0
+    for Indice, Elemento in enumerate(Iterable):
+        if Elemento == Elemento_Base:
+            Contador += 1
+            if Contador == Apariciones:
+                if Remover == 'Antes':
+                    if Incluir == False:
+                        Indice += 1
+                    Iterable = Iterable[Indice:]
                 else:
-                    if Include:
-                        Index += 1
-                    Iterable = Iterable[:Index]
+                    if Incluir:
+                        Indice += 1
+                    Iterable = Iterable[:Indice]
     return Iterable
 
-def Get_Index_Of_All_Ocurrences(Iterable, Target_Element) -> list:
+def Obtener_Indices_De_Todas_Las_Ocurrencias(Iterable, 
+    Elemento_Objetivo) -> list:
 
-    '''
-    Retrieves the indices of all occurrences of a specified element in an iterable.
+    """
+    Recupera los índices de todas las ocurrencias de un elemento 
+    específico en un iterable.
 
-    This function iterates through the provided iterable and collects 
-    the indices where the target element appears.
+    Esta función itera a través del iterable proporcionado y recopila 
+    los índices donde aparece el elemento objetivo.
 
-    Parameters:
+    Parámetros:
     -----------
     Iterable : iterable
-        The iterable in which to search for the target element.
+        El iterable en el cual buscar el elemento objetivo.
 
-    Target_Element : object
-        The element whose indices are to be found.
+    Elemento_Objetivo : object
+        El elemento cuyos índices se deben encontrar.
 
-    Returns:
+    Retorna:
     --------
     list
-        A list of indices where the target element occurs.
+        Una lista de índices donde ocurre el elemento objetivo.
 
-    Example:
+    Ejemplo:
     ---------
-    >>> indices = Get_Index_Of_All_Ocurrences([1, 2, 3, 2, 4], 2)
-    >>> print(indices)
+    >>> Indices = Obtener_Indices_De_Todas_Las_Ocurrencias([1, 2, 3, 2, 4], 2)
+    >>> print(Indices)
     [1, 3]
 
-    '''
+    """
 
-    Count = 1
-    Occurrences = []
+    Contador = 1
+    Ocurrencias = []
 
-    for Index, Element in enumerate(Iterable):
-        if Element == Target_Element:
-            Occurrences.append(Index)
-            Count += 1
+    for Indice, Elemento in enumerate(Iterable):
+        if Elemento == Elemento_Objetivo:
+            Ocurrencias.append(Indice)
+            Contador += 1
     
-    return Occurrences
+    return Ocurrencias
 
-def Find_And_Replace(Iterable, Target_Element, New_Value, Occurrence = 1):
+def Encontrar_Y_Reemplazar(Iterable, Elemento_Objetivo, Nuevo_Valor, 
+    Ocurrencia = 1):
 
-    '''
-    Finds and replaces a specified occurrence of an element in an iterable.
+    """
+    Encuentra y reemplaza una ocurrencia específica de un elemento en 
+    un iterable.
 
-    This function searches for the target element within the iterable 
-    and replaces the specified occurrence with a new value.
+    Esta función busca el elemento objetivo dentro del iterable y 
+    reemplaza la ocurrencia especificada con un nuevo valor.
 
-    Parameters:
+    Parámetros:
     -----------
     Iterable : iterable
-        The iterable in which to find and replace the target element.
+        El iterable en el cual encontrar y reemplazar el elemento 
+        objetivo.
 
-    Target_Element : object
-        The element to be replaced.
+    Elemento_Objetivo : object
+        El elemento a ser reemplazado.
 
-    New_Value : object
-        The value that will replace the target element.
+    Nuevo_Valor : object
+        El valor que reemplazará al elemento objetivo.
 
-    Occurrence : int
-        The specific occurrence of the target element to replace. 
-        Default is 1.
+    Ocurrencia : int
+        La ocurrencia específica del elemento objetivo a reemplazar. 
+        Por defecto es 1.
 
-    Returns:
+    Retorna:
     --------
     iterable
-        The modified iterable after replacement.
+        El iterable modificado después del reemplazo.
 
-    Raises:
+    Lanza:
     -------
     KeyError
-        If the target element does not appear the specified number of times.
+        Si el elemento objetivo no aparece el número especificado 
+        de veces.
 
-    Example:
+    Ejemplo:
     ---------
-    >>> modified = Find_And_Replace([1, 2, 2, 3], 2, 5, 1)
-    >>> print(modified)
+    >>> Modificado = Encontrar_Y_Reemplazar([1, 2, 2, 3], 2, 5, 1)
+    >>> print(Modificado)
     [1, 5, 2, 3]
 
-    '''
+    """
 
-    Occurrences_Index = Get_Index_Of_All_Ocurrences(Iterable, Target_Element)
-    if Occurrence > len(Occurrences_Index):
-        raise KeyError(f"El elemento target {Target_Element} no aparece {Occurrence} veces: aparece menos.")
+    Indices_Ocurrencias = Obtener_Indices_De_Todas_Las_Ocurrencias(
+        Iterable, Elemento_Objetivo)
+    if Ocurrencia > len(Indices_Ocurrencias):
+        raise KeyError(
+            f"El elemento objetivo {Elemento_Objetivo} no aparece "
+            f"{Ocurrencia} veces: aparece menos."
+        )
     
-    Index_To_Change = Occurrences_Index[Occurrence - 1]
-    Iterable[Index_To_Change] = New_Value
+    Indice_A_Cambiar = Indices_Ocurrencias[Ocurrencia - 1]
+    Iterable[Indice_A_Cambiar] = Nuevo_Valor
     return Iterable
 
-def Get_Index_Sublist(List, Sublist):
+def Obtener_Indices_Sublista(Lista, Sublista):
 
-    '''
-    Retrieves the indices of all occurrences of a specified sublist within a list.
+    """
+    Recupera los índices de todas las ocurrencias de una sublista 
+    específica dentro de una lista.
 
-    This function searches for the provided sublist in the main list 
-    and returns the starting indices of each occurrence.
+    Esta función busca la sublista proporcionada en la lista principal 
+    y devuelve los índices iniciales de cada ocurrencia.
 
-    Parameters:
+    Parámetros:
     -----------
-    List : list
-        The list in which to search for the sublist.
+    Lista : list
+        La lista en la cual buscar la sublista.
 
-    Sublist : list
-        The sublist to find within the main list.
+    Sublista : list
+        La sublista a encontrar dentro de la lista principal.
 
-    Returns:
+    Retorna:
     --------
     list
-        A list of starting indices where the sublist occurs.
+        Una lista de índices iniciales donde ocurre la sublista.
 
-    Example:
+    Ejemplo:
     ---------
-    >>> indices = Get_Index_Sublist([1, 2, 3, 2, 4], [2])
-    >>> print(indices)
+    >>> Indices = Obtener_Indices_Sublista([1, 2, 3, 2, 4], [2])
+    >>> print(Indices)
     [1, 3]
-    '''
 
-    List_Of_Index = []
-    for Index, Element in enumerate(List):
-        if Element == Sublist[0]:
-            if List[Index:Index+len(Sublist)] == Sublist:
-                List_Of_Index.append(Index)
-    return List_Of_Index
+    """
 
-def Filter_List_By_Criteria(List: list, Criteria: str = "=", Value = None, Value2 = None):
+    Lista_De_Indices = []
+    for Indice, Elemento in enumerate(Lista):
+        if Elemento == Sublista[0]:
+            if Lista[Indice:Indice+len(Sublista)] == Sublista:
+                Lista_De_Indices.append(Indice)
+    return Lista_De_Indices
 
-    '''
-    Filters a list based on specified criteria.
+def Filtrar_Lista_Por_Criterio(Lista: list, Criterio: str = "=", 
+    Valor = None, Valor2 = None):
 
-    This function iterates through the input list and applies the 
-    given criteria to filter the elements. The filtered elements 
-    are returned in a new list.
+    """
+    Filtra una lista basada en criterios específicos.
 
-    Parameters:
+    Esta función itera a través de la lista de entrada y aplica el 
+    criterio dado para filtrar los elementos. Los elementos filtrados 
+    se devuelven en una nueva lista.
+
+    Parámetros:
     -----------
-    List : list
-        The list to be filtered.
+    Lista : list
+        La lista a ser filtrada.
 
-    Criteria : str
-        The criteria to apply for filtering. It can be one of: 
+    Criterio : str
+        El criterio a aplicar para el filtrado. Puede ser uno de:
         =, !=, >, <, <=, >=, 
-        Contains, Not Contains, Starts With, Ends With, In, Not In, 
-        Is Instance, Between, Length, Is None, Is Not None, Modulo, 
-        Regex, All True, Any True, Custom Function, Type Equals, 
-        Within Range. Default is "=".
+        Contiene, No_Contiene, Empieza_Con, Termina_Con, En, No_En,
+        Es_Instancia, Entre, Longitud, Es_Nulo, No_Es_Nulo, Modulo,
+        Regex, Todos_Verdaderos, Alguno_Verdadero, Funcion_Personal,
+        Tipo_Igual, En_Rango. Por defecto es "=".
 
-    Value : object
-        The value to compare against based on the specified criteria. 
+    Valor : object
+        El valor contra el cual comparar según el criterio especificado.
 
-    Value2 : object
-        A second value to use for certain criteria, such as 'Between' 
-        or 'Length'.
+    Valor2 : object
+        Un segundo valor a usar para ciertos criterios, como 'Entre' 
+        o 'Longitud'.
 
-    Returns:
+    Retorna:
     --------
     list
-        A new list containing elements that meet the specified criteria.
+        Una nueva lista que contiene los elementos que cumplen el 
+        criterio especificado.
 
-    Raises:
+    Lanza:
     -------
     KeyError
-        If an unsupported criteria is specified.
+        Si se especifica un criterio no soportado.
 
-    Example:
+    Ejemplo:
     ---------
-    >>> filtered = Filter_List_By_Criteria([1, 2, 3, 4], Criteria='>', Value=2)
-    >>> print(filtered)
+    >>> Filtrado = Filtrar_Lista_Por_Criterio([1, 2, 3, 4], Criterio = '>', 
+            Valor = 2)
+    >>> print(Filtrado)
     [3, 4]
 
-    '''
+    """
 
-    Final_List = []
+    Lista_Final = []
     
-    for Element in List:
-        if Criteria == "=":
-            if Element == Value:
-                Final_List.append(Element)
-        elif Criteria == "!=":
-            if Element != Value:
-                Final_List.append(Element)
-        elif Criteria == ">":
-            if Element > Value:
-                Final_List.append(Element)
-        elif Criteria == "<":
-            if Element < Value:
-                Final_List.append(Element)
-        elif Criteria == ">=":
-            if Element >= Value:
-                Final_List.append(Element)
-        elif Criteria == "<=":
-            if Element <= Value:
-                Final_List.append(Element)
-        elif Criteria == "Contains":
-            if isinstance(Element, str) and isinstance(Value, str) and Value in Element:
-                Final_List.append(Element)
-        elif Criteria == "Not Contains":
-            if isinstance(Element, str) and isinstance(Value, str) and Value not in Element:
-                Final_List.append(Element)
-        elif Criteria == "Starts With":
-            if isinstance(Element, str) and isinstance(Value, str) and Element.startswith(Value):
-                Final_List.append(Element)
-        elif Criteria == "Ends With":
-            if isinstance(Element, str) and isinstance(Value, (str, tuple)) and Element.endswith(Value):
-                Final_List.append(Element)
-        elif Criteria == "In":
-            if Element in Value:
-                Final_List.append(Element)
-        elif Criteria == "NotIn":
-            if Element not in Value:
-                Final_List.append(Element)
-        elif Criteria == "Is Instance":
-            if Value is not None and isinstance(Value, type) and isinstance(Element, Value):
-                Final_List.append(Element)
-        elif Criteria == "Between":
-            if Value <= Element <= Value2:
-                Final_List.append(Element)
-        elif Criteria == "Length":
-            if hasattr(Element, '__len__') and len(Element) == Value:
-                Final_List.append(Element)
-        elif Criteria == "Is None":
-            if Element is None:
-                Final_List.append(Element)
-        elif Criteria == "Is Not None":
-            if Element is not None:
-                Final_List.append(Element)
-        elif Criteria == "Modulo":
-            if Element % Value == Value2:
-                Final_List.append(Element)
-        elif Criteria == "Regex":
-            if isinstance(Element, str) and isinstance(Value, (str, re.Pattern)) and re.search(Value, Element):
-                Final_List.append(Element)
-        elif Criteria == "All True":
-            if Value is not None and callable(Value) and all(Value(E) for E in Element):
-                Final_List.append(Element)
-        elif Criteria == "Any True":
-            if Value is not None and callable(Value) and any(Value(E) for E in Element):
-                Final_List.append(Element)
-        elif Criteria == "Custom Function":
-            if Value is not None and callable(Value) and Value(Element):
-                Final_List.append(Element)
-        elif Criteria == "Type Equals":
-            if type(Element) == Value:
-                Final_List.append(Element)
-        elif Criteria == "Within Range":
-            if Value < Element < Value2:
-                Final_List.append(Element)
+    for Elemento in Lista:
+        if Criterio == "=":
+            if Elemento == Valor:
+                Lista_Final.append(Elemento)
+        elif Criterio == "!=":
+            if Elemento != Valor:
+                Lista_Final.append(Elemento)
+        elif Criterio == ">":
+            if Elemento > Valor:
+                Lista_Final.append(Elemento)
+        elif Criterio == "<":
+            if Elemento < Valor:
+                Lista_Final.append(Elemento)
+        elif Criterio == ">=":
+            if Elemento >= Valor:
+                Lista_Final.append(Elemento)
+        elif Criterio == "<=":
+            if Elemento <= Valor:
+                Lista_Final.append(Elemento)
+        elif Criterio == "Contiene":
+            if isinstance(Elemento, str) and isinstance(Valor, str) and \
+                Valor in Elemento:
+                Lista_Final.append(Elemento)
+        elif Criterio == "No_Contiene":
+            if isinstance(Elemento, str) and isinstance(Valor, str) and \
+                Valor not in Elemento:
+                Lista_Final.append(Elemento)
+        elif Criterio == "Empieza_Con":
+            if isinstance(Elemento, str) and isinstance(Valor, str) and \
+                Elemento.startswith(Valor):
+                Lista_Final.append(Elemento)
+        elif Criterio == "Termina_Con":
+            if isinstance(Elemento, str) and isinstance(Valor, (str, tuple)) and \
+                Elemento.endswith(Valor):
+                Lista_Final.append(Elemento)
+        elif Criterio == "En":
+            if Elemento in Valor:
+                Lista_Final.append(Elemento)
+        elif Criterio == "No_En":
+            if Elemento not in Valor:
+                Lista_Final.append(Elemento)
+        elif Criterio == "Es_Instancia":
+            if Valor is not None and isinstance(Valor, type) and \
+                isinstance(Elemento, Valor):
+                Lista_Final.append(Elemento)
+        elif Criterio == "Entre":
+            if Valor <= Elemento <= Valor2:
+                Lista_Final.append(Elemento)
+        elif Criterio == "Longitud":
+            if hasattr(Elemento, '__len__') and len(Elemento) == Valor:
+                Lista_Final.append(Elemento)
+        elif Criterio == "Es_Nulo":
+            if Elemento is None:
+                Lista_Final.append(Elemento)
+        elif Criterio == "No_Es_Nulo":
+            if Elemento is not None:
+                Lista_Final.append(Elemento)
+        elif Criterio == "Modulo":
+            if Elemento % Valor == Valor2:
+                Lista_Final.append(Elemento)
+        elif Criterio == "Regex":
+            if isinstance(Elemento, str) and isinstance(Valor, (str, re.Pattern)) \
+                and re.search(Valor, Elemento):
+                Lista_Final.append(Elemento)
+        elif Criterio == "Todos_Verdaderos":
+            if Valor is not None and callable(Valor) and \
+                all(Valor(E) for E in Elemento):
+                Lista_Final.append(Elemento)
+        elif Criterio == "Alguno_Verdadero":
+            if Valor is not None and callable(Valor) and \
+                any(Valor(E) for E in Elemento):
+                Lista_Final.append(Elemento)
+        elif Criterio == "Funcion_Personal":
+            if Valor is not None and callable(Valor) and Valor(Elemento):
+                Lista_Final.append(Elemento)
+        elif Criterio == "Tipo_Igual":
+            if type(Elemento) == Valor:
+                Lista_Final.append(Elemento)
+        elif Criterio == "En_Rango":
+            if Valor < Elemento < Valor2:
+                Lista_Final.append(Elemento)
         else:
-            raise KeyError("The criteria must be one of: =, !=, >, <, <=, >=, Contains, Not Contains, Starts With, Ends With, In, Not In, Is Instance, Between, Length, Is None, Is Not None, Modulo, Regex, All True, Any True, Custom Function, Type Equals, Within Range.")
+            raise KeyError(
+                "El criterio debe ser uno de: =, !=, >, <, <=, >=, "
+                "Contiene, No_Contiene, Empieza_Con, Termina_Con, En, "
+                "No_En, Es_Instancia, Entre, Longitud, Es_Nulo, "
+                "No_Es_Nulo, Modulo, Regex, Todos_Verdaderos, "
+                "Alguno_Verdadero, Funcion_Personal, Tipo_Igual, En_Rango."
+            )
     
-    return Final_List
+    return Lista_Final
 
-def Remove_Duplicates_In_List(List: list):
+def Eliminar_Duplicados_En_Lista(Lista: list):
 
-    '''
-    Removes duplicate elements from a list.
+    """
+    Elimina elementos duplicados de una lista.
 
-    This function iterates through the provided list and returns a 
-    new list that contains only unique elements.
+    Esta función itera a través de la lista proporcionada y devuelve 
+    una nueva lista que contiene solo elementos únicos.
 
-    Parameters:
+    Parámetros:
     -----------
-    List : list
-        The list from which duplicates should be removed.
+    Lista : list
+        La lista de la cual se deben eliminar los duplicados.
 
-    Returns:
+    Retorna:
     --------
     list
-        A new list containing only unique elements.
+        Una nueva lista que contiene solo elementos únicos.
 
-    Example:
+    Ejemplo:
     ---------
-    >>> unique_list = Remove_Duplicates_In_List([1, 2, 2, 3])
-    >>> print(unique_list)
+    >>> Lista_Unica = Eliminar_Duplicados_En_Lista([1, 2, 2, 3])
+    >>> print(Lista_Unica)
     [1, 2, 3]
 
-    '''
+    """
 
-    List_Without_Duplicates = []
-    Seen = set()  # For optimized searches.
-    for Element in List:
-        if Element not in Seen:
-            List_Without_Duplicates.append(Element)
-            Seen.add(Element)
+    Lista_Sin_Duplicados = []
+    Vistos = set()  # Para búsquedas optimizadas.
+    for Elemento in Lista:
+        if Elemento not in Vistos:
+            Lista_Sin_Duplicados.append(Elemento)
+            Vistos.add(Elemento)
     
-    return List_Without_Duplicates
+    return Lista_Sin_Duplicados
 
-def Find_Element(List: list, Value_Element: object, Get_Index: bool = False):
+def Encontrar_Elemento(Lista: list, Valor_Elemento: object, 
+    Obtener_Indice: bool = False):
 
-    '''
-    Finds an element in a list and optionally retrieves its index.
+    """
+    Encuentra un elemento en una lista y opcionalmente recupera su 
+    índice.
 
-    This function checks if the specified value is present in the 
-    provided list. If Get_Index is True, it returns the indices of 
-    all occurrences; otherwise, it returns a boolean indicating 
-    presence.
+    Esta función verifica si el valor especificado está presente en la 
+    lista proporcionada. Si Obtener_Indice es True, devuelve los 
+    índices de todas las ocurrencias; en caso contrario, devuelve un 
+    booleano indicando su presencia.
 
-    Parameters:
+    Parámetros:
     -----------
-    List : list
-        The list in which to search for the specified value.
+    Lista : list
+        La lista en la cual buscar el valor especificado.
 
-    Value_Element : object
-        The value to search for in the list.
+    Valor_Elemento : object
+        El valor a buscar en la lista.
 
-    Get_Index : bool
-        Whether to return the indices of occurrences instead of a 
-        boolean. Default is False.
+    Obtener_Indice : bool
+        Si se deben devolver los índices de las ocurrencias en lugar 
+        de un booleano. Por defecto es False.
 
-    Returns:
+    Retorna:
     --------
     bool or list
-        True if the element is found (and Get_Index is False); 
-        otherwise, a list of indices if Get_Index is True.
+        True si el elemento se encuentra (y Obtener_Indice es False); 
+        en caso contrario, una lista de índices si Obtener_Indice 
+        es True.
 
-    Example:
+    Ejemplo:
     ---------
-    >>> result = Find_Element([1, 2, 3], 2)
-    >>> print(result)
+    >>> Resultado = Encontrar_Elemento([1, 2, 3], 2)
+    >>> print(Resultado)
     True
 
-    >>> indices = Find_Element([1, 2, 3, 2], 2, True)
-    >>> print(indices)
+    >>> Indices = Encontrar_Elemento([1, 2, 3, 2], 2, True)
+    >>> print(Indices)
     [1, 3]
 
-    '''
+    """
 
-    Index_List = []
+    Lista_Indices = []
 
-    for Index, Element in enumerate(List):
-        if Value_Element == Element:
-            if Get_Index == False:
+    for Indice, Elemento in enumerate(Lista):
+        if Valor_Elemento == Elemento:
+            if Obtener_Indice == False:
                 return True
             else:
-                Index_List.append(Index)
+                Lista_Indices.append(Indice)
     
-    if Index_List is None:
+    if Lista_Indices is None:
         return False
     else:
-        return Index_List
+        return Lista_Indices
 
-def Max_Characters(Iterable):
+def Maximo_Caracteres(Iterable: list | tuple | set | dict) -> int:
 
-    '''
-    Finds the maximum number of characters among the elements in an iterable.
+    """
+    Encuentra el número máximo de caracteres entre los elementos de 
+    un iterable.
 
-    This function calculates the maximum length of string representations 
-    of the elements in the provided iterable.
+    Esta función calcula la longitud máxima de las representaciones 
+    de cadena de los elementos en el iterable proporcionado.
 
-    Parameters:
+    Parámetros:
     -----------
     Iterable : iterable
-        The iterable containing elements to evaluate.
+        El iterable que contiene los elementos a evaluar.
 
-    Returns:
+    Retorna:
     --------
     int
-        The maximum number of characters among the elements.
+        El número máximo de caracteres entre los elementos.
 
-    Example:
+    Ejemplo:
     ---------
-    >>> max_chars = Max_Characters([1, 'abc', 3.14159])
-    >>> print(max_chars)
+    >>> Max_Caracteres = Maximo_Caracteres([1, 'abc', 3.14159])
+    >>> print(Max_Caracteres)
     5
 
-    '''
+    """
 
-    Max_Characters = 0
+    Maximo_De_Caracteres = 0
 
-    for Element in Iterable:
-        Characters = len(str(Element))
+    for Elemento in Iterable:
+        Caracteres = len(str(Elemento))
 
-        if Characters > Max_Characters:
-            Max_Characters = Characters   
+        if Caracteres > Maximo_De_Caracteres:
+            Maximo_De_Caracteres = Caracteres   
 
-    return Max_Characters
+    return Maximo_De_Caracteres
 
-def Generate_All_Combinations(List: list, Elements: int):
+def Generar_Todas_Las_Combinaciones(Lista: list, Elementos: int) -> list:
 
-    '''
-    Generates all combinations of a specified length from a list.
+    """
+    Genera todas las combinaciones de una longitud específica a partir 
+    de una lista.
 
-    This function returns all possible combinations of a given size 
-    from the input list.
+    Esta función devuelve todas las combinaciones posibles de un 
+    tamaño dado a partir de la lista de entrada.
 
-    Parameters:
+    Parámetros:
     -----------
-    List : list
-        The list from which combinations will be generated.
+    Lista : list
+        La lista a partir de la cual se generarán las combinaciones.
 
-    Elements : int
-        The number of elements in each combination.
+    Elementos : int
+        El número de elementos en cada combinación.
 
-    Returns:
+    Retorna:
     --------
     list
-        A list of tuples representing all possible combinations.
+        Una lista de tuplas que representa todas las combinaciones 
+        posibles.
 
-    Raises:
+    Lanza:
     -------
     ValueError
-        If the number of elements is greater than the length of the list.
+        Si el número de elementos es mayor que la longitud de la lista.
 
-    Example:
+    Ejemplo:
     ---------
-    >>> combinations = Generate_All_Combinations([1, 2, 3, 4], 2)
-    >>> print(combinations)
+    >>> Combinaciones = Generar_Todas_Las_Combinaciones([1, 2, 3, 4], 2)
+    >>> print(Combinaciones)
     [(1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4)]
     
-    '''
-
-    if Elements > len(List):
-        raise ValueError("El número de elementos no puede ser mayor que la longitud de la lista.")
-
-    List_Of_Combinations = list(itertools.combinations(List, Elements))
-
-    return List_Of_Combinations
-
-def Find_Different_Elements(First_List: list, Second_List: list) -> list:
-
-    """
-    Finds elements that are present in the first list but not in the second.
-
-    Parameters:
-        First_List: The list to search for unique elements.
-        Second_List: The list to compare against.
-
-    Returns:
-        A list containing elements that are in the first list but 
-        not in the second list.
-
-    Example:
-        >>> Get_Elements_([1, 2, 3], [2, 4])
-        [1, 3]
-
     """
 
-    Unique_Elements = [Element for Element in First_List if Element not in Second_List]
+    if Elementos > len(Lista):
+        raise ValueError(
+            "El número de elementos no puede ser mayor que la longitud "
+            "de la lista."
+        )
 
-    return Unique_Elements
+    Lista_De_Combinaciones = list(itertools.combinations(Lista, Elementos))
+
+    return Lista_De_Combinaciones
+
+def Encontrar_Elementos_Diferentes(Primera_Lista: list, 
+    Segunda_Lista: list) -> list:
+
+    """
+    Encuentra elementos que están presentes en la primera lista pero 
+    no en la segunda.
+
+    Esta función compara dos listas y encuentra los elementos que solo 
+    existen en la primera lista.
+
+    Parámetros:
+    -----------
+    Primera_Lista : list
+        La lista en la que buscar elementos únicos.
+
+    Segunda_Lista : list
+        La lista contra la cual comparar.
+
+    Retorna:
+    --------
+    list
+        Una lista que contiene los elementos que están en la primera 
+        lista pero no en la segunda lista.
+
+    Ejemplo:
+    ---------
+    >>> Elementos = Encontrar_Elementos_Diferentes([1, 2, 3], [2, 4])
+    >>> print(Elementos)
+    [1, 3]
+
+    """
+
+    Elementos_Unicos = [Elemento for Elemento in Primera_Lista 
+                       if Elemento not in Segunda_Lista]
+
+    return Elementos_Unicos

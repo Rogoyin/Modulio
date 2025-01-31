@@ -1,74 +1,82 @@
 import datetime as dt
 
-def Sorting_Dates_For_Weeks(Dates: list[dt.datetime]) -> list[list[int]]:
+def Ordenar_Fechas_Por_Semanas(Fechas: list[dt.datetime]) -> list[list[int]]:
     
     """
-    Sort a list of dates into weeks and return indices of the days.
+    Ordena una lista de fechas por semanas y devuelve los índices de los días.
 
-    Parameters:
-    - Dates (list[datetime]): A list of dates, where each element is a 
-      datetime object representing a day, month, year, and possibly time.
+    Parámetros:
+    - Fechas (list[datetime]): Una lista de fechas, donde cada elemento es un 
+      objeto datetime que representa un día, mes, año y posiblemente hora.
 
-    Returns:
-    - list[list[int]]: A list of weeks, where each week contains indices 
-      of the days within that week.
+    Retorna:
+    - list[list[int]]: Una lista de semanas, donde cada semana contiene los 
+      índices de los días dentro de esa semana.
     
     """
 
-    Weeks = []
-    Index = 0
+    Semanas = []
+    Indice = 0
 
-    while Index < len(Dates) - 2:
-        if Dates[Index].weekday() == 0:  # Check if it's Monday.
-            Week = []
-            while Index < len(Dates) - 2 and Dates[Index].weekday() <= Dates[Index + 1].weekday():
-                Week.append(Index)  # Append index of the date.
-                Index += 1
-            Week.append(Index)  # Append the last index of the week.
-            Weeks.append(Week)  # Add the week to the list of weeks.
-        Index += 1
+    while Indice < len(Fechas) - 2:
+        # Verificar si es lunes.
+        if Fechas[Indice].weekday() == 0:  
+            Semana = []
+            while (Indice < len(Fechas) - 2 and 
+                   Fechas[Indice].weekday() <= Fechas[Indice + 1].weekday()):
+                # Agregar el índice de la fecha.
+                Semana.append(Indice)  
+                Indice += 1
+            # Agregar el último índice de la semana.
+            Semana.append(Indice)  
+            # Añadir la semana a la lista de semanas.
+            Semanas.append(Semana)  
+        Indice += 1
 
-    if Dates[-1].weekday() == 0:  # If the last date is a Monday.
-        Weeks[-1].append(len(Dates) - 1)  # Append the last index to the last week.
+    # Si la última fecha es un lunes.
+    if Fechas[-1].weekday() == 0:  
+        # Agregar el último índice a la última semana.
+        Semanas[-1].append(len(Fechas) - 1)  
     else:
-        Weeks.append([len(Dates) - 1])  # Add the last date as a new week.
+        # Añadir la última fecha como una nueva semana.
+        Semanas.append([len(Fechas) - 1])  
 
-    return Weeks
+    return Semanas
 
-def Add_Time_Delta(Minutes: int = 0, Hours: int = 0, Days: int = 0, Future: bool = True, 
-                   String: bool = False):
+def Agregar_Delta_Tiempo(Minutos: int = 0, Horas: int = 0, Dias: int = 0, 
+                        Futuro: bool = True, Texto: bool = False):
     
     """
-    Add or subtract a time delta from the current datetime.
+    Agrega o resta un delta de tiempo desde el datetime actual.
 
-    This function calculates a new datetime by adding or subtracting 
-    a specified amount of time (in minutes, hours, and days) from the 
-    current datetime. It can return the result as a formatted string 
-    or as a datetime object.
+    Esta función calcula un nuevo datetime agregando o restando una cantidad 
+    específica de tiempo (en minutos, horas y días) desde el datetime actual. 
+    Puede devolver el resultado como una cadena formateada o como un objeto 
+    datetime.
 
-    Parameters:
-    Minutes (int): The number of minutes to add or subtract. Default is 0.
-    Hours (int): The number of hours to add or subtract. Default is 0.
-    Days (int): The number of days to add or subtract. Default is 0.
-    Future (bool): If True, adds the time delta. If False, subtracts it. 
-                   Default is True.
-    String (bool): If True, returns the result as a formatted string. 
-                   If False, returns a datetime object. Default is False.
+    Parámetros:
+    Minutos (int): Número de minutos a agregar o restar. Por defecto es 0.
+    Horas (int): Número de horas a agregar o restar. Por defecto es 0.
+    Dias (int): Número de días a agregar o restar. Por defecto es 0.
+    Futuro (bool): Si es True, suma el delta. Si es False, lo resta. 
+                   Por defecto es True.
+    Texto (bool): Si es True, retorna el resultado como cadena formateada. 
+                  Si es False, retorna un objeto datetime. Por defecto es False.
 
-    Returns:
-    datetime or str: Returns the new datetime object if String is False, 
-                     or a formatted string if String is True.
+    Retorna:
+    datetime o str: Retorna el nuevo objeto datetime si Texto es False, 
+                   o una cadena formateada si Texto es True.
     """
 
-    Now = dt.datetime.now()
-    Period = dt.timedelta(days = Days, hours = Hours, minutes = Minutes)
+    Ahora = dt.datetime.now()
+    Periodo = dt.timedelta(days=Dias, hours=Horas, minutes=Minutos)
 
-    if Future:
-        Moment = Now + Period
+    if Futuro:
+        Momento = Ahora + Periodo
     else:
-        Moment = Now - Period
+        Momento = Ahora - Periodo
 
-    if String:
-        return Moment.strftime('%Y-%m-%d %H:%M')
+    if Texto:
+        return Momento.strftime('%Y-%m-%d %H:%M')
     else:
-        return Moment
+        return Momento

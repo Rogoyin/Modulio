@@ -3,356 +3,410 @@ from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.styles import NamedStyle, Font, PatternFill, Border, Side, Alignment, Color
 from openpyxl.worksheet.dimensions import ColumnDimension, DimensionHolder
 from openpyxl.worksheet.worksheet import Worksheet
-from Listpy import *
+from Listpy import Convertir_Lista_De_Tuplas_A_Lista_De_Listas
 import pandas as pd
 from typing import Optional, List
 import pandas as pd
 from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Alignment, Border, Side
 
-def Get_Sheets_And_Sheetnames(Book):
+def Obtener_Hojas_Y_Nombres(Libro):
 
     """
-    Get the sheet names and corresponding sheet objects from a workbook.
+    Obtiene los nombres de las hojas y los objetos de hoja correspondientes 
+    de un libro de trabajo.
 
-    Parameters:
-    - Book: The workbook object to extract sheet names and sheets from.
+    Parametros:
+    - Libro: El objeto libro de trabajo del cual extraer nombres y hojas.
 
-    Returns:
-    - tuple: A tuple containing a list of sheet names and a list of 
-      corresponding sheets.
-
-    """
-
-    Sheet_Names = Book.sheetnames 
-    Sheets = []
-    for Sheet in Sheet_Names:  # Fixed to iterate over Sheet_Names
-        Current_Sheet = Book[Sheet]
-        Sheets.append(Current_Sheet)
-    return Sheet_Names, Sheets
-
-def Get_Range_Values(Cell1: str, Cell2: str, Sheet) -> list:
-
-    """
-    Get values from a specified range in a worksheet.
-
-    Parameters:
-    - Cell1 (str): The starting cell (e.g., 'A1').
-    - Cell2 (str): The ending cell (e.g., 'B2').
-    - Sheet: The worksheet object from which to extract values.
-
-    Returns:
-    - list: A list of lists containing the values from the specified range.
+    Retorna:
+    - tuple: Una tupla que contiene una lista de nombres de hojas y una 
+      lista de hojas correspondientes.
 
     """
 
-    Range = Sheet[Cell1:Cell2]
-    Range = Convert_List_Of_Tuples_To_List_Of_List(Range)
-    Range_Values = []
+    Nombres_Hojas = Libro.sheetnames 
+    Hojas = []
+    for Hoja in Nombres_Hojas:
+        Hoja_Actual = Libro[Hoja]
+        Hojas.append(Hoja_Actual)
+    return Nombres_Hojas, Hojas
 
-    for Row in Range:
-        Row_Values = []
-        for Cell in Row:
-            Row_Values.append(Cell.value)
-        Range_Values.append(Row_Values)
-    return Range_Values
-
-def Verify_Cell_Value(Value, Sheet, Column: int, Row: int) -> bool:
+def Obtener_Valores_Rango(Celda1: str, Celda2: str, Hoja) -> list:
 
     """
-    Verify if a cell's value matches the specified value.
+    Obtiene valores de un rango específico en una hoja de trabajo.
 
-    Parameters:
-    - Value: The value to compare against.
-    - Sheet: The worksheet object containing the cell.
-    - Column (int): The column number of the cell (1-based index).
-    - Row (int): The row number of the cell (1-based index).
+    Parametros:
+    - Celda1 (str): La celda inicial (ej: 'A1').
+    - Celda2 (str): La celda final (ej: 'B2').
+    - Hoja: El objeto hoja de trabajo de la cual extraer valores.
 
-    Returns:
-    - bool: True if the cell's value matches, False otherwise.
+    Retorna:
+    - list: Una lista de listas conteniendo los valores del rango 
+      especificado.
+
+    """
+
+    Rango = Hoja[Celda1:Celda2]
+    Rango = Convertir_Lista_De_Tuplas_A_Lista_De_Listas(Rango)
+    Valores_Rango = []
+
+    for Fila in Rango:
+        Valores_Fila = []
+        for Celda in Fila:
+            Valores_Fila.append(Celda.value)
+        Valores_Rango.append(Valores_Fila)
+    return Valores_Rango
+
+def Verificar_Valor_Celda(Valor, Hoja, Columna: int, Fila: int) -> bool:
+
+    """
+    Verifica si el valor de una celda coincide con el valor especificado.
+
+    Parametros:
+    - Valor: El valor contra el cual comparar.
+    - Hoja: El objeto hoja de trabajo que contiene la celda.
+    - Columna (int): El número de columna de la celda (índice base 1).
+    - Fila (int): El número de fila de la celda (índice base 1).
+
+    Retorna:
+    - bool: True si el valor de la celda coincide, False en caso contrario.
 
     """
     
-    return Value == Sheet.cell(row=Row, column=Column).value
+    return Valor == Hoja.cell(row=Fila, column=Columna).value
 
-def Get_Cell_Value(Value, Sheet, Cell: Optional[str] = None, Column: Optional[int] = None, 
-                   Row: Optional[int] = None):
+def Obtener_Valor_Celda(Valor, Hoja, Celda: Optional[str] = None, 
+                       Columna: Optional[int] = None, 
+                       Fila: Optional[int] = None):
     
     """
-    Get the value of a cell in a worksheet.
+    Obtiene el valor de una celda en una hoja de trabajo.
 
-    Parameters:
-    - Value: The value to compare against.
-    - Sheet: The worksheet object containing the cell.
-    - Cell (str, optional): The cell reference (e.g., 'A1').
-    - Column (int, optional): The column number (1-based index).
-    - Row (int, optional): The row number (1-based index).
+    Parametros:
+    - Valor: El valor contra el cual comparar.
+    - Hoja: El objeto hoja de trabajo que contiene la celda.
+    - Celda (str, opcional): La referencia de celda (ej: 'A1').
+    - Columna (int, opcional): El número de columna (índice base 1).
+    - Fila (int, opcional): El número de fila (índice base 1).
 
-    Returns:
-    - The value of the specified cell.
+    Retorna:
+    - El valor de la celda especificada.
 
-    Raises:
-    - KeyError: If no cell reference or column/row is provided.
+    Eleva:
+    - KeyError: Si no se proporciona una referencia de celda o columna/fila.
 
     """
 
-    if Cell is None and Column is None and Row is None:
+    if Celda is None and Columna is None and Fila is None:
         raise KeyError(
-            'You must provide a cell reference (e.g., "A1") or both '
-            'column and row numbers.'
+            'Debe proporcionar una referencia de celda (ej: "A1") o ambos '
+            'números de columna y fila.'
         )
     
-    if Cell:
-        return Value == Sheet[Cell].value
+    if Celda:
+        return Valor == Hoja[Celda].value
     
-    return Sheet.cell(row=Row, column=Column).value
+    return Hoja.cell(row=Fila, column=Columna).value
 
-def Get_Length_And_Width(Sheet) -> tuple[int, int]:
-
-    """
-    Get the dimensions (length and width) of a worksheet.
-
-    Parameters:
-    - Sheet: The worksheet object to measure.
-
-    Returns:
-    - tuple: A tuple containing the number of rows (length) and 
-      columns (width).
+def Obtener_Largo_Y_Ancho(Hoja) -> tuple[int, int]:
 
     """
+    Obtiene las dimensiones (largo y ancho) de una hoja de trabajo.
 
-    Length = Sheet.max_row  
-    Width = Sheet.max_column
-    return Length, Width
+    Parametros:
+    - Hoja: El objeto hoja de trabajo a medir.
 
-def Merge_Sheets(Book, Name):
-
-    """
-    Merge all sheets in a workbook into a new sheet.
-
-    Parameters:
-    - Book: The workbook object containing the sheets to merge.
-    - Name: The name for the new merged sheet.
+    Retorna:
+    - tuple: Una tupla conteniendo el número de filas (largo) y 
+      columnas (ancho).
 
     """
 
-    New_Doc = Workbook()
-    New_Sheet = New_Doc.create_sheet(Name)
-    Sheet_Names, Sheets = Get_Sheets_And_Sheetnames(Book)
-    Total_Length = 1
+    Largo = Hoja.max_row  
+    Ancho = Hoja.max_column
+    return Largo, Ancho
 
-    for Sheet in Sheets:
-        Sheet_Length, Sheet_Width = Get_Length_And_Width(Sheet)    
-        for Row in range(Total_Length, Total_Length + Sheet_Length):
-            for Column in range(1, Sheet_Width + 1):  # Fixed to include last column
-                Cell = Sheet.cell(row=Row - Total_Length + 1, column=Column).value
-                New_Sheet.cell(row=Row, column=Column, value=Cell)
-        Total_Length += Sheet_Length
-
-    New_Doc.save(Name)  # Saving the new workbook
-
-def Formating_Book(Path: str, Sheet_Name: Optional[str] = None):
+def Combinar_Hojas(Libro, Nombre):
 
     """
-    Format a workbook by applying filters, alignment, and borders.
+    Combina todas las hojas de un libro en una nueva hoja.
 
-    Parameters:
-    - Path (str): The path to the workbook file.
-    - Sheet_Name (str, optional): The name of the sheet to format. 
-      Defaults to the active sheet.
+    Parametros:
+    - Libro: El objeto libro de trabajo que contiene las hojas a combinar.
+    - Nombre: El nombre para la nueva hoja combinada.
 
     """
 
-    Book = load_workbook(Path)
+    Nuevo_Doc = Workbook()
+    Nueva_Hoja = Nuevo_Doc.create_sheet(Nombre)
+    Nombres_Hojas, Hojas = Obtener_Hojas_Y_Nombres(Libro)
+    Largo_Total = 1
+
+    for Hoja in Hojas:
+        Largo_Hoja, Ancho_Hoja = Obtener_Largo_Y_Ancho(Hoja)    
+        for Fila in range(Largo_Total, Largo_Total + Largo_Hoja):
+            for Columna in range(1, Ancho_Hoja + 1):
+                Celda = Hoja.cell(row=Fila - Largo_Total + 1, 
+                                column=Columna).value
+                Nueva_Hoja.cell(row=Fila, column=Columna, value=Celda)
+        Largo_Total += Largo_Hoja
+
+    Nuevo_Doc.save(Nombre)
+
+def Formatear_Libro(Ruta: str, Nombre_Hoja: Optional[str] = None):
+
+    """
+    Formatea un libro aplicando filtros, alineación y bordes.
+
+    Parametros:
+    - Ruta (str): La ruta al archivo del libro.
+    - Nombre_Hoja (str, opcional): El nombre de la hoja a formatear. 
+      Por defecto es la hoja activa.
+
+    """
+
+    Libro = load_workbook(Ruta)
     
-    if Sheet_Name is None:
-        Sheet = Book.active  
+    if Nombre_Hoja is None:
+        Hoja = Libro.active  
     else:
-        if Sheet_Name not in Book.sheetnames:
-            raise ValueError(f"Sheet '{Sheet_Name}' does not exist in the workbook.")
-        Sheet = Book[Sheet_Name]
+        if Nombre_Hoja not in Libro.sheetnames:
+            raise ValueError(
+                f"La hoja '{Nombre_Hoja}' no existe en el libro."
+            )
+        Hoja = Libro[Nombre_Hoja]
 
-    # Apply autofilter.
-    Sheet.auto_filter.ref = Sheet.dimensions
-
-    Align_Format = Alignment(horizontal='center', vertical='center')
-    Border_Format = Border(left=Side(style='thin'), right=Side(style='thin'),
-                           top=Side(style='thin'), bottom=Side(style='thin'))
-    
-    for Column in range(1, Sheet.max_column + 1):
-        for Row in range(1, Sheet.max_row + 1):
-            Cell = Sheet.cell(row=Row, column=Column)
-            Cell.alignment = Align_Format
-            Cell.border = Border_Format
-
-    Book.save(Path)
-
-def Convert_DataFrame_To_Excel(df, Path: str, Filename: str):
-
-    """
-    Convert a DataFrame to an Excel file with formatting.
-
-    Parameters:
-    - df: The DataFrame to convert.
-    - Path (str): The directory path where the file will be saved.
-    - Filename (str): The name of the Excel file.
-
-    """
-
-    Full_Path = f"{Path}{Filename}"
-    Formating_Book(Full_Path)
-
-def Immobilize_Panes(Path: str, Cell: str, Sheet_Name: Optional[str] = None):
-
-    """
-    Freeze panes in a specified Excel worksheet.
-
-    Parameters:
-    - Path (str): The path to the workbook file.
-    - Cell (str): The cell at which to freeze panes (e.g., 'A1').
-    - Sheet_Name (str, optional): The name of the sheet to modify. 
-      Defaults to the active sheet.
-
-    """
-
-    Book = load_workbook(Path)
-    
-    if Sheet_Name is None:
-        Sheet = Book.active
+    # Aplicar autofiltro.
+    if Hoja is not None:
+        Hoja.auto_filter.ref = Hoja.dimensions
     else:
-        if Sheet_Name not in Book.sheetnames:
-            raise ValueError(f"Sheet '{Sheet_Name}' does not exist.")
-        Sheet = Book[Sheet_Name]
+        raise ValueError("La hoja especificada no existe.")
 
-    Sheet.freeze_panes = Cell
-    Book.save(Path)
+    Formato_Alineacion = Alignment(horizontal='center', vertical='center')
+    Formato_Borde = Border(
+        left=Side(style='thin'), 
+        right=Side(style='thin'),
+        top=Side(style='thin'), 
+        bottom=Side(style='thin')
+    )
+    
+    for Columna in range(1, Hoja.max_column + 1):
+        for Fila in range(1, Hoja.max_row + 1):
+            Celda = Hoja.cell(row=Fila, column=Columna)
+            Celda.alignment = Formato_Alineacion
+            Celda.border = Formato_Borde
 
-def Replace_Character_In_Range_Of_Excel_Book(
-    Path: str, Old_Character: str, New_Character: str, 
-    Min_Col: int, Min_Row: int, Max_Col: Optional[int] = None, 
-    Max_Row: Optional[int] = None, Sheet_Name: Optional[str] = None
+    Libro.save(Ruta)
+
+def Convertir_DataFrame_A_Excel(df, Ruta: str, Nombre_Archivo: str):
+
+    """
+    Convierte un DataFrame a un archivo Excel con formato.
+
+    Parametros:
+    - df: El DataFrame a convertir.
+    - Ruta (str): La ruta del directorio donde se guardará el archivo.
+    - Nombre_Archivo (str): El nombre del archivo Excel.
+
+    """
+
+    Ruta_Completa = f"{Ruta}{Nombre_Archivo}"
+    Formatear_Libro(Ruta_Completa)
+
+def Inmovilizar_Paneles(Ruta: str, Celda: str, 
+                       Nombre_Hoja: Optional[str] = None):
+
+    """
+    Congela los paneles en una hoja de Excel especificada.
+
+    Parametros:
+    - Ruta (str): La ruta al archivo del libro.
+    - Celda (str): La celda en la que congelar los paneles (ej: 'A1').
+    - Nombre_Hoja (str, opcional): El nombre de la hoja a modificar. 
+      Por defecto es la hoja activa.
+
+    """
+
+    Libro = load_workbook(Ruta)
+    
+    if Nombre_Hoja is None:
+        Hoja = Libro.active
+    else:
+        if Nombre_Hoja not in Libro.sheetnames:
+            raise ValueError(f"La hoja '{Nombre_Hoja}' no existe.")
+        Hoja = Libro[Nombre_Hoja]
+
+    if Hoja is not None:
+        Hoja.freeze_panes = Celda
+        Libro.save(Ruta)
+    else:
+        raise ValueError("La hoja especificada no existe.")
+
+def Reemplazar_Caracter_En_Rango_Excel(
+    Ruta: str, 
+    Caracter_Viejo: str, 
+    Caracter_Nuevo: str, 
+    Col_Min: int, 
+    Fila_Min: int, 
+    Col_Max: Optional[int] = None, 
+    Fila_Max: Optional[int] = None, 
+    Nombre_Hoja: Optional[str] = None
 ):
     
     """
-    Replace characters in a specified range of an Excel workbook.
+    Reemplaza caracteres en un rango específico de un libro Excel.
 
-    Parameters:
-    - Path (str): The path to the workbook file.
-    - Old_Character (str): The character to replace.
-    - New_Character (str): The character to use as replacement.
-    - Min_Col (int): The minimum column index (1-based).
-    - Min_Row (int): The minimum row index (1-based).
-    - Max_Col (int, optional): The maximum column index (1-based).
-    - Max_Row (int, optional): The maximum row index (1-based).
-    - Sheet_Name (str, optional): The name of the sheet to modify.
-      Defaults to the active sheet.
+    Parametros:
+    - Ruta (str): La ruta al archivo del libro.
+    - Caracter_Viejo (str): El carácter a reemplazar.
+    - Caracter_Nuevo (str): El carácter a usar como reemplazo.
+    - Col_Min (int): El índice de columna mínimo (base 1).
+    - Fila_Min (int): El índice de fila mínimo (base 1).
+    - Col_Max (int, opcional): El índice de columna máximo (base 1).
+    - Fila_Max (int, opcional): El índice de fila máximo (base 1).
+    - Nombre_Hoja (str, opcional): El nombre de la hoja a modificar.
+      Por defecto es la hoja activa.
 
     """
 
-    Book = load_workbook(Path)
+    Libro = load_workbook(Ruta)
     
-    if Sheet_Name is None:
-        Sheet = Book.active
+    if Nombre_Hoja is None:
+        Hoja = Libro.active
     else:
-        Sheet = Book[Sheet_Name]
+        Hoja = Libro[Nombre_Hoja]
     
-    if Max_Col is None:
-        Max_Col = Sheet.max_column
-    if Max_Row is None:
-        Max_Row = Sheet.max_row
+    if Hoja is None:
+        raise ValueError("La hoja especificada no existe.")
     
-    for Row in Sheet.iter_rows(min_row=Min_Row, min_col=Min_Col, 
-                               max_row=Max_Row, max_col=Max_Col):  
-        for Cell in Row:
-            Content = Cell.value
-            if Content:
-                Cell.value = Content.replace(Old_Character, New_Character)
+    if Col_Max is None:
+        Col_Max = Hoja.max_column
+    if Fila_Max is None:
+        Fila_Max = Hoja.max_row
     
-    Book.save(Path)
+    for Fila in Hoja.iter_rows(min_row=Fila_Min, min_col=Col_Min, 
+                             max_row=Fila_Max, max_col=Col_Max):  
+        for Celda in Fila:
+            Contenido = Celda.value
+            if Contenido:
+                if isinstance(Contenido, str):
+                    Celda.value = Contenido.replace(
+                        Caracter_Viejo, 
+                        Caracter_Nuevo
+                    )
+    
+    Libro.save(Ruta)
 
-def Delete_Columns_In_Excel_Book(Path: str, Columns: list[str], Sheet_Name: Optional[str] = None):
+def Eliminar_Columnas_Excel(
+    Ruta: str, 
+    Columnas: list[str], 
+    Nombre_Hoja: Optional[str] = None
+):
 
     """
-    Delete specified columns from an Excel worksheet.
+    Elimina columnas específicas de una hoja de Excel.
 
-    Parameters:
-    - Path (str): The path to the workbook file.
-    - Columns (list[str]): List of column names to delete.
-    - Sheet_Name (str, optional): The name of the sheet to modify.
-      Defaults to the active sheet.
+    Parametros:
+    - Ruta (str): La ruta al archivo del libro.
+    - Columnas (list[str]): Lista de nombres de columnas a eliminar.
+    - Nombre_Hoja (str, opcional): El nombre de la hoja a modificar.
+      Por defecto es la hoja activa.
 
     """
 
-    Book = load_workbook(Path)
+    Libro = load_workbook(Ruta)
     
-    if Sheet_Name is None:
-        Sheet = Book.active
+    if Nombre_Hoja is None:
+        Hoja = Libro.active
     else:
-        Sheet = Book[Sheet_Name]
+        Hoja = Libro[Nombre_Hoja]
     
-    Row1 = Sheet[1]
+    if Hoja is None:
+        raise ValueError("La hoja especificada no existe.")
     
-    Mapping = {Cell.value: Cell.column for Cell in Row1}
+    Fila1 = Hoja[1]
     
-    Column_Index = [Mapping[i] for i in Columns if i in Mapping]
+    Mapeo = {Celda.value: Celda.column for Celda in Fila1}
+    
+    Indice_Columnas = [
+        Mapeo[i] for i in Columnas if i in Mapeo
+    ]
      
-    for i in sorted(Column_Index, reverse=True):
-        Sheet.delete_cols(i)
+    for i in sorted(Indice_Columnas, reverse=True):
+        Hoja.delete_cols(i)
     
-    Book.save(Path)
+    Libro.save(Ruta)
 
-def Adjust_Column_Width(Path: str, Min_Column: int, Max_Column: int, 
-                         Width: float, Sheet_Name: Optional[str] = None):
+def Ajustar_Ancho_Columna(
+    Ruta: str, 
+    Columna_Min: int, 
+    Columna_Max: int, 
+    Ancho: float, 
+    Nombre_Hoja: Optional[str] = None
+):
     
     """
-    Adjust the width of specified columns in a worksheet.
+    Ajusta el ancho de columnas específicas en una hoja de trabajo.
 
-    Parameters:
-    - Path (str): The path to the workbook file.
-    - Min_Column (int): The starting column index (1-based).
-    - Max_Column (int): The ending column index (1-based).
-    - Width (float): The width to set for the columns.
-    - Sheet_Name (str, optional): The name of the sheet to modify.
-      Defaults to the active sheet.
+    Parametros:
+    - Ruta (str): La ruta al archivo del libro.
+    - Columna_Min (int): El índice de columna inicial (base 1).
+    - Columna_Max (int): El índice de columna final (base 1).
+    - Ancho (float): El ancho a establecer para las columnas.
+    - Nombre_Hoja (str, opcional): El nombre de la hoja a modificar.
+      Por defecto es la hoja activa.
 
     """
 
-    Book = load_workbook(Path)
+    Libro = load_workbook(Ruta)
     
-    if Sheet_Name is None:
-        Sheet = Book.active
+    if Nombre_Hoja is None:
+        Hoja = Libro.active
     else:
-        Sheet = Book[Sheet_Name]
+        Hoja = Libro[Nombre_Hoja]
         
-    for Column in range(Min_Column, Max_Column + 1):
-        Sheet.column_dimensions[chr(64 + Column)].width = Width
+    if Hoja is None:
+        raise ValueError("La hoja especificada no existe.")
+        
+    for Columna in range(Columna_Min, Columna_Max + 1):
+        Hoja.column_dimensions[get_column_letter(Columna)].width = Ancho
     
-    Book.save(Path)
+    Libro.save(Ruta)
 
-def Create_Excel_With_Multiple_Data_Frames(Path: str, df_List: list[pd.DataFrame], 
-                                            Sheet_Names_List: Optional[List[str]] = None):
+def Crear_Excel_Con_Multiple_DataFrames(
+    Ruta: str, 
+    Lista_Df: list[pd.DataFrame], 
+    Lista_Nombres_Hojas: Optional[List[str]] = None
+):
     
     """
-    Create an Excel workbook with multiple DataFrames in separate sheets.
+    Crea un libro Excel con múltiples DataFrames en hojas separadas.
 
-    Parameters:
-    - Path (str): The path where the workbook will be saved.
-    - df_List (list[pd.DataFrame]): List of DataFrames to save.
-    - Sheet_Names_List (list[str], optional): List of names for the sheets. 
-      If not provided, defaults to "Sheet1", "Sheet2", etc.
+    Parametros:
+    - Ruta (str): La ruta donde se guardará el libro.
+    - Lista_Df (list[pd.DataFrame]): Lista de DataFrames a guardar.
+    - Lista_Nombres_Hojas (list[str], opcional): Lista de nombres para las 
+      hojas. Si no se proporciona, por defecto será "Hoja1", "Hoja2", etc.
     
-    Raises:
-    - ValueError: If the lengths of df_List and Sheet_Names_List do not match.
+    Eleva:
+    - ValueError: Si las longitudes de Lista_Df y Lista_Nombres_Hojas no 
+      coinciden.
 
     """
 
-    if Sheet_Names_List is None:
-        Sheet_Names_List = [f'Sheet{i+1}' for i in range(len(df_List))]
+    if Lista_Nombres_Hojas is None:
+        Lista_Nombres_Hojas = [
+            f'Hoja{i+1}' for i in range(len(Lista_Df))
+        ]
 
-    elif len(df_List) != len(Sheet_Names_List):
-        raise ValueError("The list of sheet names must match the length of "
-                         "the DataFrames list.")
+    elif len(Lista_Df) != len(Lista_Nombres_Hojas):
+        raise ValueError(
+            "La lista de nombres de hojas debe coincidir con la longitud "
+            "de la lista de DataFrames."
+        )
 
-    with pd.ExcelWriter(Path) as Writer:
-        for df, Sheet_Name in zip(df_List, Sheet_Names_List):
-            df.to_excel(Writer, sheet_name=Sheet_Name, index=False)
+    with pd.ExcelWriter(Ruta) as Escritor:
+        for Df, Nombre_Hoja in zip(Lista_Df, Lista_Nombres_Hojas):
+            Df.to_excel(Escritor, sheet_name = Nombre_Hoja, index = False)

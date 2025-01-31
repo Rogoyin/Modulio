@@ -1,15 +1,16 @@
 '''
 --OPERACIONES EXCLUSIVAS DEL PROGRAMA DEL FORRAJE--
+
 '''
 
 import Stringpy
 from typing import List
-import pandas as pd # type: ignore
+import pandas as pd 
 import time
-import pyautogui # type: ignore
-import pygetwindow as gw # type: ignore
+import pyautogui 
+import pygetwindow as gw 
 import subprocess
-import pyperclip # type: ignore
+import pyperclip 
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 # Diccionarios.

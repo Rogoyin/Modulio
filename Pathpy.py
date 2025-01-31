@@ -1,27 +1,46 @@
 from typing import Optional
 import os
 
-def Get_Most_Recent_Backup(Directory: str) -> Optional[str]:
+def Obtener_Backup_Mas_Reciente(Directorio: str) -> Optional[str]:
 
     """
-    Gets the most recent file in a directory based on modification time.
+    Obtiene el archivo más reciente en un directorio basándose en la 
+    fecha de modificación.
 
-    Args:
-        Directory (str): The path to the directory.
+    Esta función examina todos los archivos en el directorio 
+    especificado y determina cuál fue modificado más recientemente.
 
-    Returns:
-        Optional[str]: The path to the most recent file or None if no files are found.
+    Parámetros:
+    -----------
+    Directorio : str
+        La ruta al directorio.
+
+    Retorna:
+    --------
+    Optional[str]
+        La ruta al archivo más reciente o None si no se encuentran 
+        archivos.
+
+    Ejemplo:
+    --------
+    >>> Backup = Obtener_Backup_Mas_Reciente('/ruta/al/directorio')
+    >>> print(Backup)
+    '/ruta/al/directorio/archivo_reciente.txt'
 
     """
 
-    # List all files in the directory.
-    Files = [os.path.join(Directory, File) for File in os.listdir(Directory) if os.path.isfile(os.path.join(Directory, File))]
+    # Lista todos los archivos en el directorio.
+    Archivos = [
+        os.path.join(Directorio, Archivo) 
+        for Archivo in os.listdir(Directorio) 
+        if os.path.isfile(os.path.join(Directorio, Archivo))
+    ]
     
-    # Check if the directory is empty.
-    if not Files:
+    # Verifica si el directorio está vacío.
+    if not Archivos:
         return None
     
-    # Get the most recent file by modification time.
-    Most_Recent_Backup = max(Files, key=os.path.getmtime)
+    # Obtiene el archivo más reciente por fecha de modificación.
+    Backup_Mas_Reciente = max(Archivos, key = os.path.getmtime)
     
-    return Most_Recent_Backup
+    return Backup_Mas_Reciente

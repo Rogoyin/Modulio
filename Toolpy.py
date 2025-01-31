@@ -1,30 +1,41 @@
 
-def Print_Docstring(Function):  
+from typing import Callable, Any, NoReturn
+
+def Imprimir_Docstring(Funcion: Callable[..., Any]) -> None:
 
     """
-    Print the docstring of a given function with enhanced formatting.
+    Imprime el docstring de una función dada con formato mejorado.
 
-    Parameters:
+    Esta función toma como entrada otra función y muestra su docstring 
+    con un formato especial que incluye líneas decorativas para mejor 
+    visualización.
+
+    Parámetros:
     -----------
-    Function : callable
-        The function whose docstring is to be printed.
+    Funcion : Callable[..., Any]
+        La función cuyo docstring se va a imprimir.
 
-    Returns:
+    Retorna:
     --------
     None
-        The function prints the docstring of the provided function.
+        La función imprime el docstring de la función proporcionada.
+
+    Lanza:
+    ------
+    ValueError
+        Si el argumento proporcionado no es una función.
 
     """
     
-    if not callable(Function):
-        raise ValueError("The provided argument is not a function.")
+    if not callable(Funcion):
+        raise ValueError("El argumento proporcionado no es una función.")
 
-    # Capture docstring.
-    Captured_Docstring = Function.__doc__ or "No docstring available." 
-     # Fallback if no docstring is present.
+    # Captura el docstring.
+    Docstring_Capturado = Funcion.__doc__ or "No hay docstring disponible."
+    # Se usa valor alternativo si no hay docstring.
 
-    # Print the captured docstring with formatting.
-    print("===" * 10)  # Decorative line.
-    print(Captured_Docstring)
-    print("===" * 10)  # Decorative line.
+    # Imprime el docstring capturado con formato.
+    print("===" * 10)  # Línea decorativa.
+    print(Docstring_Capturado)
+    print("===" * 10)  # Línea decorativa.
 

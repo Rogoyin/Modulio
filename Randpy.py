@@ -1,50 +1,76 @@
 import random
 from typing import List
 
-def Generate_Random_Numbers(Count: int, Minimum_Value: int, Maximum_Value: int) -> List[int]:
+def Generar_Numeros_Aleatorios(Cantidad: int, Valor_Minimo: int, 
+    Valor_Maximo: int) -> List[int]:
+
+    """
+    Genera una lista de números enteros aleatorios dentro de un rango 
+    especificado.
+
+    Esta función crea una lista de números enteros aleatorios, donde 
+    cada número está dentro del rango definido por los valores mínimo 
+    y máximo especificados.
+
+    Parámetros:
+    -----------
+    Cantidad : int
+        La cantidad de números aleatorios a generar.
+
+    Valor_Minimo : int
+        El valor mínimo para los números aleatorios.
+
+    Valor_Maximo : int
+        El valor máximo para los números aleatorios.
+
+    Retorna:
+    --------
+    List[int]
+        Una lista de números enteros aleatorios dentro del rango 
+        especificado.
+
+    Ejemplo:
+    --------
+    >>> Generar_Numeros_Aleatorios(5, 1, 10)
+    [3, 7, 2, 10, 6]
 
     """
 
-    Generates a list of random integers within a specified range.
+    return [random.randint(Valor_Minimo, Valor_Maximo) 
+            for _ in range(Cantidad)]
 
-    Parameters:
-        Count: The number of random integers to generate.
-        Minimum_Value: The minimum value for the random integers.
-        Maximum_Value: The maximum value for the random integers.
+def Generar_Letras_Aleatorias(Cantidad: int, 
+    Incluir_Mayusculas: bool = True) -> List[str]:
 
-    Returns:
-        A list of random integers within the specified range.
+    """
+    Genera una lista de letras aleatorias del alfabeto.
 
-    Example:
-        >>> Generate_Random_Numbers(5, 1, 10)
-        [3, 7, 2, 10, 6]
+    Esta función crea una lista de letras aleatorias, con la opción 
+    de incluir tanto minúsculas como mayúsculas.
+
+    Parámetros:
+    -----------
+    Cantidad : int
+        La cantidad de letras aleatorias a generar.
+
+    Incluir_Mayusculas : bool
+        Indica si se deben incluir letras mayúsculas. Por defecto 
+        es True.
+
+    Retorna:
+    --------
+    List[str]
+        Una lista de letras aleatorias del alfabeto.
+
+    Ejemplo:
+    --------
+    >>> Generar_Letras_Aleatorias(5, Incluir_Mayusculas=True)
+    ['A', 'b', 'Z', 'm', 'P']
 
     """
 
-    return [random.randint(Minimum_Value, Maximum_Value) for _ in range(Count)]
+    Letras = "abcdefghijklmnopqrstuvwxyz"
+    if Incluir_Mayusculas:
+        Letras += Letras.upper()
 
-def Generate_Random_Letters(Count: int, Include_Uppercase: bool = True) -> List[str]:
-
-    """
-
-    Generates a list of random letters from the alphabet.
-
-    Parameters:
-        Count: The number of random letters to generate.
-        Include_Uppercase: Indicates whether to include uppercase letters.
-
-    Returns:
-        A list of random letters from the alphabet.
-
-    Example:
-        >>> Generate_Random_Letters(5, Include_Uppercase=True)
-        ['A', 'b', 'Z', 'm', 'P']
-
-    """
-
-    Letters = "abcdefghijklmnopqrstuvwxyz"
-    if Include_Uppercase:
-        Letters += Letters.upper()
-
-    return [random.choice(Letters) for _ in range(Count)]
-
+    return [random.choice(Letras) for _ in range(Cantidad)]
